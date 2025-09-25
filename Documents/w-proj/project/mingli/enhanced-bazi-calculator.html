@@ -1,0 +1,2740 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>八字排盘工具 - 高精度算法</title>
+    <style>
+      /* =================== 丰富多彩的设计变量 =================== */
+      :root {
+        /* 主色调 - 神秘紫色 */
+        --primary-color: #8b5fbf;
+        --primary-light: #a855f7;
+        --primary-dark: #7c3aed;
+
+        /* 辅助色调 */
+        --secondary-color: #06d6a0; /* 翡翠绿 */
+        --accent-color: #f72585; /* 玉红 */
+        --warning-color: #fbbf24; /* 明黄 */
+        --success-color: #10b981; /* 绿色 */
+        --info-color: #0ea5e9; /* 天蓝 */
+        --orange-color: #f97316; /* 橙色 */
+        --pink-color: #ec4899; /* 粉红 */
+        --indigo-color: #6366f1; /* 靠蓝 */
+
+        /* 背景渐变 - 棋盘式彩虹 */
+        --background: linear-gradient(
+          45deg,
+          #667eea 0%,
+          #764ba2 25%,
+          #f093fb 50%,
+          #f5576c 75%,
+          #4facfe 100%
+        );
+
+        /* 表面颜色 */
+        --surface: rgba(255, 255, 255, 0.95);
+        --surface-variant: rgba(248, 250, 252, 0.85);
+        --card-surface: rgba(255, 255, 255, 0.98);
+        --surface-tint: rgba(139, 95, 191, 0.05);
+
+        /* 文字颜色 */
+        --on-surface: #1e293b;
+        --on-surface-variant: #64748b;
+        --on-primary: #ffffff;
+
+        /* 边框和阴影 */
+        --border: rgba(203, 213, 225, 0.4);
+        --border-focus: var(--primary-color);
+        --border-colorful: linear-gradient(45deg, #f093fb, #f5576c, #4facfe);
+
+        /* 阴影效果 */
+        --shadow:
+          0 4px 20px rgba(139, 95, 191, 0.15), 0 2px 8px rgba(0, 0, 0, 0.05);
+        --shadow-elevated:
+          0 8px 32px rgba(139, 95, 191, 0.2), 0 4px 16px rgba(0, 0, 0, 0.1);
+        --shadow-glow: 0 0 40px rgba(139, 95, 191, 0.4);
+        --shadow-colorful: 0 8px 32px rgba(247, 37, 133, 0.3);
+
+        /* 圆角 */
+        --radius: 16px;
+        --radius-lg: 24px;
+        --radius-xl: 32px;
+
+        /* 过渡效果 */
+        --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+        /* 多彩渐变 */
+        --gradient-primary: linear-gradient(
+          135deg,
+          #8b5fbf 0%,
+          #a855f7 30%,
+          #ec4899 70%,
+          #f97316 100%
+        );
+        --gradient-secondary: linear-gradient(
+          135deg,
+          #06d6a0 0%,
+          #0ea5e9 50%,
+          #6366f1 100%
+        );
+        --gradient-warm: linear-gradient(
+          135deg,
+          #f093fb 0%,
+          #f5576c 50%,
+          #fbbf24 100%
+        );
+        --gradient-cool: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        --gradient-card: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.98) 0%,
+          rgba(255, 255, 255, 0.9) 100%
+        );
+        --gradient-glass: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.3) 0%,
+          rgba(255, 255, 255, 0.1) 100%
+        );
+
+        /* 玻璃效果 */
+        --glass-bg: rgba(255, 255, 255, 0.2);
+        --glass-border: rgba(255, 255, 255, 0.3);
+        --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+      }
+
+      /* =================== 基础样式 =================== */
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+          "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+        background: var(--background);
+        color: var(--on-surface);
+        line-height: 1.6;
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+          radial-gradient(
+            circle at 20% 50%,
+            rgba(120, 119, 198, 0.1) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 20%,
+            rgba(255, 119, 198, 0.1) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 40% 80%,
+            rgba(120, 219, 255, 0.1) 0%,
+            transparent 50%
+          );
+        z-index: -1;
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+          radial-gradient(
+            circle at 20% 30%,
+            rgba(139, 95, 191, 0.1) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 20%,
+            rgba(247, 37, 133, 0.1) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 40% 70%,
+            rgba(6, 214, 160, 0.1) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 1px 1px,
+            rgba(255, 255, 255, 0.2) 1px,
+            transparent 0
+          );
+        background-size:
+          100% 100%,
+          100% 100%,
+          100% 100%,
+          40px 40px;
+        z-index: -1;
+        opacity: 0.6;
+        animation: floatBackground 20s ease-in-out infinite;
+      }
+
+      @keyframes floatBackground {
+        0%,
+        100% {
+          transform: translateY(0px) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-10px) rotate(1deg);
+        }
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      /* =================== 精美标题区域 =================== */
+      .header {
+        text-align: center;
+        margin-bottom: 60px;
+        background: var(--gradient-card);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 2px solid var(--glass-border);
+        padding: 80px 40px;
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-elevated), var(--shadow-glow);
+        position: relative;
+        overflow: hidden;
+        transform: translateY(0);
+        animation: headerFloat 6s ease-in-out infinite;
+      }
+
+      @keyframes headerFloat {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-5px);
+        }
+      }
+
+      .header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--gradient-primary);
+        opacity: 0.05;
+        z-index: -1;
+        animation: gradientShift 8s ease-in-out infinite;
+      }
+
+      @keyframes gradientShift {
+        0%,
+        100% {
+          opacity: 0.05;
+          transform: rotate(0deg);
+        }
+        50% {
+          opacity: 0.1;
+          transform: rotate(2deg);
+        }
+      }
+
+      .header::after {
+        content: "✨";
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        font-size: 2rem;
+        animation: sparkle 3s ease-in-out infinite;
+      }
+
+      @keyframes sparkle {
+        0%,
+        100% {
+          transform: rotate(0deg) scale(1);
+          opacity: 0.7;
+        }
+        50% {
+          transform: rotate(180deg) scale(1.2);
+          opacity: 1;
+        }
+      }
+
+      .header h1 {
+        font-size: 3.5rem;
+        margin: 0 0 20px 0;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        text-shadow: 0 4px 8px rgba(139, 95, 191, 0.3);
+        position: relative;
+      }
+
+      .header h1::before {
+        content: "太极";
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.3em;
+        color: var(--accent-color);
+        opacity: 0.7;
+      }
+
+      .header .subtitle {
+        color: var(--on-surface-variant);
+        font-size: 1.3rem;
+        margin: 0 0 40px 0;
+        font-weight: 500;
+        opacity: 0.85;
+        background: var(--gradient-secondary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .features {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .feature-tag {
+        background: var(--gradient-glass);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 2px solid var(--glass-border);
+        color: var(--primary-color);
+        padding: 10px 20px;
+        border-radius: 30px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        transition: var(--transition-bounce);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .feature-tag:nth-child(1) {
+        border-color: var(--accent-color);
+        color: var(--accent-color);
+      }
+      .feature-tag:nth-child(2) {
+        border-color: var(--secondary-color);
+        color: var(--secondary-color);
+      }
+      .feature-tag:nth-child(3) {
+        border-color: var(--info-color);
+        color: var(--info-color);
+      }
+      .feature-tag:nth-child(4) {
+        border-color: var(--orange-color);
+        color: var(--orange-color);
+      }
+      .feature-tag:nth-child(5) {
+        border-color: var(--warning-color);
+        color: var(--warning-color);
+      }
+
+      .feature-tag::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.4),
+          transparent
+        );
+        transition: var(--transition);
+      }
+
+      .feature-tag:hover {
+        transform: translateY(-4px) scale(1.05);
+        box-shadow: var(--shadow-colorful);
+      }
+
+      .feature-tag:hover::before {
+        left: 100%;
+      }
+
+      .feature-tag:nth-child(1):hover {
+        background: var(--accent-color);
+        color: white;
+      }
+      .feature-tag:nth-child(2):hover {
+        background: var(--secondary-color);
+        color: white;
+      }
+      .feature-tag:nth-child(3):hover {
+        background: var(--info-color);
+        color: white;
+      }
+      .feature-tag:nth-child(4):hover {
+        background: var(--orange-color);
+        color: white;
+      }
+      .feature-tag:nth-child(5):hover {
+        background: var(--warning-color);
+        color: white;
+      }
+
+      /* =================== 精美输入表单 =================== */
+      .input-section {
+        background: var(--gradient-card);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 2px solid var(--glass-border);
+        padding: 45px;
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-elevated), var(--glass-shadow);
+        margin-bottom: 50px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .input-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: var(--gradient-primary);
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+        animation: gradientFlow 3s ease-in-out infinite;
+      }
+
+      @keyframes gradientFlow {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+
+      .input-section::after {
+        content: "阴阳";
+        position: absolute;
+        top: 20px;
+        right: 25px;
+        font-size: 1.5rem;
+        color: var(--primary-color);
+        opacity: 0.4;
+        animation: rotate 10s linear infinite;
+      }
+
+      @keyframes rotate {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 0 0 30px 0;
+        padding-bottom: 15px;
+        border-bottom: 3px solid transparent;
+        background-image:
+          linear-gradient(var(--surface), var(--surface)),
+          var(--gradient-primary);
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
+        position: relative;
+      }
+
+      .section-title::before {
+        content: "✨";
+        margin-right: 10px;
+        color: var(--accent-color);
+      }
+
+      .input-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+      }
+
+      .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .form-row {
+        display: flex;
+        gap: 15px;
+        align-items: end;
+      }
+
+      .form-field {
+        flex: 1;
+      }
+
+      .form-field label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 6px;
+        color: var(--on-surface);
+        font-size: 0.9rem;
+      }
+
+      .form-field input,
+      .form-field select {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid var(--border);
+        border-radius: var(--radius);
+        font-size: 1rem;
+        background: var(--surface);
+        color: var(--on-surface);
+        transition: var(--transition);
+        position: relative;
+      }
+
+      .form-field input:focus,
+      .form-field select:focus {
+        outline: none;
+        border: 2px solid transparent;
+        background:
+          linear-gradient(var(--surface), var(--surface)) padding-box,
+          var(--gradient-primary) border-box;
+        box-shadow:
+          0 0 0 4px rgba(139, 95, 191, 0.2),
+          var(--shadow);
+        transform: translateY(-2px);
+      }
+
+      .form-field input:hover,
+      .form-field select:hover {
+        border-color: var(--primary-color);
+        box-shadow: 0 2px 8px rgba(139, 95, 191, 0.1);
+      }
+
+      /* =================== 选项开关 =================== */
+      .options-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .checkbox-field {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        background: var(--surface-variant);
+        border-radius: var(--radius);
+        transition: var(--transition);
+        cursor: pointer;
+      }
+
+      .checkbox-field:hover {
+        background: #e8f0fe;
+      }
+
+      .checkbox-field input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--primary-color);
+      }
+
+      .checkbox-field label {
+        margin: 0;
+        cursor: pointer;
+        font-size: 0.9rem;
+      }
+
+      /* =================== 炫彩按钮 =================== */
+      .button-group {
+        text-align: center;
+        margin-top: 50px;
+        display: flex;
+        gap: 25px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        padding: 18px 36px;
+        font-size: 1.15rem;
+        font-weight: 700;
+        border: none;
+        border-radius: var(--radius-xl);
+        cursor: pointer;
+        transition: var(--transition-bounce);
+        text-decoration: none;
+        background: var(--gradient-primary);
+        color: white;
+        box-shadow:
+          var(--shadow-elevated),
+          0 0 30px rgba(139, 95, 191, 0.4);
+        min-width: 180px;
+        position: relative;
+        overflow: hidden;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        transition: var(--transition);
+      }
+
+      .btn::after {
+        content: "✨";
+        position: absolute;
+        top: 50%;
+        right: 15px;
+        transform: translateY(-50%);
+        opacity: 0;
+        transition: var(--transition);
+      }
+
+      .btn:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow:
+          var(--shadow-elevated),
+          0 15px 40px rgba(139, 95, 191, 0.6),
+          0 0 60px rgba(247, 37, 133, 0.4);
+        filter: brightness(1.15) saturate(1.2);
+      }
+
+      .btn:hover::before {
+        left: 100%;
+      }
+
+      .btn:hover::after {
+        opacity: 1;
+        right: 12px;
+      }
+
+      .btn:active {
+        transform: translateY(-2px) scale(1.02);
+      }
+
+      .btn-secondary {
+        background: var(--gradient-glass);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        color: var(--primary-color);
+        border: 3px solid var(--glass-border);
+        box-shadow: var(--glass-shadow);
+      }
+
+      .btn-secondary:hover {
+        background: var(--gradient-secondary);
+        border-color: var(--secondary-color);
+        color: white;
+        box-shadow: 0 15px 40px rgba(6, 214, 160, 0.4);
+      }
+
+      /* =================== 炫彩结果显示 =================== */
+      .result-section {
+        background: var(--gradient-card);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 3px solid var(--glass-border);
+        padding: 50px;
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-elevated), var(--glass-shadow);
+        margin-bottom: 50px;
+        display: none;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .result-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 8px;
+        background: var(--gradient-primary);
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+        animation: gradientFlow 4s ease-in-out infinite;
+      }
+
+      .result-section::after {
+        content: "八卦";
+        position: absolute;
+        top: 20px;
+        right: 25px;
+        font-size: 2rem;
+        color: var(--primary-color);
+        opacity: 0.3;
+        animation: rotate 15s linear infinite;
+      }
+
+      .result-section.show {
+        display: block;
+        animation: slideInUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      @keyframes slideInUp {
+        from {
+          opacity: 0;
+          transform: translateY(50px) scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      /* 精美八字表格 */
+      .bazi-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin: 40px 0;
+        background: var(--gradient-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 3px solid var(--glass-border);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        box-shadow: var(--shadow-elevated), var(--glass-shadow);
+        position: relative;
+      }
+
+      .bazi-table::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: var(--gradient-primary);
+        z-index: 1;
+      }
+
+      .bazi-table th {
+        background: var(--gradient-primary);
+        color: white;
+        padding: 20px 18px;
+        font-weight: 700;
+        text-align: center;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        position: relative;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .bazi-table th:nth-child(1)::after {
+        content: "🕰️";
+        position: absolute;
+        top: 5px;
+        right: 8px;
+      }
+      .bazi-table th:nth-child(2)::after {
+        content: "✨";
+        position: absolute;
+        top: 5px;
+        right: 8px;
+      }
+      .bazi-table th:nth-child(3)::after {
+        content: "🌌";
+        position: absolute;
+        top: 5px;
+        right: 8px;
+      }
+      .bazi-table th:nth-child(4)::after {
+        content: "🌿";
+        position: absolute;
+        top: 5px;
+        right: 8px;
+      }
+      .bazi-table th:nth-child(5)::after {
+        content: "☀️";
+        position: absolute;
+        top: 5px;
+        right: 8px;
+      }
+      .bazi-table th:nth-child(6)::after {
+        content: "🎵";
+        position: absolute;
+        top: 5px;
+        right: 8px;
+      }
+
+      .bazi-table td {
+        padding: 20px 18px;
+        text-align: center;
+        border-bottom: 2px solid rgba(203, 213, 225, 0.2);
+        transition: var(--transition);
+        font-size: 1.05rem;
+        font-weight: 500;
+        position: relative;
+      }
+
+      .bazi-table tbody tr:nth-child(1) td:first-child {
+        color: var(--accent-color);
+        font-weight: 700;
+      }
+      .bazi-table tbody tr:nth-child(2) td:first-child {
+        color: var(--secondary-color);
+        font-weight: 700;
+      }
+      .bazi-table tbody tr:nth-child(3) td:first-child {
+        color: var(--info-color);
+        font-weight: 700;
+      }
+      .bazi-table tbody tr:nth-child(4) td:first-child {
+        color: var(--orange-color);
+        font-weight: 700;
+      }
+
+      .bazi-table tbody tr:nth-child(1) td:nth-child(2) {
+        background: var(--gradient-warm);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 800;
+        font-size: 1.3rem;
+      }
+      .bazi-table tbody tr:nth-child(2) td:nth-child(2) {
+        background: var(--gradient-secondary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 800;
+        font-size: 1.3rem;
+      }
+      .bazi-table tbody tr:nth-child(3) td:nth-child(2) {
+        background: var(--gradient-cool);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 800;
+        font-size: 1.3rem;
+      }
+      .bazi-table tbody tr:nth-child(4) td:nth-child(2) {
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 800;
+        font-size: 1.3rem;
+      }
+
+      .bazi-table tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      .bazi-table tbody tr:hover {
+        background: linear-gradient(
+          90deg,
+          rgba(139, 95, 191, 0.05),
+          rgba(247, 37, 133, 0.05)
+        );
+        transform: scale(1.005);
+      }
+
+      .bazi-table tbody tr:hover td {
+        box-shadow: inset 0 0 0 2px rgba(139, 95, 191, 0.3);
+        color: var(--on-surface);
+      }
+
+      /* 多彩八字卡片 */
+      .bazi-cards {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 30px;
+        margin: 40px 0;
+      }
+
+      .pillar-card {
+        background: var(--gradient-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 3px solid var(--glass-border);
+        border-radius: var(--radius-xl);
+        padding: 30px 25px;
+        text-align: center;
+        transition: var(--transition-bounce);
+        position: relative;
+        overflow: hidden;
+        transform: translateZ(0);
+      }
+
+      .pillar-card:nth-child(1) {
+        border-color: var(--accent-color);
+        background: linear-gradient(
+          145deg,
+          rgba(247, 37, 133, 0.1),
+          rgba(255, 255, 255, 0.95)
+        );
+      }
+      .pillar-card:nth-child(2) {
+        border-color: var(--secondary-color);
+        background: linear-gradient(
+          145deg,
+          rgba(6, 214, 160, 0.1),
+          rgba(255, 255, 255, 0.95)
+        );
+      }
+      .pillar-card:nth-child(3) {
+        border-color: var(--info-color);
+        background: linear-gradient(
+          145deg,
+          rgba(14, 165, 233, 0.1),
+          rgba(255, 255, 255, 0.95)
+        );
+      }
+      .pillar-card:nth-child(4) {
+        border-color: var(--orange-color);
+        background: linear-gradient(
+          145deg,
+          rgba(249, 115, 22, 0.1),
+          rgba(255, 255, 255, 0.95)
+        );
+      }
+
+      .pillar-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+        transform: scaleX(0);
+        transition: var(--transition);
+        transform-origin: left;
+      }
+
+      .pillar-card:nth-child(1)::before {
+        background: var(--gradient-warm);
+      }
+      .pillar-card:nth-child(2)::before {
+        background: var(--gradient-secondary);
+      }
+      .pillar-card:nth-child(3)::before {
+        background: var(--gradient-cool);
+      }
+      .pillar-card:nth-child(4)::before {
+        background: var(--gradient-primary);
+      }
+
+      .pillar-card::after {
+        content: "";
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        transition: var(--transition);
+      }
+
+      .pillar-card:nth-child(1)::after {
+        background: var(--accent-color);
+      }
+      .pillar-card:nth-child(2)::after {
+        background: var(--secondary-color);
+      }
+      .pillar-card:nth-child(3)::after {
+        background: var(--info-color);
+      }
+      .pillar-card:nth-child(4)::after {
+        background: var(--orange-color);
+      }
+
+      .pillar-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: var(--shadow-elevated), var(--shadow-colorful);
+      }
+
+      .pillar-card:hover::before {
+        transform: scaleX(1);
+      }
+
+      .pillar-card:hover::after {
+        transform: scale(1.5);
+        box-shadow: 0 0 20px currentColor;
+      }
+
+      .pillar-card .title {
+        font-size: 1.1rem;
+        color: var(--on-surface);
+        margin-bottom: 20px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        position: relative;
+      }
+
+      .pillar-card:nth-child(1) .title {
+        color: var(--accent-color);
+      }
+      .pillar-card:nth-child(2) .title {
+        color: var(--secondary-color);
+      }
+      .pillar-card:nth-child(3) .title {
+        color: var(--info-color);
+      }
+      .pillar-card:nth-child(4) .title {
+        color: var(--orange-color);
+      }
+
+      .pillar-card .ganZhi {
+        font-size: 2.8rem;
+        font-weight: 900;
+        margin: 20px 0;
+        line-height: 1;
+        position: relative;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .pillar-card:nth-child(1) .ganZhi {
+        background: var(--gradient-warm);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .pillar-card:nth-child(2) .ganZhi {
+        background: var(--gradient-secondary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .pillar-card:nth-child(3) .ganZhi {
+        background: var(--gradient-cool);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .pillar-card:nth-child(4) .ganZhi {
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .pillar-card .details {
+        font-size: 1rem;
+        color: var(--on-surface-variant);
+        line-height: 1.6;
+        opacity: 0.85;
+        font-weight: 500;
+      }
+
+      /* =================== 精美详细信息 =================== */
+      .info-panel {
+        background: var(--gradient-glass);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 2px solid var(--glass-border);
+        border-radius: var(--radius-xl);
+        padding: 30px;
+        margin-top: 30px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--glass-shadow);
+      }
+
+      .info-panel::before {
+        content: "⚙️";
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 1.5rem;
+        opacity: 0.3;
+        animation: rotate 8s linear infinite;
+      }
+
+      .info-panel h3 {
+        margin-top: 0;
+        background: var(--gradient-secondary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 25px;
+      }
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 2px solid rgba(139, 95, 191, 0.1);
+        transition: var(--transition);
+      }
+
+      .info-row:hover {
+        background: rgba(139, 95, 191, 0.05);
+        border-radius: var(--radius);
+        padding: 12px 15px;
+        margin: 0 -15px;
+      }
+
+      .info-row:last-child {
+        border-bottom: none;
+      }
+
+      .info-label {
+        font-weight: 600;
+        color: var(--on-surface);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .info-label::before {
+        content: "•";
+        color: var(--primary-color);
+        font-weight: 900;
+      }
+
+      .info-value {
+        color: var(--primary-color);
+        font-weight: 500;
+        font-family: monospace;
+        background: rgba(139, 95, 191, 0.1);
+        padding: 4px 8px;
+        border-radius: var(--radius);
+        font-size: 0.9rem;
+      }
+
+      /* =================== 炫彩警告提示 =================== */
+      .alert {
+        padding: 20px 25px;
+        border-radius: var(--radius-lg);
+        margin: 20px 0;
+        border: none;
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        box-shadow: var(--shadow);
+        font-weight: 500;
+      }
+
+      .alert::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 6px;
+      }
+
+      .alert-info {
+        background: linear-gradient(
+          135deg,
+          rgba(14, 165, 233, 0.1),
+          rgba(255, 255, 255, 0.9)
+        );
+        color: var(--info-color);
+      }
+      .alert-info::before {
+        background: var(--gradient-cool);
+      }
+
+      .alert-warning {
+        background: linear-gradient(
+          135deg,
+          rgba(251, 191, 36, 0.1),
+          rgba(255, 255, 255, 0.9)
+        );
+        color: var(--warning-color);
+      }
+      .alert-warning::before {
+        background: linear-gradient(
+          135deg,
+          var(--warning-color),
+          var(--orange-color)
+        );
+      }
+
+      .alert-success {
+        background: linear-gradient(
+          135deg,
+          rgba(16, 185, 129, 0.1),
+          rgba(255, 255, 255, 0.9)
+        );
+        color: var(--success-color);
+      }
+      .alert-success::before {
+        background: var(--gradient-secondary);
+      }
+
+      /* =================== 响应式布局 =================== */
+      /* =================== 动态背景元素 =================== */
+      .container {
+        position: relative;
+      }
+
+      .container::before {
+        content: "太";
+        position: absolute;
+        top: 15%;
+        left: 5%;
+        font-size: 8rem;
+        color: rgba(139, 95, 191, 0.03);
+        z-index: -1;
+        animation: float 12s ease-in-out infinite;
+      }
+
+      .container::after {
+        content: "极";
+        position: absolute;
+        bottom: 15%;
+        right: 5%;
+        font-size: 8rem;
+        color: rgba(247, 37, 133, 0.03);
+        z-index: -1;
+        animation: float 12s ease-in-out infinite reverse;
+      }
+
+      @media (max-width: 1024px) {
+        .container {
+          padding: 20px;
+        }
+
+        .input-section,
+        .result-section {
+          padding: 30px;
+        }
+
+        .header {
+          padding: 50px 25px;
+        }
+
+        .container::before,
+        .container::after {
+          font-size: 6rem;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 15px;
+        }
+
+        .header {
+          padding: 40px 20px;
+          margin-bottom: 35px;
+        }
+
+        .header h1 {
+          font-size: 2.5rem;
+        }
+
+        .header .subtitle {
+          font-size: 1.1rem;
+        }
+
+        .input-section,
+        .result-section {
+          padding: 30px;
+          margin-bottom: 35px;
+        }
+
+        .input-grid {
+          grid-template-columns: 1fr;
+          gap: 30px;
+        }
+
+        .form-row {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .bazi-cards {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 20px;
+          margin: 25px 0;
+        }
+
+        .pillar-card {
+          padding: 25px 20px;
+        }
+
+        .pillar-card .ganZhi {
+          font-size: 2.2rem;
+        }
+
+        .options-group {
+          grid-template-columns: 1fr;
+          gap: 15px;
+        }
+
+        .features {
+          flex-direction: column;
+          align-items: center;
+          gap: 15px;
+        }
+
+        .button-group {
+          flex-direction: column;
+          align-items: center;
+          gap: 20px;
+        }
+
+        .btn {
+          width: 100%;
+          max-width: 350px;
+          padding: 20px 40px;
+          font-size: 1.1rem;
+        }
+
+        .bazi-table {
+          font-size: 0.95rem;
+        }
+
+        .bazi-table th,
+        .bazi-table td {
+          padding: 15px 10px;
+          font-size: 0.95rem;
+        }
+
+        .container::before,
+        .container::after {
+          font-size: 5rem;
+          opacity: 0.02;
+        }
+
+        .info-panel {
+          padding: 25px;
+        }
+
+        .info-row {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 5px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 10px;
+        }
+
+        .header {
+          padding: 30px 15px;
+          margin-bottom: 25px;
+        }
+
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .header h1::before {
+          font-size: 0.4em;
+          top: -10px;
+        }
+
+        .header .subtitle {
+          font-size: 1rem;
+          margin-bottom: 25px;
+        }
+
+        .input-section,
+        .result-section {
+          padding: 20px;
+          margin-bottom: 25px;
+        }
+
+        .bazi-cards {
+          grid-template-columns: 1fr;
+          gap: 20px;
+          margin: 20px 0;
+        }
+
+        .pillar-card {
+          padding: 25px 20px;
+        }
+
+        .pillar-card .ganZhi {
+          font-size: 2rem;
+        }
+
+        .pillar-card .title {
+          font-size: 1rem;
+          margin-bottom: 15px;
+        }
+
+        .pillar-card .details {
+          font-size: 0.9rem;
+        }
+
+        .feature-tag {
+          padding: 8px 16px;
+          font-size: 0.85rem;
+          width: 100%;
+          text-align: center;
+        }
+
+        .features {
+          gap: 10px;
+        }
+
+        .section-title {
+          font-size: 1.3rem;
+        }
+
+        .btn {
+          padding: 18px 30px;
+          font-size: 1rem;
+          min-width: 100%;
+        }
+
+        .bazi-table {
+          font-size: 0.85rem;
+        }
+
+        .bazi-table th {
+          padding: 12px 8px;
+          font-size: 0.85rem;
+        }
+
+        .bazi-table td {
+          padding: 12px 8px;
+          font-size: 0.85rem;
+        }
+
+        .bazi-table tbody tr:nth-child(1) td:nth-child(2),
+        .bazi-table tbody tr:nth-child(2) td:nth-child(2),
+        .bazi-table tbody tr:nth-child(3) td:nth-child(2),
+        .bazi-table tbody tr:nth-child(4) td:nth-child(2) {
+          font-size: 1.1rem;
+        }
+
+        .info-panel {
+          padding: 20px;
+        }
+
+        .info-panel h3 {
+          font-size: 1.1rem;
+        }
+
+        .info-row {
+          flex-direction: column;
+          gap: 6px;
+          align-items: flex-start;
+          padding: 10px 0;
+        }
+
+        .info-value {
+          font-size: 0.85rem;
+          width: 100%;
+          text-align: left;
+        }
+
+        .container::before,
+        .container::after {
+          display: none;
+        }
+
+        .alert {
+          padding: 15px 20px;
+          margin: 15px 0;
+          font-size: 0.9rem;
+        }
+
+        .form-field input,
+        .form-field select {
+          padding: 16px 20px;
+          font-size: 1rem;
+        }
+      }
+
+      /* =================== 丰富动画效果 =================== */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @keyframes slideInLeft {
+        from {
+          opacity: 0;
+          transform: translateX(-50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes slideInRight {
+        from {
+          opacity: 0;
+          transform: translateX(50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes scaleIn {
+        from {
+          opacity: 0;
+          transform: scale(0.8);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      @keyframes rainbow {
+        0% {
+          filter: hue-rotate(0deg);
+        }
+        100% {
+          filter: hue-rotate(360deg);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 0.8;
+        }
+        50% {
+          transform: scale(1.05);
+          opacity: 1;
+        }
+      }
+
+      @keyframes shimmer {
+        0% {
+          background-position: -200px 0;
+        }
+        100% {
+          background-position: 200px 0;
+        }
+      }
+
+      .fade-in {
+        animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      .slide-in-left {
+        animation: slideInLeft 0.6s ease-out;
+      }
+
+      .slide-in-right {
+        animation: slideInRight 0.6s ease-out;
+      }
+
+      .scale-in {
+        animation: scaleIn 0.5s ease-out;
+      }
+
+      /* =================== 精美加载状态 =================== */
+      .loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 60px;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid rgba(139, 95, 191, 0.2);
+        border-top: 5px solid var(--primary-color);
+        border-right: 5px solid var(--accent-color);
+        border-radius: 50%;
+        animation:
+          spin 1.5s linear infinite,
+          rainbow 3s ease-in-out infinite;
+        box-shadow: 0 0 20px rgba(139, 95, 191, 0.3);
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .loading-text {
+        color: var(--primary-color);
+        font-weight: 600;
+        font-size: 1.1rem;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      /* =================== 悬浮元素 =================== */
+      .floating-element {
+        position: absolute;
+        pointer-events: none;
+        opacity: 0.1;
+        font-size: 2rem;
+        animation: float 8s ease-in-out infinite;
+        z-index: -1;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px) rotate(0deg);
+        }
+        25% {
+          transform: translateY(-20px) rotate(90deg);
+        }
+        50% {
+          transform: translateY(-10px) rotate(180deg);
+        }
+        75% {
+          transform: translateY(-30px) rotate(270deg);
+        }
+      }
+
+      .floating-element:nth-child(1) {
+        top: 10%;
+        left: 5%;
+        animation-delay: 0s;
+      }
+      .floating-element:nth-child(2) {
+        top: 20%;
+        right: 10%;
+        animation-delay: 2s;
+      }
+      .floating-element:nth-child(3) {
+        bottom: 30%;
+        left: 8%;
+        animation-delay: 4s;
+      }
+      .floating-element:nth-child(4) {
+        bottom: 10%;
+        right: 5%;
+        animation-delay: 6s;
+      }
+
+      /* 移动设备隐藏悬浮元素 */
+      @media (max-width: 768px) {
+        .floating-element {
+          display: none;
+        }
+      }
+
+      /* =================== 闪烁效果 =================== */
+      .shimmer {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.4),
+          transparent
+        );
+        background-size: 200px 100%;
+        animation: shimmer 2s infinite;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- 页面标题 -->
+      <div class="header">
+        <h1>八字排盘工具</h1>
+        <p class="subtitle">高精度算法 · 专业排盘 · 详细分析</p>
+        <div class="features">
+          <span class="feature-tag">✨ 真太阳时校正</span>
+          <span class="feature-tag">🌅 节气自动判断</span>
+          <span class="feature-tag">🌌 十神分析</span>
+          <span class="feature-tag">🌿 五行归属</span>
+          <span class="feature-tag">🌙 子时交日</span>
+        </div>
+      </div>
+
+      <!-- 输入表单 -->
+      <div class="input-section">
+        <h2 class="section-title">基本信息</h2>
+        <div class="input-grid">
+          <div class="input-group">
+            <h3>出生时间</h3>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="year">年份</label>
+                <input
+                  type="number"
+                  id="year"
+                  value="1990"
+                  min="1900"
+                  max="2100"
+                />
+              </div>
+              <div class="form-field">
+                <label for="month">月份</label>
+                <select id="month">
+                  <option value="1">1月</option>
+                  <option value="2">2月</option>
+                  <option value="3" selected>3月</option>
+                  <option value="4">4月</option>
+                  <option value="5">5月</option>
+                  <option value="6">6月</option>
+                  <option value="7">7月</option>
+                  <option value="8">8月</option>
+                  <option value="9">9月</option>
+                  <option value="10">10月</option>
+                  <option value="11">11月</option>
+                  <option value="12">12月</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="day">日期</label>
+                <input type="number" id="day" value="21" min="1" max="31" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="hour">时</label>
+                <input type="number" id="hour" value="10" min="0" max="23" />
+              </div>
+              <div class="form-field">
+                <label for="minute">分</label>
+                <input type="number" id="minute" value="30" min="0" max="59" />
+              </div>
+              <div class="form-field">
+                <label for="second">秒</label>
+                <input type="number" id="second" value="0" min="0" max="59" />
+              </div>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <h3>地理位置</h3>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="timezone">时区</label>
+                <select id="timezone">
+                  <option value="+08:00" selected>UTC+8:00 (北京时间)</option>
+                  <option value="+09:00">UTC+9:00 (日本时间)</option>
+                  <option value="+07:00">UTC+7:00 (泰国时间)</option>
+                  <option value="+05:30">UTC+5:30 (印度时间)</option>
+                  <option value="±00:00">UTC±0:00 (格林威治)</option>
+                  <option value="-05:00">UTC-5:00 (美东时间)</option>
+                  <option value="-08:00">UTC-8:00 (美西时间)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="longitude">经度 (东经为正)</label>
+                <input
+                  type="number"
+                  id="longitude"
+                  value="116.40"
+                  step="0.01"
+                  min="-180"
+                  max="180"
+                />
+              </div>
+              <div class="form-field">
+                <label for="latitude">纬度 (北纬为正)</label>
+                <input
+                  type="number"
+                  id="latitude"
+                  value="39.90"
+                  step="0.01"
+                  min="-90"
+                  max="90"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h3>计算选项</h3>
+        <div class="options-group">
+          <div class="checkbox-field">
+            <input type="checkbox" id="useSolarTime" />
+            <label for="useSolarTime">使用真太阳时 (仅影响时柱)</label>
+          </div>
+          <div class="checkbox-field">
+            <input type="checkbox" id="useZi23" checked />
+            <label for="useZi23">子初交日 (23:00交日)</label>
+          </div>
+          <div class="checkbox-field">
+            <input type="checkbox" id="useSolarBoundary" />
+            <label for="useSolarBoundary">日界使用真太阳时 (实验功能)</label>
+          </div>
+          <div class="checkbox-field">
+            <input type="checkbox" id="showDetails" checked />
+            <label for="showDetails">显示计算详情</label>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button class="btn" id="calculateBtn">
+            <span>开始排盘</span>
+          </button>
+          <button class="btn btn-secondary" id="resetBtn">
+            <span>重置</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 结果显示区域 -->
+      <div class="result-section" id="resultSection">
+        <h2 class="section-title">排盘结果</h2>
+
+        <!-- 八字卡片显示 -->
+        <div class="bazi-cards" id="baziCards">
+          <div class="pillar-card">
+            <div class="title">年柱</div>
+            <div class="ganZhi" id="yearPillar">--</div>
+            <div class="details" id="yearDetails">--</div>
+          </div>
+          <div class="pillar-card">
+            <div class="title">月柱</div>
+            <div class="ganZhi" id="monthPillar">--</div>
+            <div class="details" id="monthDetails">--</div>
+          </div>
+          <div class="pillar-card">
+            <div class="title">日柱</div>
+            <div class="ganZhi" id="dayPillar">--</div>
+            <div class="details" id="dayDetails">日主</div>
+          </div>
+          <div class="pillar-card">
+            <div class="title">时柱</div>
+            <div class="ganZhi" id="hourPillar">--</div>
+            <div class="details" id="hourDetails">--</div>
+          </div>
+        </div>
+
+        <!-- 详细表格 -->
+        <table class="bazi-table">
+          <thead>
+            <tr>
+              <th>柱位</th>
+              <th>干支</th>
+              <th>十神</th>
+              <th>五行</th>
+              <th>阴阳</th>
+              <th>纳音</th>
+            </tr>
+          </thead>
+          <tbody id="baziTableBody"></tbody>
+        </table>
+
+        <!-- 详细信息面板 -->
+        <div class="info-panel" id="detailsPanel" style="display: none">
+          <h3>计算详情</h3>
+          <div id="calculationDetails"></div>
+        </div>
+
+        <!-- 警告提示 -->
+        <div id="alertContainer"></div>
+      </div>
+    </div>
+
+    <script>
+      // ================== 常量定义 ==================
+      const STEMS = [
+        "甲",
+        "乙",
+        "丙",
+        "丁",
+        "戊",
+        "己",
+        "庚",
+        "辛",
+        "壬",
+        "癸",
+      ];
+      const BRANCHES = [
+        "子",
+        "丑",
+        "寅",
+        "卯",
+        "辰",
+        "巳",
+        "午",
+        "未",
+        "申",
+        "酉",
+        "戌",
+        "亥",
+      ];
+      const STEM_ELEMENTS = [
+        "木",
+        "木",
+        "火",
+        "火",
+        "土",
+        "土",
+        "金",
+        "金",
+        "水",
+        "水",
+      ];
+      const STEM_YINYANG = [
+        "阳",
+        "阴",
+        "阳",
+        "阴",
+        "阳",
+        "阴",
+        "阳",
+        "阴",
+        "阳",
+        "阴",
+      ];
+      const BRANCH_ELEMENTS = [
+        "水",
+        "土",
+        "木",
+        "木",
+        "土",
+        "火",
+        "火",
+        "土",
+        "金",
+        "金",
+        "土",
+        "水",
+      ];
+      const NAYIN_60 = [
+        "海中金",
+        "海中金",
+        "炉中火",
+        "炉中火",
+        "大林木",
+        "大林木",
+        "路旁土",
+        "路旁土",
+        "剑锋金",
+        "剑锋金",
+        "山头火",
+        "山头火",
+        "涧下水",
+        "涧下水",
+        "城头土",
+        "城头土",
+        "白腊金",
+        "白腊金",
+        "杨柳木",
+        "杨柳木",
+        "井泉水",
+        "井泉水",
+        "屋上土",
+        "屋上土",
+        "霹雳火",
+        "霹雳火",
+        "松柏木",
+        "松柏木",
+        "长流水",
+        "长流水",
+        "沙中金",
+        "沙中金",
+        "山下火",
+        "山下火",
+        "平地木",
+        "平地木",
+        "壁上土",
+        "壁上土",
+        "金箔金",
+        "金箔金",
+        "覆灯火",
+        "覆灯火",
+        "天河水",
+        "天河水",
+        "大驿土",
+        "大驿土",
+        "钗钏金",
+        "钗钏金",
+        "桑柘木",
+        "桑柘木",
+        "大溪水",
+        "大溪水",
+        "沙中土",
+        "沙中土",
+        "天上火",
+        "天上火",
+        "石榴木",
+        "石榴木",
+        "大海水",
+        "大海水",
+      ];
+
+      // 日柱偏移常数 - 修正为确保准确性
+      const DAY_OFFSET = 15; // 调整偏移量以匹配标准日柱
+
+      // ================== 工具函数 ==================
+
+      // 解析时区字符串
+      function parseTimezone(tzStr) {
+        const match = tzStr.match(/^([+-])(\d{2}):(\d{2})$/);
+        if (!match) return 0;
+        const sign = match[1] === "-" ? -1 : 1;
+        return sign * (parseInt(match[2]) + parseInt(match[3]) / 60);
+      }
+
+      // 计算儒略日
+      function toJulianDay(year, month, day, hour) {
+        let y = year,
+          m = month;
+        if (m <= 2) {
+          y -= 1;
+          m += 12;
+        }
+        const A = Math.floor(y / 100);
+        const B = 2 - A + Math.floor(A / 4);
+        const JD =
+          Math.floor(365.25 * (y + 4716)) +
+          Math.floor(30.6001 * (m + 1)) +
+          day +
+          B -
+          1524.5;
+        return JD + hour / 24;
+      }
+
+      // 计算太阳黄经
+      function solarLongitude(jd) {
+        const T = (jd - 2451545.0) / 36525;
+        const L0 = (280.46646 + 36000.76983 * T + 0.0003032 * T * T) % 360;
+        const M =
+          ((357.52911 + 35999.05029 * T - 0.0001537 * T * T) * Math.PI) / 180;
+        const C =
+          (1.914602 - 0.004817 * T - 0.000014 * T * T) * Math.sin(M) +
+          (0.019993 - 0.000101 * T) * Math.sin(2 * M) +
+          0.000289 * Math.sin(3 * M);
+        let L = L0 + C;
+        return ((L % 360) + 360) % 360;
+      }
+
+      // 角度差计算
+      function angleDiff(target, current) {
+        return ((target - current + 540) % 360) - 180;
+      }
+
+      // 寻找特定太阳黄经的时间点
+      function findSolarLongitudeTime(year, targetDegree, initialGuess) {
+        let jd = toJulianDay(year, 2, 4, 12); // 初始猜测
+        for (let i = 0; i < 15; i++) {
+          const currentLongitude = solarLongitude(jd);
+          const diff = angleDiff(targetDegree, currentLongitude);
+          if (Math.abs(diff) < 1e-6) break;
+          jd += diff / 0.98564736; // 太阳每日移动约0.986度
+        }
+        return jd;
+      }
+
+      // 获取立春时间点
+      function getLiChunTime(year) {
+        return findSolarLongitudeTime(year, 315, null);
+      }
+
+      // 干支索引转换为干支字符串
+      function indexToGanZhi(index) {
+        return STEMS[index % 10] + BRANCHES[index % 12];
+      }
+
+      // 干支字符串转换为索引
+      function ganZhiToIndex(ganZhi) {
+        const gan = ganZhi[0];
+        const zhi = ganZhi[1];
+        const ganIndex = STEMS.indexOf(gan);
+        const zhiIndex = BRANCHES.indexOf(zhi);
+
+        // 在60甲子中找到对应的索引
+        for (let i = 0; i < 60; i++) {
+          if (i % 10 === ganIndex && i % 12 === zhiIndex) {
+            return i;
+          }
+        }
+        return -1;
+      }
+
+      // 计算年柱
+      function calculateYearPillar(jd, year) {
+        const liChunJD = getLiChunTime(year);
+        const actualYear = jd >= liChunJD ? year : year - 1;
+        const yearIndex = (actualYear - 1984 + 60) % 60; // 1984年为甲子年
+        return {
+          pillar: indexToGanZhi(yearIndex),
+          actualYear: actualYear,
+          liChunJD: liChunJD,
+          isNearLiChun: Math.abs(jd - liChunJD) < 1,
+        };
+      }
+
+      // 计算月柱
+      function calculateMonthPillar(yearStemIndex, solarLong) {
+        // 以立春为起点的节气月
+        const monthIndex = Math.floor(((solarLong - 315 + 360) % 360) / 30);
+        const branchIndex = (2 + monthIndex) % 12; // 从寅月开始
+
+        // 月干计算：寅月起干公式
+        const startStem = ((yearStemIndex % 5) * 2 + 2) % 10;
+        const stemIndex = (startStem + monthIndex) % 10;
+
+        return {
+          pillar: STEMS[stemIndex] + BRANCHES[branchIndex],
+          monthIndex: monthIndex,
+          branchIndex: branchIndex,
+          stemIndex: stemIndex,
+        };
+      }
+
+      // 计算日柱 - 使用标准万年历算法
+      function calculateDayPillar(
+        jdUTC,
+        tzHours,
+        useZi23,
+        useSolarBoundary,
+        solarCorr,
+      ) {
+        let jdLocal = jdUTC + tzHours / 24;
+
+        if (useSolarBoundary) {
+          jdLocal += solarCorr / 24;
+        }
+
+        const localHour = (jdLocal + 0.5 - Math.floor(jdLocal + 0.5)) * 24;
+
+        if (useZi23 && localHour >= 23) {
+          jdLocal += 1 / 24;
+        }
+
+        const JDN = Math.floor(jdLocal + 0.5);
+
+        // 标准万年历日柱算法
+        // 参考点：使用1985年4月7日为丙子日直接校准
+        const testJD = toJulianDay(1985, 4, 7, 12); // 1985年4月7日的儒略日
+        const testGanZhiIndex = ganZhiToIndex("丙子"); // 丙子日的干支索引
+
+        // 计算天数差
+        const daysDiff = Math.floor(JDN - Math.floor(testJD + 0.5));
+
+        // 计算干支索引
+        let dayIndex = (testGanZhiIndex + daysDiff) % 60;
+        if (dayIndex < 0) dayIndex += 60;
+
+        return {
+          pillar: indexToGanZhi(dayIndex),
+          dayIndex: dayIndex,
+          JDN: JDN,
+          localHour: localHour,
+          referenceJD: testJD,
+          daysDiff: daysDiff,
+        };
+      }
+
+      // 计算时柱
+      function calculateHourPillar(
+        jdUTC,
+        tzHours,
+        dayStemIndex,
+        useSolarTime,
+        longitude,
+      ) {
+        let jdLocal = jdUTC + tzHours / 24;
+        let hour = (jdLocal + 0.5 - Math.floor(jdLocal + 0.5)) * 24;
+
+        let solarCorr = 0;
+        if (useSolarTime) {
+          // 经度修正
+          const lonCorr = ((longitude - 15 * tzHours) * 4) / 60;
+
+          // 均时差修正
+          const T = (jdUTC - 2451545.0) / 36525;
+          const L0 =
+            ((280.46646 + 36000.76983 * T + 0.0003032 * T * T) * Math.PI) / 180;
+          const M =
+            ((357.52911 + 35999.05029 * T - 0.0001537 * T * T) * Math.PI) / 180;
+          const e = 0.016708634 - 0.000042037 * T - 0.0000001267 * T * T;
+          const E = 2 * e * Math.sin(M) + 1.25 * e * e * Math.sin(2 * M);
+          const eot = ((Math.sin(2 * L0) - E) * 4) / 60;
+
+          solarCorr = lonCorr + eot;
+          hour = (hour + solarCorr + 24) % 24;
+        }
+
+        // 时辰计算
+        const branchIndex = Math.floor((hour + 1) / 2) % 12;
+        const startStem = [0, 2, 4, 6, 8][dayStemIndex % 5];
+        const stemIndex = (startStem + branchIndex) % 10;
+
+        return {
+          pillar: STEMS[stemIndex] + BRANCHES[branchIndex],
+          hour: hour,
+          solarCorr: solarCorr,
+          branchIndex: branchIndex,
+          stemIndex: stemIndex,
+        };
+      }
+
+      // 计算十神
+      function calculateTenGod(dayStemIndex, targetStemIndex) {
+        const elements = ["木", "火", "土", "金", "水"];
+        const restraint = { 木: "土", 土: "水", 水: "火", 火: "金", 金: "木" };
+
+        const dayElement = STEM_ELEMENTS[dayStemIndex];
+        const targetElement = STEM_ELEMENTS[targetStemIndex];
+        const sameYinYang =
+          STEM_YINYANG[dayStemIndex] === STEM_YINYANG[targetStemIndex];
+
+        if (dayElement === targetElement) {
+          return sameYinYang ? "比肩" : "劫财";
+        }
+
+        const dayIdx = elements.indexOf(dayElement);
+        const targetIdx = elements.indexOf(targetElement);
+
+        if ((targetIdx + 1) % 5 === dayIdx) {
+          return sameYinYang ? "正印" : "偏印";
+        }
+        if ((dayIdx + 1) % 5 === targetIdx) {
+          return sameYinYang ? "食神" : "伤官";
+        }
+        if (restraint[dayElement] === targetElement) {
+          return sameYinYang ? "正财" : "偏财";
+        }
+        if (restraint[targetElement] === dayElement) {
+          return sameYinYang ? "七杀" : "正官";
+        }
+        return "未知";
+      }
+
+      // ================== 主计算函数 ==================
+      function calculateBazi() {
+        try {
+          // 获取输入值
+          const year = parseInt(document.getElementById("year").value);
+          const month = parseInt(document.getElementById("month").value);
+          const day = parseInt(document.getElementById("day").value);
+          const hour = parseInt(document.getElementById("hour").value);
+          const minute = parseInt(document.getElementById("minute").value);
+          const second = parseInt(document.getElementById("second").value);
+          const timezone = document.getElementById("timezone").value;
+          const longitude = parseFloat(
+            document.getElementById("longitude").value,
+          );
+          const latitude = parseFloat(
+            document.getElementById("latitude").value,
+          );
+          const useSolarTime = document.getElementById("useSolarTime").checked;
+          const useZi23 = document.getElementById("useZi23").checked;
+          const useSolarBoundary =
+            document.getElementById("useSolarBoundary").checked;
+          const showDetails = document.getElementById("showDetails").checked;
+
+          // 计算UTC时间
+          const tzHours = parseTimezone(timezone);
+          const hourUTC = hour + minute / 60 + second / 3600 - tzHours;
+          const jdUTC = toJulianDay(year, month, day, hourUTC);
+
+          // 计算太阳黄经
+          const solarLong = solarLongitude(jdUTC);
+
+          // 计算太阳时修正
+          let solarCorr = 0;
+          if (useSolarTime || useSolarBoundary) {
+            const lonCorr = ((longitude - 15 * tzHours) * 4) / 60;
+            const T = (jdUTC - 2451545.0) / 36525;
+            const L0 =
+              ((280.46646 + 36000.76983 * T + 0.0003032 * T * T) * Math.PI) /
+              180;
+            const M =
+              ((357.52911 + 35999.05029 * T - 0.0001537 * T * T) * Math.PI) /
+              180;
+            const e = 0.016708634 - 0.000042037 * T - 0.0000001267 * T * T;
+            const E = 2 * e * Math.sin(M) + 1.25 * e * e * Math.sin(2 * M);
+            const eot = ((Math.sin(2 * L0) - E) * 4) / 60;
+            solarCorr = lonCorr + eot;
+          }
+
+          // 计算四柱
+          const yearResult = calculateYearPillar(jdUTC, year);
+          const yearStemIndex = STEMS.indexOf(yearResult.pillar[0]);
+
+          const monthResult = calculateMonthPillar(yearStemIndex, solarLong);
+          const monthStemIndex = STEMS.indexOf(monthResult.pillar[0]);
+
+          const dayResult = calculateDayPillar(
+            jdUTC,
+            tzHours,
+            useZi23,
+            useSolarBoundary,
+            solarCorr,
+          );
+          const dayStemIndex = STEMS.indexOf(dayResult.pillar[0]);
+
+          const hourResult = calculateHourPillar(
+            jdUTC,
+            tzHours,
+            dayStemIndex,
+            useSolarTime,
+            longitude,
+          );
+          const hourStemIndex = STEMS.indexOf(hourResult.pillar[0]);
+
+          // 计算十神
+          const yearGod = calculateTenGod(dayStemIndex, yearStemIndex);
+          const monthGod = calculateTenGod(dayStemIndex, monthStemIndex);
+          const hourGod = calculateTenGod(dayStemIndex, hourStemIndex);
+
+          // 显示结果
+          displayResults({
+            year: yearResult,
+            month: monthResult,
+            day: dayResult,
+            hour: hourResult,
+            gods: { year: yearGod, month: monthGod, hour: hourGod },
+            stemIndices: {
+              year: yearStemIndex,
+              month: monthStemIndex,
+              day: dayStemIndex,
+              hour: hourStemIndex,
+            },
+            calculation: {
+              jdUTC: jdUTC,
+              solarLong: solarLong,
+              tzHours: tzHours,
+              solarCorr: solarCorr,
+              showDetails: showDetails,
+            },
+          });
+
+          // 显示结果区域
+          document
+            .getElementById("resultSection")
+            .classList.add("show", "fade-in");
+        } catch (error) {
+          showAlert("计算出错：" + error.message, "warning");
+          console.error("计算错误:", error);
+        }
+      }
+
+      // 显示结果
+      function displayResults(result) {
+        // 更新卡片显示
+        document.getElementById("yearPillar").textContent = result.year.pillar;
+        document.getElementById("monthPillar").textContent =
+          result.month.pillar;
+        document.getElementById("dayPillar").textContent = result.day.pillar;
+        document.getElementById("hourPillar").textContent = result.hour.pillar;
+
+        document.getElementById("yearDetails").innerHTML =
+          `${result.gods.year}<br>${STEM_ELEMENTS[result.stemIndices.year]}${STEM_YINYANG[result.stemIndices.year]}`;
+        document.getElementById("monthDetails").innerHTML =
+          `${result.gods.month}<br>${STEM_ELEMENTS[result.stemIndices.month]}${STEM_YINYANG[result.stemIndices.month]}`;
+        document.getElementById("dayDetails").innerHTML =
+          `日主<br>${STEM_ELEMENTS[result.stemIndices.day]}${STEM_YINYANG[result.stemIndices.day]}`;
+        document.getElementById("hourDetails").innerHTML =
+          `${result.gods.hour}<br>${STEM_ELEMENTS[result.stemIndices.hour]}${STEM_YINYANG[result.stemIndices.hour]}`;
+
+        // 更新表格
+        const tableBody = document.getElementById("baziTableBody");
+        const pillars = [
+          {
+            name: "年柱",
+            pillar: result.year.pillar,
+            god: result.gods.year,
+            stemIdx: result.stemIndices.year,
+          },
+          {
+            name: "月柱",
+            pillar: result.month.pillar,
+            god: result.gods.month,
+            stemIdx: result.stemIndices.month,
+          },
+          {
+            name: "日柱",
+            pillar: result.day.pillar,
+            god: "日主",
+            stemIdx: result.stemIndices.day,
+          },
+          {
+            name: "时柱",
+            pillar: result.hour.pillar,
+            god: result.gods.hour,
+            stemIdx: result.stemIndices.hour,
+          },
+        ];
+
+        tableBody.innerHTML = "";
+        pillars.forEach((p) => {
+          const stemIdx = STEMS.indexOf(p.pillar[0]);
+          const branchIdx = BRANCHES.indexOf(p.pillar[1]);
+          // 正确的六十甲子索引计算
+          let pillarIndex = -1;
+          for (let i = 0; i < 60; i++) {
+            if (i % 10 === stemIdx && i % 12 === branchIdx) {
+              pillarIndex = i;
+              break;
+            }
+          }
+          const nayin = NAYIN_60[pillarIndex];
+
+          const row = tableBody.insertRow();
+          row.innerHTML = `
+                  <td><strong>${p.name}</strong></td>
+                  <td><strong style="font-size: 1.2em; color: var(--primary-color);">${p.pillar}</strong></td>
+                  <td>${p.god}</td>
+                  <td>${STEM_ELEMENTS[p.stemIdx]}</td>
+                  <td>${STEM_YINYANG[p.stemIdx]}</td>
+                  <td>${nayin}</td>
+              `;
+        });
+
+        // 显示详细信息
+        if (result.calculation.showDetails) {
+          const detailsPanel = document.getElementById("detailsPanel");
+          const detailsDiv = document.getElementById("calculationDetails");
+
+          detailsDiv.innerHTML = `
+                  <div class="info-row">
+                      <span class="info-label">儒略日(UTC)</span>
+                      <span class="info-value">${result.calculation.jdUTC.toFixed(6)}</span>
+                  </div>
+                  <div class="info-row">
+                      <span class="info-label">太阳黄经</span>
+                      <span class="info-value">${result.calculation.solarLong.toFixed(5)}°</span>
+                  </div>
+                  <div class="info-row">
+                      <span class="info-label">时区偏移</span>
+                      <span class="info-value">UTC${result.calculation.tzHours >= 0 ? "+" : ""}${result.calculation.tzHours.toFixed(2)}</span>
+                  </div>
+                  <div class="info-row">
+                      <span class="info-label">太阳时修正</span>
+                      <span class="info-value">${result.calculation.solarCorr.toFixed(3)} 小时</span>
+                  </div>
+                  <div class="info-row">
+                      <span class="info-label">使用年份</span>
+                      <span class="info-value">${result.year.actualYear}年 ${result.year.isNearLiChun ? "(立春交界)" : ""}</span>
+                  </div>
+                  <div class="info-row">
+                      <span class="info-label">日柱JDN</span>
+                      <span class="info-value">${result.day.JDN} (参考JD: ${result.day.referenceJD})</span>
+                  </div>
+                  <div class="info-row">
+                      <span class="info-label">日柱索引</span>
+                      <span class="info-value">${result.day.dayIndex}/60 (天数差: ${result.day.daysDiff})</span>
+                  </div>
+              `;
+
+          detailsPanel.style.display = "block";
+        } else {
+          document.getElementById("detailsPanel").style.display = "none";
+        }
+
+        // 显示警告信息
+        const alertContainer = document.getElementById("alertContainer");
+        alertContainer.innerHTML = "";
+
+        if (result.year.isNearLiChun) {
+          showAlert(
+            "当前时间接近立春节气点，年柱可能存在争议，请注意核实。",
+            "warning",
+          );
+        }
+
+        // 显示成功信息
+        showAlert("八字排盘计算完成！", "success");
+      }
+
+      // 精美提示信息
+      function showAlert(message, type = "info") {
+        const alertContainer = document.getElementById("alertContainer");
+        const alert = document.createElement("div");
+        alert.className = `alert alert-${type}`;
+
+        // 添加图标
+        let icon = "📝";
+        if (type === "success") icon = "✨";
+        if (type === "warning") icon = "⚠️";
+        if (type === "info") icon = "💡";
+
+        alert.innerHTML = `${icon} ${message}`;
+        alert.style.transform = "translateX(100%)";
+        alert.style.transition = "var(--transition)";
+
+        alertContainer.appendChild(alert);
+
+        // 滑入动画
+        setTimeout(() => {
+          alert.style.transform = "translateX(0)";
+        }, 100);
+
+        // 6秒后滑出并移除
+        setTimeout(() => {
+          alert.style.transform = "translateX(100%)";
+          setTimeout(() => {
+            alert.remove();
+          }, 300);
+        }, 6000);
+      }
+
+      // 重置表单
+      function resetForm() {
+        const now = new Date();
+        document.getElementById("year").value = now.getFullYear();
+        document.getElementById("month").value = now.getMonth() + 1;
+        document.getElementById("day").value = now.getDate();
+        document.getElementById("hour").value = now.getHours();
+        document.getElementById("minute").value = now.getMinutes();
+        document.getElementById("second").value = 0;
+        document.getElementById("timezone").value = "+08:00";
+        document.getElementById("longitude").value = "116.40";
+        document.getElementById("latitude").value = "39.90";
+        document.getElementById("useSolarTime").checked = false;
+        document.getElementById("useZi23").checked = true;
+        document.getElementById("useSolarBoundary").checked = false;
+        document.getElementById("showDetails").checked = true;
+
+        document.getElementById("resultSection").classList.remove("show");
+        document.getElementById("alertContainer").innerHTML = "";
+      }
+
+      // 添加验证函数
+      function validateDayPillar() {
+        // 测试已知的日柱对照表（按照万年历标准）
+        const testCases = [
+          {
+            year: 1985,
+            month: 4,
+            day: 7,
+            hour: 10,
+            expected: "丙子",
+            desc: "1985年4月7日 10时 (参考点)",
+          },
+          {
+            year: 1985,
+            month: 4,
+            day: 8,
+            hour: 10,
+            expected: "丁丑",
+            desc: "1985年4月8日 10时",
+          },
+          {
+            year: 1985,
+            month: 4,
+            day: 6,
+            hour: 10,
+            expected: "乙亥",
+            desc: "1985年4月6日 10时",
+          },
+          {
+            year: 2024,
+            month: 4,
+            day: 7,
+            hour: 12,
+            expected: "丙子",
+            desc: "2024年4月7日 12时",
+          },
+          {
+            year: 1900,
+            month: 1,
+            day: 1,
+            hour: 12,
+            expected: "甲辰",
+            desc: "1900年1月1日 12时",
+          },
+        ];
+
+        console.log("=== 日柱算法验证 (万年历标准) ===");
+        let correctCount = 0;
+        testCases.forEach((testCase) => {
+          const jdUTC = toJulianDay(
+            testCase.year,
+            testCase.month,
+            testCase.day,
+            testCase.hour,
+          );
+          const result = calculateDayPillar(jdUTC, 8, true, false, 0);
+          const match = result.pillar === testCase.expected;
+          if (match) correctCount++;
+          const expectedIndex = ganZhiToIndex(testCase.expected);
+          console.log(
+            `${testCase.desc}: 计算=${result.pillar}(${result.dayIndex}), 预期=${testCase.expected}(${expectedIndex}), JD=${jdUTC.toFixed(2)}, 天数差=${result.daysDiff}, ${match ? "✓正确" : "✗错误"}`,
+          );
+        });
+        console.log(`验证结果: ${correctCount}/${testCases.length} 正确`);
+
+        // 特别验证时柱
+        console.log("\n=== 时柱验证 ===");
+        const hourTest = testCases[0]; // 1985年4月7日 10时
+        const jdUTC = toJulianDay(
+          hourTest.year,
+          hourTest.month,
+          hourTest.day,
+          hourTest.hour - 8,
+        ); // UTC时间
+        const dayResult = calculateDayPillar(jdUTC, 8, true, false, 0);
+        const dayStemIndex = STEMS.indexOf(dayResult.pillar[0]);
+        const hourResult = calculateHourPillar(
+          jdUTC,
+          8,
+          dayStemIndex,
+          false,
+          116.4,
+        );
+        console.log(
+          `${hourTest.desc} 时柱: 计算=${hourResult.pillar}, 预期=癸巳, ${hourResult.pillar === "癸巳" ? "✓正确" : "✗错误"}`,
+        );
+
+        // 显示60甲子表供参考
+        console.log("\n=== 60甲子表 ===");
+        for (let i = 0; i < 60; i += 10) {
+          const row = [];
+          for (let j = 0; j < 10 && i + j < 60; j++) {
+            const idx = i + j;
+            row.push(`${idx.toString().padStart(2)}: ${indexToGanZhi(idx)}`);
+          }
+          console.log(row.join(" | "));
+        }
+
+        return correctCount === testCases.length;
+      }
+
+      // 事件监听器
+      document.addEventListener("DOMContentLoaded", function () {
+        document
+          .getElementById("calculateBtn")
+          .addEventListener("click", calculateBtn);
+        document
+          .getElementById("resetBtn")
+          .addEventListener("click", resetForm);
+
+        // 设置测试时间为默认值 (验证1985年4月7日为丙子日癸巳时)
+        document.getElementById("year").value = 1985;
+        document.getElementById("month").value = 4;
+        document.getElementById("day").value = 7;
+        document.getElementById("hour").value = 10;
+        document.getElementById("minute").value = 0;
+
+        // 验证算法并自动计算
+        const isValid = validateDayPillar();
+        if (isValid) {
+          console.log("🎉 日柱算法验证通过！");
+        } else {
+          console.warn("⚠️ 日柱算法验证失败，需要进一步调整");
+        }
+
+        // 添加页面加载动画
+        document.body.style.opacity = "0";
+        document.body.style.transform = "translateY(20px)";
+        setTimeout(() => {
+          document.body.style.transition = "var(--transition)";
+          document.body.style.opacity = "1";
+          document.body.style.transform = "translateY(0)";
+        }, 100);
+
+        setTimeout(() => {
+          calculateBazi();
+          document
+            .getElementById("resultSection")
+            .classList.add("show", "fade-in");
+          // 添加精美的成功提示和动画效果
+          showAlert("🎉 算法验证完成！万年历模式已启用", "success");
+          // 添加卡片动画（移动设备优化）
+          const cards = document.querySelectorAll(".pillar-card");
+          const isMobile = window.innerWidth <= 768;
+          cards.forEach((card, index) => {
+            setTimeout(
+              () => {
+                card.style.animation = `scaleIn 0.6s ease-out ${index * (isMobile ? 0.05 : 0.1)}s both`;
+              },
+              isMobile ? 200 : 300,
+            );
+          });
+        }, 1200);
+      });
+
+      // 精美计算按钮处理
+      function calculateBtn() {
+        const btn = document.getElementById("calculateBtn");
+        const originalText = btn.innerHTML;
+
+        // 精美加载状态
+        btn.innerHTML = `
+              <div class="spinner" style="width: 20px; height: 20px; border-width: 3px; margin-right: 10px;"></div>
+              <span class="loading-text">正在计算八字...</span>
+          `;
+        btn.disabled = true;
+        btn.style.background = "var(--gradient-secondary)";
+
+        // 添加按钮动画
+        btn.style.transform = "scale(0.95)";
+        setTimeout(() => {
+          btn.style.transform = "scale(1)";
+        }, 100);
+
+        // 模拟计算延迟，提升用户体验
+        setTimeout(() => {
+          calculateBazi();
+          btn.innerHTML = originalText + " ✓";
+          btn.style.background = "var(--gradient-primary)";
+          btn.disabled = false;
+
+          // 成功动画
+          btn.style.animation = "pulse 0.6s ease-out";
+          setTimeout(() => {
+            btn.style.animation = "";
+            btn.innerHTML = originalText;
+          }, 600);
+        }, 800);
+      }
+    </script>
+  </body>
+</html>
