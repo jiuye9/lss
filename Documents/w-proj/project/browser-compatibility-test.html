@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六爻排盘系统 - 浏览器兼容性测试</title>
+    <style>
+        :root {
+            --primary-color: #D4AF37;
+            --secondary-color: #B8860B;
+            --bg-color: #1A1A1A;
+            --card-bg: #2F2F2F;
+            --text-color: #F5F5DC;
+            --success-color: #228B22;
+            --error-color: #DC143C;
+            --warning-color: #FF8C00;
+            --border-color: #4A4A4A;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: var(--bg-color);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            padding: 30px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 2px solid var(--primary-color);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .test-section {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .test-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 8px;
+        }
+
+        .test-result {
+            margin: 10px 0;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .test-pass {
+            background: rgba(34, 139, 34, 0.1);
+            border-left-color: var(--success-color);
+            color: var(--success-color);
+        }
+
+        .test-fail {
+            background: rgba(220, 20, 60, 0.1);
+            border-left-color: var(--error-color);
+            color: var(--error-color);
+        }
+
+        .test-warning {
+            background: rgba(255, 140, 0, 0.1);
+            border-left-color: var(--warning-color);
+            color: var(--warning-color);
+        }
+
+        .test-partial {
+            background: rgba(212, 175, 55, 0.1);
+            border-left-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn {
+            background: var(--primary-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: var(--secondary-color);
+        }
+
+        .test-controls {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .test-detail {
+            font-size: 0.9rem;
+            margin-top: 8px;
+            opacity: 0.9;
+        }
+
+        .browser-info {
+            grid-column: span 2;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .compatibility-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .compatibility-item {
+            background: var(--bg-color);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .compatibility-score {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .score-excellent { color: var(--success-color); }
+        .score-good { color: var(--primary-color); }
+        .score-fair { color: var(--warning-color); }
+        .score-poor { color: var(--error-color); }
+
+        .feature-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .feature-table th,
+        .feature-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .feature-table th {
+            background: var(--primary-color);
+            color: var(--bg-color);
+            font-weight: bold;
+        }
+
+        .feature-table tr:nth-child(even) {
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .support-yes { color: var(--success-color); font-weight: bold; }
+        .support-no { color: var(--error-color); font-weight: bold; }
+        .support-partial { color: var(--warning-color); font-weight: bold; }
+
+        @media (max-width: 768px) {
+            .test-container {
+                grid-template-columns: 1fr;
+            }
+            .browser-info {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>六爻排盘系统浏览器兼容性测试</h1>
+        <p>检测系统在不同浏览器和环境下的兼容性</p>
+        <div id="test-timestamp"></div>
+    </div>
+
+    <div class="test-controls">
+        <button class="btn" onclick="runAllCompatibilityTests()">执行全部兼容性测试</button>
+        <button class="btn" onclick="runJSFeatureTests()">JavaScript特性测试</button>
+        <button class="btn" onclick="runCSSFeatureTests()">CSS特性测试</button>
+        <button class="btn" onclick="runHTMLFeatureTests()">HTML特性测试</button>
+        <button class="btn" onclick="clearResults()">清除结果</button>
+    </div>
+
+    <div class="browser-info">
+        <h2>🌐 当前浏览器环境信息</h2>
+        <div id="browser-details"></div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-section">
+            <h2>🔧 JavaScript特性支持</h2>
+            <div id="js-feature-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎨 CSS特性支持</h2>
+            <div id="css-feature-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📝 HTML特性支持</h2>
+            <div id="html-feature-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🚀 性能API支持</h2>
+            <div id="performance-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📱 设备API支持</h2>
+            <div id="device-api-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔐 安全特性支持</h2>
+            <div id="security-results"></div>
+        </div>
+    </div>
+
+    <div class="test-section" style="margin-top: 20px;">
+        <h2>📊 兼容性评分汇总</h2>
+        <div id="compatibility-summary"></div>
+    </div>
+
+    <script>
+        // 全局测试统计
+        let compatibilityStats = {
+            total: 0,
+            passed: 0,
+            failed: 0,
+            partial: 0
+        };
+
+        // 初始化时间戳
+        document.getElementById('test-timestamp').textContent =
+            `测试时间：${new Date().toLocaleString('zh-CN')}`;
+
+        // 记录测试结果
+        function recordCompatibilityResult(elementId, testName, status, details = '') {
+            compatibilityStats.total++;
+
+            let statusClass, statusIcon;
+            switch (status) {
+                case 'pass':
+                    compatibilityStats.passed++;
+                    statusClass = 'test-pass';
+                    statusIcon = '✅';
+                    break;
+                case 'fail':
+                    compatibilityStats.failed++;
+                    statusClass = 'test-fail';
+                    statusIcon = '❌';
+                    break;
+                case 'partial':
+                    compatibilityStats.partial++;
+                    statusClass = 'test-partial';
+                    statusIcon = '⚠️';
+                    break;
+                default:
+                    statusClass = 'test-warning';
+                    statusIcon = '❓';
+            }
+
+            const resultHtml = `
+                <div class="test-result ${statusClass}">
+                    <strong>${statusIcon} ${testName}</strong>
+                    <div class="test-detail">${details}</div>
+                </div>
+            `;
+
+            document.getElementById(elementId).innerHTML += resultHtml;
+        }
+
+        // 浏览器检测和信息显示
+        function detectBrowserInfo() {
+            const ua = navigator.userAgent;
+            const browserInfo = {
+                name: 'Unknown',
+                version: 'Unknown',
+                engine: 'Unknown',
+                os: 'Unknown'
+            };
+
+            // 浏览器检测
+            if (ua.includes('Chrome')) browserInfo.name = 'Chrome';
+            else if (ua.includes('Firefox')) browserInfo.name = 'Firefox';
+            else if (ua.includes('Safari')) browserInfo.name = 'Safari';
+            else if (ua.includes('Edge')) browserInfo.name = 'Edge';
+            else if (ua.includes('Opera')) browserInfo.name = 'Opera';
+            else if (ua.includes('MSIE') || ua.includes('Trident')) browserInfo.name = 'Internet Explorer';
+
+            // 操作系统检测
+            if (ua.includes('Windows')) browserInfo.os = 'Windows';
+            else if (ua.includes('Mac')) browserInfo.os = 'macOS';
+            else if (ua.includes('Linux')) browserInfo.os = 'Linux';
+            else if (ua.includes('Android')) browserInfo.os = 'Android';
+            else if (ua.includes('iOS')) browserInfo.os = 'iOS';
+
+            // 引擎检测
+            if (ua.includes('WebKit')) browserInfo.engine = 'WebKit';
+            else if (ua.includes('Gecko')) browserInfo.engine = 'Gecko';
+            else if (ua.includes('Trident')) browserInfo.engine = 'Trident';
+            else if (ua.includes('Presto')) browserInfo.engine = 'Presto';
+
+            return browserInfo;
+        }
+
+        // 显示浏览器信息
+        function displayBrowserInfo() {
+            const info = detectBrowserInfo();
+            const infoHtml = `
+                <div class="compatibility-grid">
+                    <div class="compatibility-item">
+                        <h4>浏览器</h4>
+                        <div class="compatibility-score score-good">${info.name}</div>
+                    </div>
+                    <div class="compatibility-item">
+                        <h4>操作系统</h4>
+                        <div class="compatibility-score score-good">${info.os}</div>
+                    </div>
+                    <div class="compatibility-item">
+                        <h4>渲染引擎</h4>
+                        <div class="compatibility-score score-good">${info.engine}</div>
+                    </div>
+                    <div class="compatibility-item">
+                        <h4>用户代理</h4>
+                        <div style="font-size: 0.8rem; word-break: break-all;">${navigator.userAgent}</div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('browser-details').innerHTML = infoHtml;
+        }
+
+        // JavaScript特性测试
+        function runJSFeatureTests() {
+            const jsFeatures = [
+                {
+                    name: 'ES6 箭头函数',
+                    test: () => {
+                        try {
+                            eval('(() => true)()');
+                            return true;
+                        } catch (e) {
+                            return false;
+                        }
+                    }
+                },
+                {
+                    name: 'ES6 const/let',
+                    test: () => {
+                        try {
+                            eval('const test = 1; let test2 = 2;');
+                            return true;
+                        } catch (e) {
+                            return false;
+                        }
+                    }
+                },
+                {
+                    name: 'ES6 模板字符串',
+                    test: () => {
+                        try {
+                            eval('`template string`');
+                            return true;
+                        } catch (e) {
+                            return false;
+                        }
+                    }
+                },
+                {
+                    name: 'ES6 解构赋值',
+                    test: () => {
+                        try {
+                            eval('const {a} = {a: 1};');
+                            return true;
+                        } catch (e) {
+                            return false;
+                        }
+                    }
+                },
+                {
+                    name: 'Promise支持',
+                    test: () => typeof Promise !== 'undefined'
+                },
+                {
+                    name: 'async/await支持',
+                    test: () => {
+                        try {
+                            eval('async function test() { await 1; }');
+                            return true;
+                        } catch (e) {
+                            return false;
+                        }
+                    }
+                },
+                {
+                    name: 'Array.from支持',
+                    test: () => typeof Array.from === 'function'
+                },
+                {
+                    name: 'Object.assign支持',
+                    test: () => typeof Object.assign === 'function'
+                },
+                {
+                    name: 'Map和Set支持',
+                    test: () => typeof Map !== 'undefined' && typeof Set !== 'undefined'
+                },
+                {
+                    name: 'Proxy支持',
+                    test: () => typeof Proxy !== 'undefined'
+                },
+                {
+                    name: 'Symbol支持',
+                    test: () => typeof Symbol !== 'undefined'
+                },
+                {
+                    name: 'WeakMap/WeakSet支持',
+                    test: () => typeof WeakMap !== 'undefined' && typeof WeakSet !== 'undefined'
+                }
+            ];
+
+            let passCount = 0;
+            jsFeatures.forEach(feature => {
+                try {
+                    const supported = feature.test();
+                    if (supported) passCount++;
+
+                    recordCompatibilityResult('js-feature-results',
+                        feature.name,
+                        supported ? 'pass' : 'fail',
+                        `支持状态: ${supported ? '支持' : '不支持'}`);
+                } catch (error) {
+                    recordCompatibilityResult('js-feature-results',
+                        feature.name,
+                        'fail',
+                        `测试错误: ${error.message}`);
+                }
+            });
+
+            recordCompatibilityResult('js-feature-results',
+                'JavaScript总体兼容性',
+                passCount >= jsFeatures.length * 0.8 ? 'pass' : (passCount >= jsFeatures.length * 0.5 ? 'partial' : 'fail'),
+                `支持特性: ${passCount}/${jsFeatures.length} (${Math.round(passCount/jsFeatures.length*100)}%)`);
+        }
+
+        // CSS特性测试
+        function runCSSFeatureTests() {
+            const cssFeatures = [
+                {
+                    name: 'CSS Grid布局',
+                    test: () => CSS.supports('display', 'grid')
+                },
+                {
+                    name: 'CSS Flexbox',
+                    test: () => CSS.supports('display', 'flex')
+                },
+                {
+                    name: 'CSS Variables',
+                    test: () => CSS.supports('color', 'var(--test)')
+                },
+                {
+                    name: 'CSS Transform',
+                    test: () => CSS.supports('transform', 'translateX(10px)')
+                },
+                {
+                    name: 'CSS Transition',
+                    test: () => CSS.supports('transition', 'all 0.3s')
+                },
+                {
+                    name: 'CSS Animation',
+                    test: () => CSS.supports('animation', 'fadeIn 1s')
+                },
+                {
+                    name: 'CSS Calc',
+                    test: () => CSS.supports('width', 'calc(100% - 10px)')
+                },
+                {
+                    name: 'CSS Media Queries',
+                    test: () => window.matchMedia !== undefined
+                },
+                {
+                    name: 'CSS Gradients',
+                    test: () => CSS.supports('background', 'linear-gradient(to right, red, blue)')
+                },
+                {
+                    name: 'CSS Box Shadow',
+                    test: () => CSS.supports('box-shadow', '0 0 10px rgba(0,0,0,0.5)')
+                },
+                {
+                    name: 'CSS Border Radius',
+                    test: () => CSS.supports('border-radius', '10px')
+                },
+                {
+                    name: 'CSS Opacity',
+                    test: () => CSS.supports('opacity', '0.5')
+                }
+            ];
+
+            let passCount = 0;
+            cssFeatures.forEach(feature => {
+                try {
+                    const supported = feature.test();
+                    if (supported) passCount++;
+
+                    recordCompatibilityResult('css-feature-results',
+                        feature.name,
+                        supported ? 'pass' : 'fail',
+                        `支持状态: ${supported ? '支持' : '不支持'}`);
+                } catch (error) {
+                    recordCompatibilityResult('css-feature-results',
+                        feature.name,
+                        'fail',
+                        `测试错误: ${error.message}`);
+                }
+            });
+
+            recordCompatibilityResult('css-feature-results',
+                'CSS总体兼容性',
+                passCount >= cssFeatures.length * 0.9 ? 'pass' : (passCount >= cssFeatures.length * 0.7 ? 'partial' : 'fail'),
+                `支持特性: ${passCount}/${cssFeatures.length} (${Math.round(passCount/cssFeatures.length*100)}%)`);
+        }
+
+        // HTML特性测试
+        function runHTMLFeatureTests() {
+            const htmlFeatures = [
+                {
+                    name: 'HTML5 Semantic Elements',
+                    test: () => {
+                        const testDiv = document.createElement('section');
+                        return testDiv.toString() === '[object HTMLElement]';
+                    }
+                },
+                {
+                    name: 'HTML5 Input Types',
+                    test: () => {
+                        const input = document.createElement('input');
+                        input.type = 'date';
+                        return input.type === 'date';
+                    }
+                },
+                {
+                    name: 'HTML5 Form Validation',
+                    test: () => {
+                        const input = document.createElement('input');
+                        return typeof input.checkValidity === 'function';
+                    }
+                },
+                {
+                    name: 'HTML5 Dataset API',
+                    test: () => {
+                        const div = document.createElement('div');
+                        return typeof div.dataset === 'object';
+                    }
+                },
+                {
+                    name: 'HTML5 classList API',
+                    test: () => {
+                        const div = document.createElement('div');
+                        return typeof div.classList === 'object';
+                    }
+                },
+                {
+                    name: 'HTML5 querySelector',
+                    test: () => typeof document.querySelector === 'function'
+                },
+                {
+                    name: 'HTML5 querySelectorAll',
+                    test: () => typeof document.querySelectorAll === 'function'
+                },
+                {
+                    name: 'HTML5 Storage API',
+                    test: () => typeof localStorage !== 'undefined' && typeof sessionStorage !== 'undefined'
+                }
+            ];
+
+            let passCount = 0;
+            htmlFeatures.forEach(feature => {
+                try {
+                    const supported = feature.test();
+                    if (supported) passCount++;
+
+                    recordCompatibilityResult('html-feature-results',
+                        feature.name,
+                        supported ? 'pass' : 'fail',
+                        `支持状态: ${supported ? '支持' : '不支持'}`);
+                } catch (error) {
+                    recordCompatibilityResult('html-feature-results',
+                        feature.name,
+                        'fail',
+                        `测试错误: ${error.message}`);
+                }
+            });
+
+            recordCompatibilityResult('html-feature-results',
+                'HTML总体兼容性',
+                passCount >= htmlFeatures.length * 0.9 ? 'pass' : (passCount >= htmlFeatures.length * 0.7 ? 'partial' : 'fail'),
+                `支持特性: ${passCount}/${htmlFeatures.length} (${Math.round(passCount/htmlFeatures.length*100)}%)`);
+        }
+
+        // 性能API测试
+        function runPerformanceTests() {
+            const performanceFeatures = [
+                {
+                    name: 'Performance API',
+                    test: () => typeof performance !== 'undefined'
+                },
+                {
+                    name: 'Performance.now()',
+                    test: () => typeof performance.now === 'function'
+                },
+                {
+                    name: 'Performance.mark()',
+                    test: () => typeof performance.mark === 'function'
+                },
+                {
+                    name: 'Performance.measure()',
+                    test: () => typeof performance.measure === 'function'
+                },
+                {
+                    name: 'Performance Observer',
+                    test: () => typeof PerformanceObserver !== 'undefined'
+                },
+                {
+                    name: 'Navigation Timing API',
+                    test: () => typeof performance.timing !== 'undefined'
+                },
+                {
+                    name: 'Memory API',
+                    test: () => typeof performance.memory !== 'undefined'
+                }
+            ];
+
+            let passCount = 0;
+            performanceFeatures.forEach(feature => {
+                try {
+                    const supported = feature.test();
+                    if (supported) passCount++;
+
+                    recordCompatibilityResult('performance-results',
+                        feature.name,
+                        supported ? 'pass' : 'fail',
+                        `支持状态: ${supported ? '支持' : '不支持'}`);
+                } catch (error) {
+                    recordCompatibilityResult('performance-results',
+                        feature.name,
+                        'fail',
+                        `测试错误: ${error.message}`);
+                }
+            });
+
+            recordCompatibilityResult('performance-results',
+                '性能API总体支持',
+                passCount >= performanceFeatures.length * 0.6 ? 'pass' : (passCount >= performanceFeatures.length * 0.3 ? 'partial' : 'fail'),
+                `支持API: ${passCount}/${performanceFeatures.length} (${Math.round(passCount/performanceFeatures.length*100)}%)`);
+        }
+
+        // 设备API测试
+        function runDeviceAPITests() {
+            const deviceFeatures = [
+                {
+                    name: 'Touch Events',
+                    test: () => 'ontouchstart' in window
+                },
+                {
+                    name: 'Device Orientation',
+                    test: () => 'DeviceOrientationEvent' in window
+                },
+                {
+                    name: 'Geolocation API',
+                    test: () => 'geolocation' in navigator
+                },
+                {
+                    name: 'Vibration API',
+                    test: () => 'vibrate' in navigator
+                },
+                {
+                    name: 'Battery API',
+                    test: () => 'getBattery' in navigator
+                },
+                {
+                    name: 'Network Information',
+                    test: () => 'connection' in navigator
+                },
+                {
+                    name: 'Screen Orientation',
+                    test: () => 'orientation' in screen
+                }
+            ];
+
+            let passCount = 0;
+            deviceFeatures.forEach(feature => {
+                try {
+                    const supported = feature.test();
+                    if (supported) passCount++;
+
+                    recordCompatibilityResult('device-api-results',
+                        feature.name,
+                        supported ? 'pass' : 'fail',
+                        `支持状态: ${supported ? '支持' : '不支持'}`);
+                } catch (error) {
+                    recordCompatibilityResult('device-api-results',
+                        feature.name,
+                        'fail',
+                        `测试错误: ${error.message}`);
+                }
+            });
+
+            recordCompatibilityResult('device-api-results',
+                '设备API总体支持',
+                passCount >= deviceFeatures.length * 0.4 ? 'pass' : (passCount >= deviceFeatures.length * 0.2 ? 'partial' : 'fail'),
+                `支持API: ${passCount}/${deviceFeatures.length} (${Math.round(passCount/deviceFeatures.length*100)}%)`);
+        }
+
+        // 安全特性测试
+        function runSecurityTests() {
+            const securityFeatures = [
+                {
+                    name: 'HTTPS协议',
+                    test: () => location.protocol === 'https:'
+                },
+                {
+                    name: 'Content Security Policy',
+                    test: () => typeof CSP !== 'undefined' || document.querySelector('meta[http-equiv="Content-Security-Policy"]') !== null
+                },
+                {
+                    name: 'Secure Context',
+                    test: () => typeof isSecureContext !== 'undefined' ? isSecureContext : false
+                },
+                {
+                    name: 'SubResource Integrity',
+                    test: () => {
+                        const script = document.createElement('script');
+                        return 'integrity' in script;
+                    }
+                },
+                {
+                    name: 'Referrer Policy',
+                    test: () => {
+                        const link = document.createElement('a');
+                        return 'referrerPolicy' in link;
+                    }
+                }
+            ];
+
+            let passCount = 0;
+            securityFeatures.forEach(feature => {
+                try {
+                    const supported = feature.test();
+                    if (supported) passCount++;
+
+                    recordCompatibilityResult('security-results',
+                        feature.name,
+                        supported ? 'pass' : 'fail',
+                        `支持状态: ${supported ? '支持' : '不支持'}`);
+                } catch (error) {
+                    recordCompatibilityResult('security-results',
+                        feature.name,
+                        'fail',
+                        `测试错误: ${error.message}`);
+                }
+            });
+
+            recordCompatibilityResult('security-results',
+                '安全特性总体支持',
+                passCount >= securityFeatures.length * 0.6 ? 'pass' : (passCount >= securityFeatures.length * 0.3 ? 'partial' : 'fail'),
+                `支持特性: ${passCount}/${securityFeatures.length} (${Math.round(passCount/securityFeatures.length*100)}%)`);
+        }
+
+        // 执行所有兼容性测试
+        function runAllCompatibilityTests() {
+            clearResults();
+            compatibilityStats = { total: 0, passed: 0, failed: 0, partial: 0 };
+
+            displayBrowserInfo();
+
+            const startTime = performance.now();
+
+            runJSFeatureTests();
+            runCSSFeatureTests();
+            runHTMLFeatureTests();
+            runPerformanceTests();
+            runDeviceAPITests();
+            runSecurityTests();
+
+            const endTime = performance.now();
+            const totalTime = Math.round(endTime - startTime);
+
+            generateCompatibilitySummary(totalTime);
+        }
+
+        // 生成兼容性汇总
+        function generateCompatibilitySummary(totalTime) {
+            const totalTests = compatibilityStats.total;
+            const passRate = Math.round((compatibilityStats.passed / totalTests) * 100);
+            const partialRate = Math.round((compatibilityStats.partial / totalTests) * 100);
+            const failRate = Math.round((compatibilityStats.failed / totalTests) * 100);
+
+            const compatibilityGrade = getCompatibilityGrade(passRate, partialRate);
+
+            // 生成浏览器兼容性表格
+            const browserCompatibilityTable = generateBrowserCompatibilityTable();
+
+            const summaryHtml = `
+                <div class="compatibility-grid">
+                    <div class="compatibility-item">
+                        <h4>总测试项</h4>
+                        <div class="compatibility-score score-good">${totalTests}</div>
+                    </div>
+                    <div class="compatibility-item">
+                        <h4>完全支持</h4>
+                        <div class="compatibility-score score-excellent">${compatibilityStats.passed}</div>
+                        <div style="font-size: 0.8rem;">${passRate}%</div>
+                    </div>
+                    <div class="compatibility-item">
+                        <h4>部分支持</h4>
+                        <div class="compatibility-score score-fair">${compatibilityStats.partial}</div>
+                        <div style="font-size: 0.8rem;">${partialRate}%</div>
+                    </div>
+                    <div class="compatibility-item">
+                        <h4>不支持</h4>
+                        <div class="compatibility-score score-poor">${compatibilityStats.failed}</div>
+                        <div style="font-size: 0.8rem;">${failRate}%</div>
+                    </div>
+                </div>
+
+                <div style="margin: 20px 0; padding: 20px; background: var(--card-bg); border-radius: 8px; border: 2px solid ${compatibilityGrade.color};">
+                    <h3 style="color: ${compatibilityGrade.color}; text-align: center;">
+                        兼容性等级: ${compatibilityGrade.level} ${compatibilityGrade.icon}
+                    </h3>
+                    <p style="text-align: center; margin-top: 10px; font-size: 1.1rem;">
+                        ${compatibilityGrade.description}
+                    </p>
+                </div>
+
+                <div style="margin: 20px 0;">
+                    <h3 style="color: var(--primary-color); margin-bottom: 15px;">主流浏览器兼容性预估</h3>
+                    ${browserCompatibilityTable}
+                </div>
+
+                <div style="margin: 20px 0; padding: 15px; background: rgba(212, 175, 55, 0.1); border-radius: 8px; border-left: 4px solid var(--primary-color);">
+                    <h4 style="color: var(--primary-color); margin-bottom: 10px;">兼容性建议</h4>
+                    <div style="line-height: 1.6;">
+                        ${compatibilityGrade.suggestions.map(suggestion => `• ${suggestion}`).join('<br>')}
+                    </div>
+                </div>
+
+                <div style="margin-top: 15px; padding: 10px; background: var(--bg-color); border-radius: 6px; font-size: 0.9rem; color: var(--text-secondary);">
+                    <strong>测试说明：</strong>本兼容性测试基于当前浏览器环境进行检测，实际兼容性可能因浏览器版本、设置等因素而有所差异。
+                    测试耗时：${totalTime}ms
+                </div>
+            `;
+
+            document.getElementById('compatibility-summary').innerHTML = summaryHtml;
+        }
+
+        // 生成浏览器兼容性表格
+        function generateBrowserCompatibilityTable() {
+            const browsers = [
+                { name: 'Chrome', score: 95, status: '优秀', note: '完全支持所有现代特性' },
+                { name: 'Firefox', score: 93, status: '优秀', note: '对标准支持良好' },
+                { name: 'Safari', score: 88, status: '良好', note: '部分新特性支持较慢' },
+                { name: 'Edge', score: 90, status: '良好', note: '基于Chromium，兼容性好' },
+                { name: 'Opera', score: 92, status: '优秀', note: '基于Chromium内核' },
+                { name: 'IE 11', score: 45, status: '差', note: '不推荐使用' }
+            ];
+
+            let tableHtml = `
+                <table class="feature-table">
+                    <thead>
+                        <tr>
+                            <th>浏览器</th>
+                            <th>预估得分</th>
+                            <th>兼容状态</th>
+                            <th>备注</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            browsers.forEach(browser => {
+                const scoreClass = browser.score >= 90 ? 'support-yes' :
+                                  browser.score >= 70 ? 'support-partial' : 'support-no';
+
+                tableHtml += `
+                    <tr>
+                        <td>${browser.name}</td>
+                        <td class="${scoreClass}">${browser.score}%</td>
+                        <td class="${scoreClass}">${browser.status}</td>
+                        <td>${browser.note}</td>
+                    </tr>
+                `;
+            });
+
+            tableHtml += `
+                    </tbody>
+                </table>
+            `;
+
+            return tableHtml;
+        }
+
+        // 兼容性等级评估
+        function getCompatibilityGrade(passRate, partialRate) {
+            const effectiveRate = passRate + (partialRate * 0.5);
+
+            if (effectiveRate >= 95) {
+                return {
+                    level: '优秀',
+                    color: 'var(--success-color)',
+                    icon: '🏆',
+                    description: '系统兼容性优秀，支持所有主流浏览器和现代特性',
+                    suggestions: [
+                        '当前兼容性已达到优秀水平',
+                        '可以安全地在生产环境中使用',
+                        '建议定期更新以保持兼容性'
+                    ]
+                };
+            } else if (effectiveRate >= 85) {
+                return {
+                    level: '良好',
+                    color: 'var(--primary-color)',
+                    icon: '✨',
+                    description: '系统兼容性良好，支持大多数现代浏览器',
+                    suggestions: [
+                        '建议增加对不支持特性的polyfill',
+                        '考虑提供降级方案',
+                        '测试更多浏览器版本'
+                    ]
+                };
+            } else if (effectiveRate >= 70) {
+                return {
+                    level: '一般',
+                    color: 'var(--warning-color)',
+                    icon: '⚠️',
+                    description: '系统兼容性一般，部分浏览器可能存在问题',
+                    suggestions: [
+                        '优先修复失败的核心特性',
+                        '增加更多polyfill支持',
+                        '提供详细的浏览器兼容性说明'
+                    ]
+                };
+            } else {
+                return {
+                    level: '需改进',
+                    color: 'var(--error-color)',
+                    icon: '🚨',
+                    description: '系统兼容性较差，需要大量优化工作',
+                    suggestions: [
+                        '重点解决JavaScript和CSS兼容性问题',
+                        '考虑使用兼容性更好的技术栈',
+                        '建议进行全面的代码重构'
+                    ]
+                };
+            }
+        }
+
+        // 清除测试结果
+        function clearResults() {
+            const resultContainers = [
+                'js-feature-results', 'css-feature-results', 'html-feature-results',
+                'performance-results', 'device-api-results', 'security-results',
+                'compatibility-summary'
+            ];
+
+            resultContainers.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.innerHTML = '';
+            });
+
+            compatibilityStats = { total: 0, passed: 0, failed: 0, partial: 0 };
+        }
+
+        // 页面加载完成后自动显示浏览器信息
+        window.addEventListener('load', () => {
+            displayBrowserInfo();
+            setTimeout(() => {
+                recordCompatibilityResult('js-feature-results', '兼容性测试套件初始化', 'pass',
+                    '测试环境准备完成，点击上方按钮开始测试');
+            }, 500);
+        });
+    </script>
+</body>
+</html>

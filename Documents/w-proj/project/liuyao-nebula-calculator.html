@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六爻排盘系统 - Nebula星云主题</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // Nebula主题配色 - 深邃星云色系
+                        nebula: {
+                            900: '#0A0A0F',      // 深空黑
+                            800: '#0F0F1A',      // 夜空深蓝
+                            700: '#171738',      // 星云深紫
+                            600: '#1E1E47',      // 宇宙深蓝
+                            500: '#2D2D5F',      // 星云中蓝
+                            400: '#4848A3',      // 星云紫
+                            300: '#6B6BCF',      // 明亮紫
+                            200: '#9999E5',      // 浅紫
+                            100: '#B8B8F2',      // 极浅紫
+                            50: '#E5E5FF',       // 星光白
+                        },
+                        // 星云渐变色
+                        cosmic: {
+                            pink: '#FF6B9D',     // 宇宙粉
+                            purple: '#8B5CF6',   // 星云紫
+                            blue: '#3B82F6',     // 深空蓝
+                            cyan: '#06B6D4',     // 星光青
+                            teal: '#14B8A6',     // 翡翠绿
+                            gold: '#F59E0B',     // 星辰金
+                        },
+                        // 易学配色
+                        yixue: {
+                            yang: '#FF6B6B',     // 阳爻红
+                            yin: '#4ECDC4',      // 阴爻青
+                            change: '#FFD700',   // 动爻金
+                            world: '#FF8C00',    // 世爻橙
+                            response: '#32CD32',  // 应爻绿
+                        }
+                    },
+                    fontFamily: {
+                        'chinese': ['PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', 'Source Han Sans CN', 'sans-serif'],
+                    },
+                    animation: {
+                        'nebula-float': 'nebulaFloat 6s ease-in-out infinite',
+                        'star-twinkle': 'starTwinkle 2s ease-in-out infinite alternate',
+                        'cosmic-pulse': 'cosmicPulse 3s ease-in-out infinite',
+                        'fade-in-up': 'fadeInUp 0.8s ease-out',
+                        'slide-in-right': 'slideInRight 0.6s ease-out',
+                    },
+                    backdropBlur: {
+                        'xs': '2px',
+                    },
+                    backgroundImage: {
+                        'nebula-gradient': 'radial-gradient(ellipse at top left, rgba(139, 92, 246, 0.3) 0%, rgba(59, 130, 246, 0.2) 25%, rgba(6, 182, 212, 0.1) 50%, transparent 70%)',
+                        'cosmic-gradient': 'linear-gradient(135deg, rgba(255, 107, 157, 0.2) 0%, rgba(139, 92, 246, 0.2) 25%, rgba(59, 130, 246, 0.2) 50%, rgba(6, 182, 212, 0.2) 75%, rgba(20, 184, 166, 0.2) 100%)',
+                        'star-field': 'radial-gradient(2px 2px at 20px 30px, #eee, transparent), radial-gradient(2px 2px at 40px 70px, #fff, transparent), radial-gradient(1px 1px at 90px 40px, #fff, transparent), radial-gradient(1px 1px at 130px 80px, #fff, transparent), radial-gradient(2px 2px at 160px 30px, #ddd, transparent)'
+                    },
+                    boxShadow: {
+                        'nebula': '0 0 50px rgba(139, 92, 246, 0.3), 0 0 100px rgba(59, 130, 246, 0.2)',
+                        'cosmic': '0 0 30px rgba(255, 107, 157, 0.4), 0 0 60px rgba(139, 92, 246, 0.3)',
+                        'glow': '0 0 20px rgba(255, 255, 255, 0.1), 0 0 40px rgba(139, 92, 246, 0.2)',
+                        'inner-glow': 'inset 0 0 20px rgba(139, 92, 246, 0.1)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes nebulaFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(1deg); }
+            50% { transform: translateY(-10px) rotate(-1deg); }
+            75% { transform: translateY(-15px) rotate(0.5deg); }
+        }
+
+        @keyframes starTwinkle {
+            0% { opacity: 0.7; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.1); }
+        }
+
+        @keyframes cosmicPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.6), 0 0 60px rgba(59, 130, 246, 0.3); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translate3d(0, 30px, 0);
+            }
+            to {
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translate3d(30px, 0, 0);
+            }
+            to {
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+            }
+        }
+
+        /* 星空背景 */
+        .star-field {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(1px 1px at 25px 50px, rgba(255, 255, 255, 0.8), transparent),
+                radial-gradient(1px 1px at 50px 100px, rgba(255, 255, 255, 0.6), transparent),
+                radial-gradient(1px 1px at 125px 30px, rgba(255, 255, 255, 0.8), transparent),
+                radial-gradient(1px 1px at 200px 80px, rgba(255, 255, 255, 0.4), transparent),
+                radial-gradient(1px 1px at 300px 25px, rgba(255, 255, 255, 0.6), transparent),
+                radial-gradient(1px 1px at 380px 120px, rgba(255, 255, 255, 0.8), transparent),
+                radial-gradient(1px 1px at 480px 60px, rgba(255, 255, 255, 0.5), transparent),
+                radial-gradient(1px 1px at 580px 90px, rgba(255, 255, 255, 0.7), transparent),
+                radial-gradient(1px 1px at 680px 40px, rgba(255, 255, 255, 0.4), transparent),
+                radial-gradient(1px 1px at 780px 110px, rgba(255, 255, 255, 0.6), transparent);
+            animation: starTwinkle 3s ease-in-out infinite alternate;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* 浮动星云效果 */
+        .nebula-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            animation: nebulaFloat 12s ease-in-out infinite;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .nebula-orb-1 {
+            top: 5%;
+            left: 5%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, rgba(99, 102, 241, 0.2) 40%, transparent 80%);
+            animation-delay: -3s;
+        }
+
+        .nebula-orb-2 {
+            top: 50%;
+            right: 10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255, 107, 157, 0.3) 0%, rgba(236, 72, 153, 0.15) 50%, transparent 85%);
+            animation-delay: -6s;
+        }
+
+        .nebula-orb-3 {
+            bottom: 10%;
+            left: 25%;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.35) 0%, rgba(34, 211, 238, 0.2) 45%, transparent 75%);
+            animation-delay: -9s;
+        }
+
+        .nebula-orb-4 {
+            top: 25%;
+            right: 45%;
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, rgba(251, 191, 36, 0.1) 60%, transparent 80%);
+            animation-delay: -12s;
+        }
+
+        .nebula-orb-5 {
+            bottom: 40%;
+            right: 5%;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.3) 0%, rgba(147, 51, 234, 0.15) 50%, transparent 75%);
+            animation-delay: -1s;
+        }
+
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 15, 26, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #8B5CF6, #3B82F6);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #7C3AED, #2563EB);
+        }
+
+        /* 玻璃形态效果 */
+        .glass {
+            background: rgba(23, 23, 56, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-strong {
+            background: rgba(15, 15, 26, 0.7);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        /* 发光文字效果 */
+        .text-glow {
+            text-shadow: 0 0 10px rgba(139, 92, 246, 0.6);
+        }
+
+        .text-cosmic {
+            background: linear-gradient(45deg, #FF6B9D, #8B5CF6, #3B82F6, #06B6D4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 移动端优化 */
+        @media (max-width: 768px) {
+            .nebula-orb {
+                display: none; /* 移动端隐藏浮动星云以提升性能 */
+            }
+
+            .star-field {
+                opacity: 0.3; /* 减少星空背景强度 */
+            }
+
+            /* 移动端卦象爻线优化 */
+            .mobile-hexagram-line {
+                font-size: 1rem;
+                padding: 0.75rem 0.5rem;
+                letter-spacing: 0.1em;
+            }
+
+            /* 移动端标签页优化 */
+            .method-tab,
+            .manual-method-tab {
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem;
+            }
+
+            /* 移动端按钮优化 */
+            .coin-btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.75rem;
+            }
+
+            /* 移动端表单优化 */
+            .glass, .glass-strong {
+                backdrop-filter: blur(10px); /* 减少模糊强度以提升性能 */
+            }
+        }
+
+        @media (max-width: 640px) {
+            /* 超小屏幕优化 */
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            .glass-strong,
+            .glass {
+                border-radius: 1rem; /* 减少圆角以节省空间 */
+            }
+
+            /* 超小屏卦象显示 */
+            .hexagram-line-text {
+                font-size: 0.875rem;
+                letter-spacing: 0.05em;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-nebula-900 via-nebula-800 to-nebula-700 text-white font-chinese overflow-x-hidden">
+    <!-- 星空背景 -->
+    <div class="star-field"></div>
+
+    <!-- 浮动星云装饰 -->
+    <div class="nebula-orb nebula-orb-1"></div>
+    <div class="nebula-orb nebula-orb-2"></div>
+    <div class="nebula-orb nebula-orb-3"></div>
+    <div class="nebula-orb nebula-orb-4"></div>
+    <div class="nebula-orb nebula-orb-5"></div>
+
+    <!-- 主容器 -->
+    <div class="relative z-10 container mx-auto px-4 py-8 max-w-7xl">
+        <!-- 头部标题区域 -->
+        <header class="text-center mb-12 animate-fade-in-up">
+            <h1 class="text-5xl md:text-6xl font-bold mb-4 text-cosmic text-glow">
+                六爻排盘系统
+            </h1>
+            <p class="text-xl text-nebula-200 mb-6">
+                基于《增删补易》传统方法的专业排盘工具
+            </p>
+            <div class="flex justify-center items-center space-x-2 text-nebula-300">
+                <span class="w-2 h-2 bg-cosmic-pink rounded-full animate-star-twinkle"></span>
+                <span class="text-sm">星云级精准计算</span>
+                <span class="w-2 h-2 bg-cosmic-purple rounded-full animate-star-twinkle" style="animation-delay: 0.5s"></span>
+                <span class="text-sm">宇宙级视觉体验</span>
+                <span class="w-2 h-2 bg-cosmic-cyan rounded-full animate-star-twinkle" style="animation-delay: 1s"></span>
+            </div>
+        </header>
+
+        <!-- 主内容区域 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- 左侧：起卦设置 -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- 基本信息卡片 -->
+                <div class="glass-strong rounded-3xl p-8 shadow-nebula animate-fade-in-up" style="animation-delay: 0.2s">
+                    <h2 class="text-2xl font-bold mb-6 text-cosmic-gold flex items-center">
+                        <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        基本信息
+                    </h2>
+
+                    <div class="space-y-6">
+                        <!-- 问事输入 -->
+                        <div>
+                            <label class="block text-nebula-200 text-sm font-medium mb-3">所问之事：</label>
+                            <textarea
+                                id="question"
+                                rows="3"
+                                placeholder="请输入您要占卜的问题..."
+                                class="w-full px-4 py-3 glass rounded-xl text-white placeholder-nebula-300 focus:outline-none focus:ring-2 focus:ring-cosmic-purple focus:border-transparent transition-all duration-300"
+                            ></textarea>
+                        </div>
+
+                        <!-- 时间设置 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-nebula-200 text-sm font-medium mb-3">起卦日期：</label>
+                                <div class="relative">
+                                    <input
+                                        type="date"
+                                        id="date"
+                                        class="w-full px-4 py-3 glass rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-cosmic-purple focus:border-transparent transition-all duration-300 pl-12"
+                                        onchange="validateDateInput()"
+                                    >
+                                    <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-cosmic-purple" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <div id="date-feedback" class="mt-2 text-sm hidden"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-nebula-200 text-sm font-medium mb-3">起卦时间：</label>
+                                <div class="relative">
+                                    <input
+                                        type="time"
+                                        id="time"
+                                        class="w-full px-4 py-3 glass rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-cosmic-purple focus:border-transparent transition-all duration-300 pl-12"
+                                        onchange="validateTimeInput()"
+                                    >
+                                    <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-cosmic-purple" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <div id="time-feedback" class="mt-2 text-sm hidden"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 起卦方式选择 -->
+                <div class="glass-strong rounded-3xl shadow-nebula animate-fade-in-up" style="animation-delay: 0.4s">
+                    <div class="p-6">
+                        <h2 class="text-2xl font-bold mb-6 text-cosmic-gold flex items-center">
+                            <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            起卦方式
+                        </h2>
+                    </div>
+
+                    <!-- 方式选择标签页 -->
+                    <div class="flex border-b border-nebula-600">
+                        <button class="method-tab px-6 py-4 font-medium transition-all duration-300 active" data-method="time">
+                            <span class="flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                </svg>
+                                时间起卦
+                            </span>
+                        </button>
+                        <button class="method-tab px-6 py-4 font-medium transition-all duration-300" data-method="coins">
+                            <span class="flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"/>
+                                </svg>
+                                铜钱起卦
+                            </span>
+                        </button>
+                        <button class="method-tab px-6 py-4 font-medium transition-all duration-300" data-method="manual">
+                            <span class="flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+                                </svg>
+                                手动指定
+                            </span>
+                        </button>
+                    </div>
+
+                    <!-- 时间起卦内容 -->
+                    <div id="time-content" class="tab-content p-6 active">
+                        <div class="glass rounded-2xl p-6 border border-cosmic-purple/30">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-cosmic-purple to-cosmic-blue rounded-full flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-nebula-100 mb-2">时间起卦法</h4>
+                                    <p class="text-nebula-300 text-sm leading-relaxed">
+                                        根据您输入的起卦时间，按照传统时间起卦法自动生成卦象。
+                                        此方法简单快捷，适合日常占卜使用，基于天时地利的自然规律。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 铜钱起卦内容 -->
+                    <div id="coins-content" class="tab-content p-6">
+                        <div class="glass rounded-2xl p-6 border border-cosmic-gold/30 mb-6">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-cosmic-gold to-cosmic-pink rounded-full flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-nebula-100 mb-2">传统三枚铜钱摇卦法</h4>
+                                    <p class="text-nebula-300 text-sm leading-relaxed">
+                                        最为正宗的起卦方式。请按照从下到上（初爻→上爻）的顺序，依次选择每一爻的摇卦结果。
+                                        每次摇卦的结果决定了该爻的阴阳和动静状态。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 铜钱起卦界面 -->
+                        <div class="space-y-4" id="coin-lines-container">
+                            <!-- 六爻输入区，从上爻到初爻排列 -->
+                            <div class="coin-throw glass rounded-xl p-4 border border-nebula-500/30 hover:border-cosmic-purple/50 transition-all duration-300" data-line="6">
+                                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                    <span class="text-cosmic-gold font-semibold text-lg flex items-center">
+                                        <span class="w-8 h-8 bg-gradient-to-r from-cosmic-purple to-cosmic-blue rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">6</span>
+                                        上爻
+                                    </span>
+                                    <div class="grid grid-cols-2 md:flex md:space-x-2 gap-2">
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-yixue-yang to-red-500 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(6, '老阳')">老阳 ○</button>
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-red-400 to-red-500 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(6, '少阳')">少阳 —</button>
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-yixue-yin to-teal-500 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(6, '少阴')">少阴 - -</button>
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-teal-600 to-teal-700 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(6, '老阴')">老阴 ×</button>
+                                    </div>
+                                    <div class="coin-result min-w-[100px] text-center font-bold text-cosmic-gold bg-glass border border-cosmic-purple/30 px-3 py-2 rounded-lg" id="coin-result-6">
+                                        <span class="text-nebula-300 text-sm">等待选择</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="coin-throw glass rounded-xl p-4 border border-nebula-500/30 hover:border-cosmic-purple/50 transition-all duration-300" data-line="5">
+                                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                    <span class="text-cosmic-gold font-semibold text-lg flex items-center">
+                                        <span class="w-8 h-8 bg-gradient-to-r from-cosmic-purple to-cosmic-blue rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">5</span>
+                                        五爻
+                                    </span>
+                                    <div class="grid grid-cols-2 md:flex md:space-x-2 gap-2">
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-yixue-yang to-red-500 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(5, '老阳')">老阳 ○</button>
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-red-400 to-red-500 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(5, '少阳')">少阳 —</button>
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-yixue-yin to-teal-500 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(5, '少阴')">少阴 - -</button>
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-teal-600 to-teal-700 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(5, '老阴')">老阴 ×</button>
+                                    </div>
+                                    <div class="coin-result min-w-[100px] text-center font-bold text-cosmic-gold bg-glass border border-cosmic-purple/30 px-3 py-2 rounded-lg" id="coin-result-5">
+                                        <span class="text-nebula-300 text-sm">等待选择</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="coin-throw glass rounded-xl p-4 border border-nebula-500/30 hover:border-cosmic-purple/50 transition-all duration-300" data-line="4">
+                                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                    <span class="text-cosmic-gold font-semibold text-lg flex items-center">
+                                        <span class="w-8 h-8 bg-gradient-to-r from-cosmic-purple to-cosmic-blue rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">4</span>
+                                        四爻
+                                    </span>
+                                    <div class="grid grid-cols-2 md:flex md:space-x-2 gap-2">
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-yixue-yang to-red-500 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(4, '老阳')">老阳 ○</button>
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-red-400 to-red-500 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(4, '少阳')">少阳 —</button>
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-yixue-yin to-teal-500 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(4, '少阴')">少阴 - -</button>
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-teal-600 to-teal-700 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(4, '老阴')">老阴 ×</button>
+                                    </div>
+                                    <div class="coin-result min-w-[100px] text-center font-bold text-cosmic-gold bg-glass border border-cosmic-purple/30 px-3 py-2 rounded-lg" id="coin-result-4">
+                                        <span class="text-nebula-300 text-sm">等待选择</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="coin-throw glass rounded-xl p-4 border border-nebula-500/30 hover:border-cosmic-purple/50 transition-all duration-300" data-line="3">
+                                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                    <span class="text-cosmic-gold font-semibold text-lg flex items-center">
+                                        <span class="w-8 h-8 bg-gradient-to-r from-cosmic-purple to-cosmic-blue rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">3</span>
+                                        三爻
+                                    </span>
+                                    <div class="grid grid-cols-2 md:flex md:space-x-2 gap-2">
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-yixue-yang to-red-500 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(3, '老阳')">老阳 ○</button>
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-red-400 to-red-500 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(3, '少阳')">少阳 —</button>
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-yixue-yin to-teal-500 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(3, '少阴')">少阴 - -</button>
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-teal-600 to-teal-700 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(3, '老阴')">老阴 ×</button>
+                                    </div>
+                                    <div class="coin-result min-w-[100px] text-center font-bold text-cosmic-gold bg-glass border border-cosmic-purple/30 px-3 py-2 rounded-lg" id="coin-result-3">
+                                        <span class="text-nebula-300 text-sm">等待选择</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="coin-throw glass rounded-xl p-4 border border-nebula-500/30 hover:border-cosmic-purple/50 transition-all duration-300" data-line="2">
+                                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                    <span class="text-cosmic-gold font-semibold text-lg flex items-center">
+                                        <span class="w-8 h-8 bg-gradient-to-r from-cosmic-purple to-cosmic-blue rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">2</span>
+                                        二爻
+                                    </span>
+                                    <div class="grid grid-cols-2 md:flex md:space-x-2 gap-2">
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-yixue-yang to-red-500 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(2, '老阳')">老阳 ○</button>
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-red-400 to-red-500 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(2, '少阳')">少阳 —</button>
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-yixue-yin to-teal-500 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(2, '少阴')">少阴 - -</button>
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-teal-600 to-teal-700 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(2, '老阴')">老阴 ×</button>
+                                    </div>
+                                    <div class="coin-result min-w-[100px] text-center font-bold text-cosmic-gold bg-glass border border-cosmic-purple/30 px-3 py-2 rounded-lg" id="coin-result-2">
+                                        <span class="text-nebula-300 text-sm">等待选择</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="coin-throw glass rounded-xl p-4 border border-nebula-500/30 hover:border-cosmic-purple/50 transition-all duration-300" data-line="1">
+                                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                    <span class="text-cosmic-gold font-semibold text-lg flex items-center">
+                                        <span class="w-8 h-8 bg-gradient-to-r from-cosmic-purple to-cosmic-blue rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">1</span>
+                                        初爻
+                                    </span>
+                                    <div class="grid grid-cols-2 md:flex md:space-x-2 gap-2">
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-yixue-yang to-red-500 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(1, '老阳')">老阳 ○</button>
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-red-400 to-red-500 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(1, '少阳')">少阳 —</button>
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-yixue-yin to-teal-500 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(1, '少阴')">少阴 - -</button>
+                                        <button class="coin-btn px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-teal-600 to-teal-700 text-white hover:scale-105 hover:shadow-glow" onclick="setCoinResult(1, '老阴')">老阴 ×</button>
+                                    </div>
+                                    <div class="coin-result min-w-[100px] text-center font-bold text-cosmic-gold bg-glass border border-cosmic-purple/30 px-3 py-2 rounded-lg" id="coin-result-1">
+                                        <span class="text-nebula-300 text-sm">等待选择</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 手动指定内容 -->
+                    <div id="manual-content" class="tab-content p-6">
+                        <div class="glass rounded-2xl p-6 border border-cosmic-teal/30 mb-6">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-cosmic-teal to-cosmic-purple rounded-full flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-nebula-100 mb-2">多种方式直接指定卦象</h4>
+                                    <p class="text-nebula-300 text-sm leading-relaxed">
+                                        适合已知卦象或有特定需求的情况。支持卦名选择、数字起卦、二进制输入和逐爻指定等多种方式。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 手动指定子选项 -->
+                        <div class="flex flex-wrap gap-3 mb-6">
+                            <button class="manual-method-tab px-6 py-3 rounded-xl font-medium transition-all duration-300 active bg-gradient-to-r from-cosmic-purple to-cosmic-blue text-white shadow-cosmic" data-manual="hexname">
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    卦名选择
+                                </span>
+                            </button>
+                            <button class="manual-method-tab px-6 py-3 rounded-xl font-medium transition-all duration-300 glass border border-nebula-500/30 text-nebula-200 hover:border-cosmic-purple hover:text-white" data-manual="numbers">
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zM8 6a2 2 0 114 0v1H8V6z" clip-rule="evenodd"/>
+                                    </svg>
+                                    数字起卦
+                                </span>
+                            </button>
+                            <button class="manual-method-tab px-6 py-3 rounded-xl font-medium transition-all duration-300 glass border border-nebula-500/30 text-nebula-200 hover:border-cosmic-purple hover:text-white" data-manual="binary">
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                                    </svg>
+                                    二进制
+                                </span>
+                            </button>
+                            <button class="manual-method-tab px-6 py-3 rounded-xl font-medium transition-all duration-300 glass border border-nebula-500/30 text-nebula-200 hover:border-cosmic-purple hover:text-white" data-manual="lines">
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5 4a3 3 0 00-3 3v6a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H5zm-1 9v-1h5v2H5a1 1 0 01-1-1zm7 1h4a1 1 0 001-1v-1h-5v2zm0-4h5V8h-5v2zM9 8H4v2h5V8z" clip-rule="evenodd"/>
+                                    </svg>
+                                    逐爻指定
+                                </span>
+                            </button>
+                        </div>
+
+                        <!-- 卦名选择 -->
+                        <div id="hexname-method" class="manual-method active">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-nebula-200 text-sm font-medium mb-3">本卦选择：</label>
+                                    <select id="original-hex" class="w-full px-4 py-3 glass rounded-xl text-white placeholder-nebula-300 border border-nebula-500/30 focus:outline-none focus:ring-2 focus:ring-cosmic-purple focus:border-transparent transition-all duration-300">
+                                        <option value="" class="bg-nebula-800 text-nebula-200">请选择本卦</option>
+                                        <!-- 这里将由JavaScript动态填充64卦选项 -->
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-nebula-200 text-sm font-medium mb-3">变卦选择（可选）：</label>
+                                    <select id="changed-hex" class="w-full px-4 py-3 glass rounded-xl text-white placeholder-nebula-300 border border-nebula-500/30 focus:outline-none focus:ring-2 focus:ring-cosmic-purple focus:border-transparent transition-all duration-300">
+                                        <option value="" class="bg-nebula-800 text-nebula-200">请选择变卦（可选）</option>
+                                        <!-- 这里将由JavaScript动态填充64卦选项 -->
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 数字起卦 -->
+                        <div id="numbers-method" class="manual-method">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label class="block text-nebula-200 text-sm font-medium mb-3">上卦数：</label>
+                                    <input type="number" id="upper-number" min="1" placeholder="任意正整数" class="w-full px-4 py-3 glass rounded-xl text-white placeholder-nebula-300 border border-nebula-500/30 focus:outline-none focus:ring-2 focus:ring-cosmic-purple focus:border-transparent transition-all duration-300" oninput="updateNumberCalculation()">
+                                    <p class="text-nebula-400 text-xs mt-2">输入任意正整数，系统自动取余数计算上卦</p>
+                                </div>
+                                <div>
+                                    <label class="block text-nebula-200 text-sm font-medium mb-3">下卦数：</label>
+                                    <input type="number" id="lower-number" min="1" placeholder="任意正整数" class="w-full px-4 py-3 glass rounded-xl text-white placeholder-nebula-300 border border-nebula-500/30 focus:outline-none focus:ring-2 focus:ring-cosmic-purple focus:border-transparent transition-all duration-300" oninput="updateNumberCalculation()">
+                                    <p class="text-nebula-400 text-xs mt-2">输入任意正整数，系统自动取余数计算下卦</p>
+                                </div>
+                            </div>
+
+                            <!-- 自动计算结果 -->
+                            <div class="glass rounded-xl p-6 border border-cosmic-gold/30 mb-6">
+                                <h4 class="text-cosmic-gold font-semibold mb-4">自动计算结果：</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                    <div class="text-center p-4 glass rounded-lg border border-nebula-500/30">
+                                        <div class="text-nebula-300 text-sm mb-1">上卦</div>
+                                        <div class="text-cosmic-gold font-bold text-lg" id="calc-upper">-</div>
+                                    </div>
+                                    <div class="text-center p-4 glass rounded-lg border border-nebula-500/30">
+                                        <div class="text-nebula-300 text-sm mb-1">下卦</div>
+                                        <div class="text-cosmic-gold font-bold text-lg" id="calc-lower">-</div>
+                                    </div>
+                                    <div class="text-center p-4 glass rounded-lg border border-nebula-500/30">
+                                        <div class="text-nebula-300 text-sm mb-1">动爻</div>
+                                        <div class="text-cosmic-gold font-bold text-lg" id="calc-line">-</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 八卦对照表 -->
+                            <div class="glass rounded-xl p-6 border border-cosmic-cyan/30">
+                                <h4 class="text-cosmic-cyan font-semibold mb-4">八卦数字对照表：</h4>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                                    <div class="flex items-center space-x-2 p-2 glass rounded-lg">
+                                        <span class="w-6 h-6 bg-gradient-to-r from-cosmic-purple to-cosmic-blue rounded-full flex items-center justify-center text-white text-xs font-bold">1</span>
+                                        <span>乾 ☰ (天)</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2 p-2 glass rounded-lg">
+                                        <span class="w-6 h-6 bg-gradient-to-r from-cosmic-purple to-cosmic-blue rounded-full flex items-center justify-center text-white text-xs font-bold">2</span>
+                                        <span>兑 ☱ (泽)</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2 p-2 glass rounded-lg">
+                                        <span class="w-6 h-6 bg-gradient-to-r from-cosmic-purple to-cosmic-blue rounded-full flex items-center justify-center text-white text-xs font-bold">3</span>
+                                        <span>离 ☲ (火)</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2 p-2 glass rounded-lg">
+                                        <span class="w-6 h-6 bg-gradient-to-r from-cosmic-purple to-cosmic-blue rounded-full flex items-center justify-center text-white text-xs font-bold">4</span>
+                                        <span>震 ☳ (雷)</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2 p-2 glass rounded-lg">
+                                        <span class="w-6 h-6 bg-gradient-to-r from-cosmic-purple to-cosmic-blue rounded-full flex items-center justify-center text-white text-xs font-bold">5</span>
+                                        <span>巽 ☴ (风)</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2 p-2 glass rounded-lg">
+                                        <span class="w-6 h-6 bg-gradient-to-r from-cosmic-purple to-cosmic-blue rounded-full flex items-center justify-center text-white text-xs font-bold">6</span>
+                                        <span>坎 ☵ (水)</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2 p-2 glass rounded-lg">
+                                        <span class="w-6 h-6 bg-gradient-to-r from-cosmic-purple to-cosmic-blue rounded-full flex items-center justify-center text-white text-xs font-bold">7</span>
+                                        <span>艮 ☶ (山)</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2 p-2 glass rounded-lg">
+                                        <span class="w-6 h-6 bg-gradient-to-r from-cosmic-purple to-cosmic-blue rounded-full flex items-center justify-center text-white text-xs font-bold">8</span>
+                                        <span>坤 ☷ (地)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 二进制输入 -->
+                        <div id="binary-method" class="manual-method">
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-nebula-200 text-sm font-medium mb-3">二进制卦象：</label>
+                                    <input type="text" id="binary-input" maxlength="6" placeholder="例如：111111（6位二进制，1=阳爻，0=阴爻）" class="w-full px-4 py-3 glass rounded-xl text-white placeholder-nebula-300 border border-nebula-500/30 focus:outline-none focus:ring-2 focus:ring-cosmic-purple focus:border-transparent transition-all duration-300 font-mono text-center text-xl tracking-widest" oninput="validateBinaryInput(this)">
+                                    <p class="text-nebula-400 text-xs mt-2">从上到下：上爻→五爻→四爻→三爻→二爻→初爻</p>
+                                    <div id="binary-preview" class="mt-4 p-4 glass rounded-lg border border-cosmic-cyan/30 hidden">
+                                        <h5 class="text-cosmic-cyan font-semibold mb-3">卦象预览：</h5>
+                                        <div id="binary-lines" class="space-y-2"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-nebula-200 text-sm font-medium mb-3">动爻位置（可选）：</label>
+                                    <input type="text" id="changing-lines-input" placeholder="例如：1,3,6（多个动爻用逗号分隔，留空表示静卦）" class="w-full px-4 py-3 glass rounded-xl text-white placeholder-nebula-300 border border-nebula-500/30 focus:outline-none focus:ring-2 focus:ring-cosmic-purple focus:border-transparent transition-all duration-300">
+                                    <p class="text-nebula-400 text-xs mt-2">1=初爻, 2=二爻, 3=三爻, 4=四爻, 5=五爻, 6=上爻</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 逐爻指定 -->
+                        <div id="lines-method" class="manual-method">
+                            <div class="space-y-4">
+                                <!-- 从上爻到初爻的选择器 -->
+                                <div class="line-selector glass rounded-xl p-4 border border-nebula-500/30" data-line="6">
+                                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                        <span class="text-cosmic-gold font-semibold text-lg flex items-center">
+                                            <span class="w-8 h-8 bg-gradient-to-r from-cosmic-teal to-cosmic-purple rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">6</span>
+                                            上爻：
+                                        </span>
+                                        <select class="line-select flex-1 max-w-xs px-4 py-2 glass rounded-lg text-white border border-nebula-500/30 focus:outline-none focus:ring-2 focus:ring-cosmic-purple focus:border-transparent transition-all duration-300">
+                                            <option value="" class="bg-nebula-800">请选择</option>
+                                            <option value="老阳" class="bg-nebula-800">老阳 ⚊ ○</option>
+                                            <option value="少阳" class="bg-nebula-800">少阳 ⚊</option>
+                                            <option value="少阴" class="bg-nebula-800">少阴 ⚋</option>
+                                            <option value="老阴" class="bg-nebula-800">老阴 ⚋ ×</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- 其他五爻类似... -->
+                                <div class="line-selector glass rounded-xl p-4 border border-nebula-500/30" data-line="5">
+                                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                        <span class="text-cosmic-gold font-semibold text-lg flex items-center">
+                                            <span class="w-8 h-8 bg-gradient-to-r from-cosmic-teal to-cosmic-purple rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">5</span>
+                                            五爻：
+                                        </span>
+                                        <select class="line-select flex-1 max-w-xs px-4 py-2 glass rounded-lg text-white border border-nebula-500/30 focus:outline-none focus:ring-2 focus:ring-cosmic-purple focus:border-transparent transition-all duration-300">
+                                            <option value="" class="bg-nebula-800">请选择</option>
+                                            <option value="老阳" class="bg-nebula-800">老阳 ⚊ ○</option>
+                                            <option value="少阳" class="bg-nebula-800">少阳 ⚊</option>
+                                            <option value="少阴" class="bg-nebula-800">少阴 ⚋</option>
+                                            <option value="老阴" class="bg-nebula-800">老阴 ⚋ ×</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="line-selector glass rounded-xl p-4 border border-nebula-500/30" data-line="4">
+                                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                        <span class="text-cosmic-gold font-semibold text-lg flex items-center">
+                                            <span class="w-8 h-8 bg-gradient-to-r from-cosmic-teal to-cosmic-purple rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">4</span>
+                                            四爻：
+                                        </span>
+                                        <select class="line-select flex-1 max-w-xs px-4 py-2 glass rounded-lg text-white border border-nebula-500/30 focus:outline-none focus:ring-2 focus:ring-cosmic-purple focus:border-transparent transition-all duration-300">
+                                            <option value="" class="bg-nebula-800">请选择</option>
+                                            <option value="老阳" class="bg-nebula-800">老阳 ⚊ ○</option>
+                                            <option value="少阳" class="bg-nebula-800">少阳 ⚊</option>
+                                            <option value="少阴" class="bg-nebula-800">少阴 ⚋</option>
+                                            <option value="老阴" class="bg-nebula-800">老阴 ⚋ ×</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="line-selector glass rounded-xl p-4 border border-nebula-500/30" data-line="3">
+                                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                        <span class="text-cosmic-gold font-semibold text-lg flex items-center">
+                                            <span class="w-8 h-8 bg-gradient-to-r from-cosmic-teal to-cosmic-purple rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">3</span>
+                                            三爻：
+                                        </span>
+                                        <select class="line-select flex-1 max-w-xs px-4 py-2 glass rounded-lg text-white border border-nebula-500/30 focus:outline-none focus:ring-2 focus:ring-cosmic-purple focus:border-transparent transition-all duration-300">
+                                            <option value="" class="bg-nebula-800">请选择</option>
+                                            <option value="老阳" class="bg-nebula-800">老阳 ⚊ ○</option>
+                                            <option value="少阳" class="bg-nebula-800">少阳 ⚊</option>
+                                            <option value="少阴" class="bg-nebula-800">少阴 ⚋</option>
+                                            <option value="老阴" class="bg-nebula-800">老阴 ⚋ ×</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="line-selector glass rounded-xl p-4 border border-nebula-500/30" data-line="2">
+                                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                        <span class="text-cosmic-gold font-semibold text-lg flex items-center">
+                                            <span class="w-8 h-8 bg-gradient-to-r from-cosmic-teal to-cosmic-purple rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">2</span>
+                                            二爻：
+                                        </span>
+                                        <select class="line-select flex-1 max-w-xs px-4 py-2 glass rounded-lg text-white border border-nebula-500/30 focus:outline-none focus:ring-2 focus:ring-cosmic-purple focus:border-transparent transition-all duration-300">
+                                            <option value="" class="bg-nebula-800">请选择</option>
+                                            <option value="老阳" class="bg-nebula-800">老阳 ⚊ ○</option>
+                                            <option value="少阳" class="bg-nebula-800">少阳 ⚊</option>
+                                            <option value="少阴" class="bg-nebula-800">少阴 ⚋</option>
+                                            <option value="老阴" class="bg-nebula-800">老阴 ⚋ ×</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="line-selector glass rounded-xl p-4 border border-nebula-500/30" data-line="1">
+                                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                        <span class="text-cosmic-gold font-semibold text-lg flex items-center">
+                                            <span class="w-8 h-8 bg-gradient-to-r from-cosmic-teal to-cosmic-purple rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">1</span>
+                                            初爻：
+                                        </span>
+                                        <select class="line-select flex-1 max-w-xs px-4 py-2 glass rounded-lg text-white border border-nebula-500/30 focus:outline-none focus:ring-2 focus:ring-cosmic-purple focus:border-transparent transition-all duration-300">
+                                            <option value="" class="bg-nebula-800">请选择</option>
+                                            <option value="老阳" class="bg-nebula-800">老阳 ⚊ ○</option>
+                                            <option value="少阳" class="bg-nebula-800">少阳 ⚊</option>
+                                            <option value="少阴" class="bg-nebula-800">少阴 ⚋</option>
+                                            <option value="老阴" class="bg-nebula-800">老阴 ⚋ ×</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 计算按钮 -->
+                <div class="text-center animate-fade-in-up" style="animation-delay: 0.6s">
+                    <button
+                        id="calculate-btn"
+                        class="px-12 py-4 bg-gradient-to-r from-cosmic-purple via-cosmic-blue to-cosmic-teal rounded-2xl font-bold text-lg shadow-cosmic hover:shadow-nebula transition-all duration-500 transform hover:scale-105 animate-cosmic-pulse"
+                        onclick="calculateDivination()"
+                    >
+                        <span class="flex items-center justify-center">
+                            <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            开始排盘
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 右侧：排盘结果展示 -->
+            <div class="lg:col-span-1">
+                <div class="sticky top-8 space-y-6">
+                    <!-- 排盘结果卡片 -->
+                    <div class="glass-strong rounded-3xl p-6 shadow-nebula animate-slide-in-right" style="animation-delay: 0.3s">
+                        <h2 class="text-2xl font-bold mb-6 text-cosmic-gold flex items-center">
+                            <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2h8a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 1a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+                            </svg>
+                            排盘结果
+                        </h2>
+
+                        <div id="result-container" class="text-center">
+                            <div class="glass rounded-2xl p-8 border border-nebula-500/30">
+                                <svg class="w-16 h-16 mx-auto text-nebula-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                </svg>
+                                <p class="text-nebula-300">请选择起卦方式并完成设置</p>
+                                <p class="text-nebula-400 text-sm mt-2">排盘结果将在此显示</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 操作面板 -->
+                    <div class="glass-strong rounded-3xl p-6 shadow-glow animate-slide-in-right" style="animation-delay: 0.5s">
+                        <h3 class="text-xl font-bold mb-4 text-cosmic-cyan">操作面板</h3>
+                        <div class="space-y-3">
+                            <button class="w-full px-4 py-3 glass rounded-xl border border-cosmic-purple/30 hover:border-cosmic-purple hover:shadow-glow transition-all duration-300 flex items-center justify-center">
+                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                </svg>
+                                导出JSON
+                            </button>
+                            <button class="w-full px-4 py-3 glass rounded-xl border border-cosmic-pink/30 hover:border-cosmic-pink hover:shadow-glow transition-all duration-300 flex items-center justify-center">
+                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+                                </svg>
+                                导出图片
+                            </button>
+                            <button class="w-full px-4 py-3 glass rounded-xl border border-cosmic-teal/30 hover:border-cosmic-teal hover:shadow-glow transition-all duration-300 flex items-center justify-center">
+                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
+                                </svg>
+                                复制结果
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局状态变量
+        let currentMethod = 'time';
+        let currentManualMethod = 'hexname';
+        let coinResults = {};
+
+        // 六十四卦基础数据
+        const HEXAGRAMS = {
+            '111111': { name: '乾为天', number: 1, shiYing: [6, 3] },
+            '000000': { name: '坤为地', number: 2, shiYing: [6, 3] },
+            '100010': { name: '水雷屯', number: 3, shiYing: [4, 1] },
+            '010001': { name: '山水蒙', number: 4, shiYing: [3, 6] },
+            '111010': { name: '水天需', number: 5, shiYing: [5, 2] },
+            '010111': { name: '天水讼', number: 6, shiYing: [2, 5] },
+            '010000': { name: '地水师', number: 7, shiYing: [4, 1] },
+            '000010': { name: '水地比', number: 8, shiYing: [1, 4] },
+            '111011': { name: '风天小畜', number: 9, shiYing: [6, 3] },
+            '110111': { name: '天泽履', number: 10, shiYing: [3, 6] },
+            '111000': { name: '地天泰', number: 11, shiYing: [5, 2] },
+            '000111': { name: '天地否', number: 12, shiYing: [2, 5] },
+            '101111': { name: '天火同人', number: 13, shiYing: [4, 1] },
+            '111101': { name: '火天大有', number: 14, shiYing: [1, 4] },
+            '001000': { name: '地山谦', number: 15, shiYing: [6, 3] },
+            '000100': { name: '雷地豫', number: 16, shiYing: [3, 6] },
+            '100110': { name: '泽雷随', number: 17, shiYing: [5, 2] },
+            '011001': { name: '山风蛊', number: 18, shiYing: [2, 5] },
+            '110000': { name: '地泽临', number: 19, shiYing: [4, 1] },
+            '000011': { name: '风地观', number: 20, shiYing: [1, 4] },
+            '100101': { name: '火雷噬嗑', number: 21, shiYing: [6, 3] },
+            '101001': { name: '山火贲', number: 22, shiYing: [3, 6] },
+            '000001': { name: '山地剥', number: 23, shiYing: [5, 2] },
+            '100000': { name: '地雷复', number: 24, shiYing: [2, 5] },
+            '100111': { name: '天雷无妄', number: 25, shiYing: [4, 1] },
+            '111001': { name: '山天大畜', number: 26, shiYing: [1, 4] },
+            '100001': { name: '山雷颐', number: 27, shiYing: [6, 3] },
+            '011110': { name: '泽风大过', number: 28, shiYing: [3, 6] },
+            '010010': { name: '坎为水', number: 29, shiYing: [5, 2] },
+            '101101': { name: '离为火', number: 30, shiYing: [2, 5] },
+            '001110': { name: '泽山咸', number: 31, shiYing: [4, 1] },
+            '011100': { name: '雷风恒', number: 32, shiYing: [1, 4] },
+            '001111': { name: '天山遁', number: 33, shiYing: [6, 3] },
+            '111100': { name: '雷天大壮', number: 34, shiYing: [3, 6] },
+            '000101': { name: '火地晋', number: 35, shiYing: [5, 2] },
+            '101000': { name: '地火明夷', number: 36, shiYing: [2, 5] },
+            '101011': { name: '风火家人', number: 37, shiYing: [4, 1] },
+            '110101': { name: '火泽睽', number: 38, shiYing: [1, 4] },
+            '001010': { name: '水山蹇', number: 39, shiYing: [6, 3] },
+            '010100': { name: '雷水解', number: 40, shiYing: [3, 6] },
+            '110001': { name: '山泽损', number: 41, shiYing: [5, 2] },
+            '100011': { name: '风雷益', number: 42, shiYing: [2, 5] },
+            '111110': { name: '泽天夬', number: 43, shiYing: [4, 1] },
+            '011111': { name: '天风姤', number: 44, shiYing: [1, 4] },
+            '000110': { name: '泽地萃', number: 45, shiYing: [6, 3] },
+            '011000': { name: '地风升', number: 46, shiYing: [3, 6] },
+            '010110': { name: '泽水困', number: 47, shiYing: [5, 2] },
+            '011010': { name: '水风井', number: 48, shiYing: [2, 5] },
+            '101110': { name: '泽火革', number: 49, shiYing: [4, 1] },
+            '011101': { name: '火风鼎', number: 50, shiYing: [1, 4] },
+            '100100': { name: '震为雷', number: 51, shiYing: [6, 3] },
+            '001001': { name: '艮为山', number: 52, shiYing: [3, 6] },
+            '001011': { name: '风山渐', number: 53, shiYing: [5, 2] },
+            '110100': { name: '雷泽归妹', number: 54, shiYing: [2, 5] },
+            '101100': { name: '雷火丰', number: 55, shiYing: [4, 1] },
+            '001101': { name: '火山旅', number: 56, shiYing: [1, 4] },
+            '011011': { name: '巽为风', number: 57, shiYing: [6, 3] },
+            '110110': { name: '兑为泽', number: 58, shiYing: [3, 6] },
+            '010011': { name: '风水涣', number: 59, shiYing: [5, 2] },
+            '110010': { name: '水泽节', number: 60, shiYing: [2, 5] },
+            '110011': { name: '风泽中孚', number: 61, shiYing: [4, 1] },
+            '001100': { name: '雷山小过', number: 62, shiYing: [1, 4] },
+            '101010': { name: '水火既济', number: 63, shiYing: [6, 3] },
+            '010101': { name: '火水未济', number: 64, shiYing: [3, 6] }
+        };
+
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            document.getElementById('date').value = now.toISOString().split('T')[0];
+            document.getElementById('time').value = now.toTimeString().slice(0, 5);
+
+            // 初始化界面功能
+            initializeTabs();
+            initializeManualTabs();
+            populateHexagramSelects();
+            initializeLineSelectors();
+            addVisualEffects();
+            handleResponsiveChanges(); // 初始化响应式设置
+        });
+
+        // 初始化主标签页功能
+        function initializeTabs() {
+            const tabs = document.querySelectorAll('.method-tab');
+            const contents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // 移除所有活动状态
+                    tabs.forEach(t => {
+                        t.classList.remove('active', 'text-cosmic-purple', 'bg-nebula-600/50', 'shadow-glow');
+                        t.classList.add('text-nebula-400');
+                    });
+                    contents.forEach(c => c.classList.remove('active'));
+
+                    // 激活当前标签
+                    this.classList.add('active', 'text-cosmic-purple', 'bg-nebula-600/50', 'shadow-glow');
+                    this.classList.remove('text-nebula-400');
+
+                    const method = this.dataset.method;
+                    document.getElementById(method + '-content').classList.add('active');
+                    currentMethod = method;
+                });
+            });
+        }
+
+        // 初始化手动指定子标签页
+        function initializeManualTabs() {
+            const manualTabs = document.querySelectorAll('.manual-method-tab');
+            const manualMethods = document.querySelectorAll('.manual-method');
+
+            manualTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // 移除所有活动状态
+                    manualTabs.forEach(t => {
+                        t.classList.remove('active', 'bg-gradient-to-r', 'from-cosmic-purple', 'to-cosmic-blue', 'shadow-cosmic');
+                        t.classList.add('glass', 'border', 'border-nebula-500/30', 'text-nebula-200', 'hover:border-cosmic-purple', 'hover:text-white');
+                    });
+                    manualMethods.forEach(m => m.classList.remove('active'));
+
+                    // 激活当前标签
+                    this.classList.add('active', 'bg-gradient-to-r', 'from-cosmic-purple', 'to-cosmic-blue', 'text-white', 'shadow-cosmic');
+                    this.classList.remove('glass', 'border', 'border-nebula-500/30', 'text-nebula-200', 'hover:border-cosmic-purple', 'hover:text-white');
+
+                    const manual = this.dataset.manual;
+                    document.getElementById(manual + '-method').classList.add('active');
+                    currentManualMethod = manual;
+                });
+            });
+        }
+
+        // 填充64卦选择器
+        function populateHexagramSelects() {
+            const originalSelect = document.getElementById('original-hex');
+            const changedSelect = document.getElementById('changed-hex');
+
+            // 按卦序号排序
+            const sortedHexagrams = Object.entries(HEXAGRAMS)
+                .sort(([,a], [,b]) => a.number - b.number);
+
+            sortedHexagrams.forEach(([binary, hex]) => {
+                const option1 = new Option(`${hex.number}. ${hex.name}`, binary);
+                const option2 = new Option(`${hex.number}. ${hex.name}`, binary);
+                originalSelect.appendChild(option1);
+                changedSelect.appendChild(option2);
+            });
+        }
+
+        // 铜钱起卦结果设置
+        function setCoinResult(line, result) {
+            coinResults[line] = result;
+            const resultElement = document.getElementById(`coin-result-${line}`);
+            const buttons = document.querySelector(`[data-line="${line}"] .coin-btn`);
+
+            // 清除所有按钮的活动状态
+            document.querySelectorAll(`[data-line="${line}"] .coin-btn`).forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-cosmic-gold', 'scale-110', 'shadow-cosmic');
+            });
+
+            // 激活选中的按钮
+            event.target.classList.add('ring-2', 'ring-cosmic-gold', 'scale-110', 'shadow-cosmic');
+
+            // 设置结果显示
+            resultElement.innerHTML = `<span class="text-cosmic-gold font-bold">${result}</span>`;
+
+            // 添加完成效果
+            const throwElement = document.querySelector(`[data-line="${line}"]`);
+            throwElement.classList.add('border-cosmic-gold/50', 'shadow-glow');
+            throwElement.classList.remove('border-nebula-500/30');
+        }
+
+        // 时间起卦算法
+        function timeToHexagram(date, time) {
+            const dateObj = new Date(`${date}T${time}`);
+            const year = dateObj.getFullYear();
+            const month = dateObj.getMonth() + 1;
+            const day = dateObj.getDate();
+            const hour = dateObj.getHours();
+
+            // 梅花易数时间起卦法
+            const upperGua = (year + month + day) % 8 || 8;
+            const lowerGua = (year + month + day + hour) % 8 || 8;
+            const changingLine = ((year + month + day + hour - 1) % 6) + 1;
+
+            return { upperGua, lowerGua, changingLine };
+        }
+
+        // 八卦数字转二进制
+        function guaNumberToBinary(guaNum) {
+            const guaMap = {
+                1: '111', 2: '110', 3: '101', 4: '100',
+                5: '011', 6: '010', 7: '001', 8: '000'
+            };
+            return guaMap[guaNum] || '000';
+        }
+
+        // 数字起卦实时计算
+        function updateNumberCalculation() {
+            const upperNumber = parseInt(document.getElementById('upper-number').value);
+            const lowerNumber = parseInt(document.getElementById('lower-number').value);
+
+            const guaNames = {
+                1: '乾', 2: '兑', 3: '离', 4: '震',
+                5: '巽', 6: '坎', 7: '艮', 8: '坤'
+            };
+
+            if (upperNumber && lowerNumber && upperNumber > 0 && lowerNumber > 0) {
+                const upperGuaNum = (upperNumber % 8) || 8;
+                const lowerGuaNum = (lowerNumber % 8) || 8;
+                const changingLineNum = ((upperNumber + lowerNumber - 1) % 6) + 1;
+
+                document.getElementById('calc-upper').textContent = `${upperGuaNum} ${guaNames[upperGuaNum]}`;
+                document.getElementById('calc-lower').textContent = `${lowerGuaNum} ${guaNames[lowerGuaNum]}`;
+                document.getElementById('calc-line').textContent = `第${changingLineNum}爻`;
+            } else {
+                document.getElementById('calc-upper').textContent = '-';
+                document.getElementById('calc-lower').textContent = '-';
+                document.getElementById('calc-line').textContent = '-';
+            }
+        }
+
+        // 主要计算函数
+        function calculateDivination() {
+            let originalHex, changedHex, changingLines = [];
+
+            try {
+                if (currentMethod === 'time') {
+                    // 时间起卦
+                    const date = document.getElementById('date').value;
+                    const time = document.getElementById('time').value;
+
+                    if (!date || !time) {
+                        throw new Error('请选择起卦日期和时间');
+                    }
+
+                    const { upperGua, lowerGua, changingLine } = timeToHexagram(date, time);
+                    originalHex = guaNumberToBinary(upperGua) + guaNumberToBinary(lowerGua);
+
+                    // 生成变卦
+                    let changedBinary = originalHex.split('');
+                    const arrayIndex = 6 - changingLine;
+                    changedBinary[arrayIndex] = changedBinary[arrayIndex] === '1' ? '0' : '1';
+                    changedHex = changedBinary.join('');
+                    changingLines = [changingLine];
+
+                } else if (currentMethod === 'coins') {
+                    // 铜钱起卦
+                    if (Object.keys(coinResults).length !== 6) {
+                        const missingLines = [];
+                        for (let i = 1; i <= 6; i++) {
+                            if (!coinResults[i]) {
+                                missingLines.push(['初爻', '二爻', '三爻', '四爻', '五爻', '上爻'][i-1]);
+                            }
+                        }
+                        throw new Error(`请完成以下爻位的摇卦：${missingLines.join('、')}`);
+                    }
+
+                    let originalBinary = '';
+                    let changedBinary = '';
+
+                    for (let i = 6; i >= 1; i--) {
+                        const result = coinResults[i];
+                        if (result === '老阳') {
+                            originalBinary += '1';
+                            changedBinary += '0';
+                            changingLines.push(i);
+                        } else if (result === '少阳') {
+                            originalBinary += '1';
+                            changedBinary += '1';
+                        } else if (result === '少阴') {
+                            originalBinary += '0';
+                            changedBinary += '0';
+                        } else if (result === '老阴') {
+                            originalBinary += '0';
+                            changedBinary += '1';
+                            changingLines.push(i);
+                        }
+                    }
+
+                    originalHex = originalBinary;
+                    changedHex = changedBinary;
+
+                } else if (currentMethod === 'manual') {
+                    // 手动指定
+                    if (currentManualMethod === 'hexname') {
+                        originalHex = document.getElementById('original-hex').value;
+                        changedHex = document.getElementById('changed-hex').value || originalHex;
+                        if (!originalHex) {
+                            throw new Error('请选择本卦');
+                        }
+                    } else if (currentManualMethod === 'numbers') {
+                        // 数字起卦
+                        const upperNumber = parseInt(document.getElementById('upper-number').value);
+                        const lowerNumber = parseInt(document.getElementById('lower-number').value);
+
+                        if (!upperNumber || !lowerNumber || upperNumber <= 0 || lowerNumber <= 0) {
+                            throw new Error('请输入有效的上卦数和下卦数');
+                        }
+
+                        const upperGuaNum = (upperNumber % 8) || 8;
+                        const lowerGuaNum = (lowerNumber % 8) || 8;
+                        const changingLineNum = ((upperNumber + lowerNumber - 1) % 6) + 1;
+
+                        originalHex = guaNumberToBinary(upperGuaNum) + guaNumberToBinary(lowerGuaNum);
+
+                        // 生成变卦
+                        let changedBinary = originalHex.split('');
+                        const arrayIndex = 6 - changingLineNum;
+                        changedBinary[arrayIndex] = changedBinary[arrayIndex] === '1' ? '0' : '1';
+                        changedHex = changedBinary.join('');
+                        changingLines = [changingLineNum];
+
+                    } else if (currentManualMethod === 'binary') {
+                        // 二进制输入
+                        const binaryInput = document.getElementById('binary-input').value;
+                        const changingLinesInput = document.getElementById('changing-lines-input').value;
+
+                        if (!binaryInput || !/^[01]{6}$/.test(binaryInput)) {
+                            throw new Error('请输入6位二进制数字（只能包含0和1）');
+                        }
+
+                        originalHex = binaryInput;
+                        changedHex = originalHex; // 默认无变化
+
+                        if (changingLinesInput.trim()) {
+                            changingLines = changingLinesInput.split(',').map(n => parseInt(n.trim())).filter(n => n >= 1 && n <= 6);
+
+                            // 生成变卦
+                            let changedBinary = originalHex.split('');
+                            changingLines.forEach(line => {
+                                const arrayIndex = 6 - line;
+                                changedBinary[arrayIndex] = changedBinary[arrayIndex] === '1' ? '0' : '1';
+                            });
+                            changedHex = changedBinary.join('');
+                        }
+
+                    } else if (currentManualMethod === 'lines') {
+                        // 逐爻指定
+                        const lineSelects = document.querySelectorAll('.line-select');
+                        let originalBinary = '';
+                        let changedBinary = '';
+
+                        for (let i = 0; i < 6; i++) {
+                            const select = lineSelects[i];
+                            const value = select.value;
+
+                            if (!value) {
+                                throw new Error(`请选择第${6-i}爻的阴阳状态`);
+                            }
+
+                            if (value === '老阳') {
+                                originalBinary += '1';
+                                changedBinary += '0';
+                                changingLines.push(6 - i);
+                            } else if (value === '少阳') {
+                                originalBinary += '1';
+                                changedBinary += '1';
+                            } else if (value === '少阴') {
+                                originalBinary += '0';
+                                changedBinary += '0';
+                            } else if (value === '老阴') {
+                                originalBinary += '0';
+                                changedBinary += '1';
+                                changingLines.push(6 - i);
+                            }
+                        }
+
+                        originalHex = originalBinary;
+                        changedHex = changedBinary;
+                }
+
+                displayResult(originalHex, changedHex, changingLines);
+
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        // 显示结果
+        function displayResult(originalHex, changedHex, changingLines) {
+            const originalHexInfo = HEXAGRAMS[originalHex];
+            const changedHexInfo = HEXAGRAMS[changedHex];
+
+            if (!originalHexInfo) {
+                showError('卦象数据错误');
+                return;
+            }
+
+            const container = document.getElementById('result-container');
+            const hasChanges = changedHex !== originalHex && changingLines.length > 0;
+
+            container.innerHTML = `
+                <div class="space-y-6 animate-fade-in-up">
+                    <!-- 卦名标题区域 -->
+                    <div class="text-center relative">
+                        <div class="absolute inset-0 bg-gradient-to-r from-cosmic-purple/20 via-cosmic-blue/20 to-cosmic-teal/20 rounded-2xl blur-xl"></div>
+                        <div class="relative bg-glass border border-cosmic-purple/30 rounded-2xl p-6">
+                            <h3 class="text-4xl font-bold text-cosmic-gold mb-3 text-glow animate-pulse">
+                                ${originalHexInfo.name}
+                            </h3>
+                            <div class="text-lg text-nebula-200 mb-2">
+                                第${originalHexInfo.number}卦
+                            </div>
+                            ${hasChanges ? `
+                                <div class="flex items-center justify-center space-x-4 mt-4">
+                                    <span class="px-4 py-2 bg-gradient-to-r from-cosmic-purple to-cosmic-blue rounded-full text-white text-sm font-medium">
+                                        本卦：${originalHexInfo.name}
+                                    </span>
+                                    <svg class="w-6 h-6 text-cosmic-gold animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span class="px-4 py-2 bg-gradient-to-r from-cosmic-teal to-cosmic-pink rounded-full text-white text-sm font-medium">
+                                        变卦：${changedHexInfo.name}
+                                    </span>
+                                </div>
+                            ` : `
+                                <div class="px-4 py-2 bg-gradient-to-r from-cosmic-cyan/20 to-cosmic-teal/20 rounded-full border border-cosmic-cyan/30 text-cosmic-cyan text-sm font-medium inline-block">
+                                    静卦无变
+                                </div>
+                            `}
+
+                            ${changingLines.length > 0 ? `
+                                <div class="mt-4 flex flex-wrap justify-center gap-2">
+                                    ${changingLines.map(line => `
+                                        <span class="px-3 py-1 bg-gradient-to-r from-yixue-change/30 to-yellow-500/30 border border-yixue-change/50 rounded-lg text-yixue-change text-xs font-semibold animate-star-twinkle">
+                                            ${['初', '二', '三', '四', '五', '上'][line-1]}爻动
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <!-- 卦象可视化区域 -->
+                    <div class="grid grid-cols-1 ${hasChanges ? 'lg:grid-cols-2' : ''} gap-6">
+                        <!-- 本卦展示 -->
+                        <div class="glass-strong rounded-2xl p-6 shadow-nebula">
+                            <div class="flex items-center justify-between mb-6">
+                                <h4 class="text-xl font-bold text-cosmic-gold flex items-center">
+                                    <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                                        <path fill-rule="evenodd" d="M4 5a2 2 0 012-2h8a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 1a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+                                    </svg>
+                                    本卦结构
+                                </h4>
+                                <div class="text-sm text-nebula-300">
+                                    世爻：第${originalHexInfo.shiYing[0]}爻 | 应爻：第${originalHexInfo.shiYing[1]}爻
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                ${renderEnhancedHexagramLines(originalHex, changingLines, originalHexInfo.shiYing)}
+                            </div>
+                        </div>
+
+                        <!-- 变卦展示（如果有动爻） -->
+                        ${hasChanges ? `
+                            <div class="glass-strong rounded-2xl p-6 shadow-cosmic">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h4 class="text-xl font-bold text-cosmic-pink flex items-center">
+                                        <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+                                        </svg>
+                                        变卦结构
+                                    </h4>
+                                    <div class="text-sm text-nebula-300">
+                                        ${changedHexInfo.name}
+                                    </div>
+                                </div>
+                                <div class="space-y-3">
+                                    ${renderEnhancedHexagramLines(changedHex, [], changedHexInfo.shiYing, true)}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <!-- 卦象解析信息 -->
+                    <div class="glass-strong rounded-2xl p-6 shadow-glow">
+                        <h4 class="text-xl font-bold text-cosmic-cyan mb-4 flex items-center">
+                            <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                            </svg>
+                            基础信息
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="p-4 glass rounded-xl border border-nebula-500/30 text-center">
+                                <div class="text-cosmic-gold font-semibold mb-1">卦序</div>
+                                <div class="text-2xl font-bold text-white">${originalHexInfo.number}</div>
+                            </div>
+                            <div class="p-4 glass rounded-xl border border-nebula-500/30 text-center">
+                                <div class="text-cosmic-purple font-semibold mb-1">世爻</div>
+                                <div class="text-2xl font-bold text-white">第${originalHexInfo.shiYing[0]}爻</div>
+                            </div>
+                            <div class="p-4 glass rounded-xl border border-nebula-500/30 text-center">
+                                <div class="text-cosmic-teal font-semibold mb-1">应爻</div>
+                                <div class="text-2xl font-bold text-white">第${originalHexInfo.shiYing[1]}爻</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // 添加结果显示动画
+            container.style.opacity = '0';
+            setTimeout(() => {
+                container.style.transition = 'opacity 0.8s ease-out';
+                container.style.opacity = '1';
+            }, 100);
+        }
+
+        // 渲染卦象爻线
+        function renderHexagramLines(hexBinary, changingLines) {
+            let html = '';
+            const lineNames = ['上', '五', '四', '三', '二', '初'];
+
+            for (let i = 0; i < 6; i++) {
+                const isYang = hexBinary[i] === '1';
+                const lineIndex = 6 - i;
+                const isChanging = changingLines.includes(lineIndex);
+
+                const lineClass = isYang ? 'bg-gradient-to-r from-yixue-yang to-red-500' : 'bg-gradient-to-r from-yixue-yin to-teal-500';
+                const changingClass = isChanging ? 'ring-2 ring-yixue-change animate-pulse' : '';
+
+                html += `
+                    <div class="flex items-center space-x-4">
+                        <span class="text-cosmic-gold font-semibold w-8">${lineNames[i]}爻</span>
+                        <div class="${lineClass} ${changingClass} rounded-lg px-6 py-3 text-white font-bold text-center flex-1 transition-all duration-300">
+                            ${isYang ? '━━━━━' : '━━  ━━'}
+                            ${isChanging ? ' ○' : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            return html;
+        }
+
+        // 增强的卦象爻线渲染（带世应标记）
+        function renderEnhancedHexagramLines(hexBinary, changingLines, shiYing, isChanged = false) {
+            let html = '';
+            const lineNames = ['上', '五', '四', '三', '二', '初'];
+            const [shiPos, yingPos] = shiYing;
+
+            for (let i = 0; i < 6; i++) {
+                const isYang = hexBinary[i] === '1';
+                const lineIndex = 6 - i;
+                const isChanging = changingLines.includes(lineIndex);
+                const isShi = lineIndex === shiPos;
+                const isYing = lineIndex === yingPos;
+
+                let lineClass = isYang ?
+                    'bg-gradient-to-r from-yixue-yang to-red-500' :
+                    'bg-gradient-to-r from-yixue-yin to-teal-500';
+
+                let containerClass = 'relative group hover:scale-105 transition-all duration-300';
+                let labelClass = '';
+
+                if (isChanged) {
+                    lineClass = isYang ?
+                        'bg-gradient-to-r from-cosmic-pink to-pink-500' :
+                        'bg-gradient-to-r from-cosmic-cyan to-cyan-500';
+                }
+
+                if (isChanging && !isChanged) {
+                    containerClass += ' ring-2 ring-yixue-change/50 animate-cosmic-pulse shadow-glow';
+                }
+
+                if (isShi) {
+                    labelClass = 'absolute -right-12 top-1/2 transform -translate-y-1/2 text-yixue-world bg-yixue-world/20 border border-yixue-world/50 px-2 py-1 rounded text-xs font-bold';
+                } else if (isYing) {
+                    labelClass = 'absolute -right-12 top-1/2 transform -translate-y-1/2 text-yixue-response bg-yixue-response/20 border border-yixue-response/50 px-2 py-1 rounded text-xs font-bold';
+                }
+
+                html += `
+                    <div class="${containerClass}">
+                        <div class="flex items-center space-x-4">
+                            <span class="text-cosmic-gold font-semibold w-12 text-right">${lineNames[i]}爻</span>
+                            <div class="relative flex-1">
+                                <div class="${lineClass} rounded-lg px-8 py-4 text-white font-bold text-center text-lg tracking-widest shadow-lg">
+                                    ${isYang ? '━━━━━━━' : '━━━  ━━━'}
+                                    ${isChanging && !isChanged ? `
+                                        <span class="absolute -top-2 -right-2 w-6 h-6 bg-yixue-change text-white rounded-full flex items-center justify-center text-xs font-bold animate-pulse shadow-cosmic">
+                                            ○
+                                        </span>
+                                    ` : ''}
+                                </div>
+                                ${(isShi || isYing) ? `
+                                    <div class="${labelClass}">
+                                        ${isShi ? '世' : '应'}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <!-- 爻辞提示（悬停显示） -->
+                        <div class="absolute left-0 -bottom-16 w-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                            <div class="bg-nebula-800/90 backdrop-blur-sm border border-cosmic-purple/30 rounded-lg p-3 text-xs text-nebula-200">
+                                <div class="font-semibold text-cosmic-gold mb-1">${lineNames[i]}爻 (${lineIndex})</div>
+                                <div>${isYang ? '阳爻' : '阴爻'}${isChanging ? ' · 动爻' : ''}${isShi ? ' · 世爻' : isYing ? ' · 应爻' : ''}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            return html;
+        }
+
+        // 错误提示
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-xl shadow-cosmic z-50 animate-slide-in-right';
+            errorDiv.textContent = message;
+
+            document.body.appendChild(errorDiv);
+
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 3000);
+        }
+
+        // 添加视觉效果
+        function addVisualEffects() {
+            // 检测是否为移动设备
+            const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+            if (!isMobile) {
+                // 桌面端：鼠标跟随星光效果
+                document.addEventListener('mousemove', function(e) {
+                    if (Math.random() > 0.9) { // 降低频率
+                        createStar(e.clientX, e.clientY);
+                    }
+                });
+            } else {
+                // 移动端：触摸时创建星光
+                document.addEventListener('touchstart', function(e) {
+                    const touch = e.touches[0];
+                    if (Math.random() > 0.7) { // 移动端频率更低
+                        createStar(touch.clientX, touch.clientY);
+                    }
+                });
+
+                // 移动端：定期创建随机星光
+                setInterval(() => {
+                    if (Math.random() > 0.8) {
+                        const x = Math.random() * window.innerWidth;
+                        const y = Math.random() * window.innerHeight;
+                        createStar(x, y);
+                    }
+                }, 3000);
+            }
+
+            // 添加屏幕尺寸变化监听
+            window.addEventListener('resize', function() {
+                // 延迟处理以避免频繁触发
+                clearTimeout(window.resizeTimeout);
+                window.resizeTimeout = setTimeout(() => {
+                    handleResponsiveChanges();
+                }, 250);
+            });
+        }
+
+        // 响应式变化处理
+        function handleResponsiveChanges() {
+            const isMobile = window.matchMedia('(max-width: 768px)').matches;
+            const nebulOrbs = document.querySelectorAll('.nebula-orb');
+
+            if (isMobile) {
+                // 移动端隐藏或简化某些效果
+                nebulOrbs.forEach(orb => {
+                    orb.style.display = 'none';
+                });
+            } else {
+                // 桌面端恢复效果
+                nebulOrbs.forEach(orb => {
+                    orb.style.display = 'block';
+                });
+            }
+        }
+
+        // 创建星光效果
+        function createStar(x, y) {
+            const star = document.createElement('div');
+            star.className = 'absolute w-1 h-1 bg-white rounded-full pointer-events-none animate-star-twinkle';
+            star.style.left = x + 'px';
+            star.style.top = y + 'px';
+            star.style.zIndex = '1000';
+            document.body.appendChild(star);
+
+            setTimeout(() => {
+                star.remove();
+            }, 1000);
+        }
+
+        // 二进制输入验证和预览
+        function validateBinaryInput(input) {
+            const value = input.value;
+            const preview = document.getElementById('binary-preview');
+            const linesContainer = document.getElementById('binary-lines');
+
+            // 只允许0和1
+            input.value = value.replace(/[^01]/g, '');
+
+            if (input.value.length === 6) {
+                // 显示预览
+                preview.classList.remove('hidden');
+                linesContainer.innerHTML = '';
+
+                const lineNames = ['上', '五', '四', '三', '二', '初'];
+                for (let i = 0; i < 6; i++) {
+                    const isYang = input.value[i] === '1';
+                    const lineDiv = document.createElement('div');
+                    lineDiv.className = 'flex items-center space-x-4';
+
+                    const lineClass = isYang ? 'bg-gradient-to-r from-yixue-yang to-red-500' : 'bg-gradient-to-r from-yixue-yin to-teal-500';
+
+                    lineDiv.innerHTML = `
+                        <span class="text-cosmic-gold font-semibold w-8">${lineNames[i]}爻</span>
+                        <div class="${lineClass} rounded-lg px-6 py-2 text-white font-bold text-center flex-1">
+                            ${isYang ? '━━━━━' : '━━  ━━'}
+                        </div>
+                    `;
+                    linesContainer.appendChild(lineDiv);
+                }
+            } else {
+                preview.classList.add('hidden');
+            }
+        }
+
+        // 逐爻指定变化监听
+        function initializeLineSelectors() {
+            const lineSelects = document.querySelectorAll('.line-select');
+            lineSelects.forEach(select => {
+                select.addEventListener('change', function() {
+                    updateLinePreview();
+                });
+            });
+        }
+
+        function updateLinePreview() {
+            // 可以添加实时预览功能
+            console.log('Line selectors updated');
+        }
+
+        // 日期验证
+        function validateDateInput() {
+            const dateInput = document.getElementById('date');
+            const feedback = document.getElementById('date-feedback');
+            const selectedDate = new Date(dateInput.value);
+            const today = new Date();
+            const minDate = new Date('1900-01-01');
+
+            feedback.classList.add('hidden');
+            dateInput.classList.remove('border-red-500', 'border-green-500');
+
+            if (selectedDate < minDate) {
+                showInputError(feedback, '请选择1900年以后的日期');
+                dateInput.classList.add('border-red-500');
+            } else if (selectedDate > today) {
+                showInputWarning(feedback, '您选择的是未来日期');
+                dateInput.classList.add('border-yellow-500');
+            } else {
+                showInputSuccess(feedback, '日期有效');
+                dateInput.classList.add('border-green-500');
+            }
+        }
+
+        // 时间验证
+        function validateTimeInput() {
+            const timeInput = document.getElementById('time');
+            const feedback = document.getElementById('time-feedback');
+
+            if (timeInput.value) {
+                showInputSuccess(feedback, '时间有效');
+                timeInput.classList.remove('border-red-500');
+                timeInput.classList.add('border-green-500');
+            }
+        }
+
+        // 显示输入错误
+        function showInputError(element, message) {
+            element.textContent = message;
+            element.className = 'mt-2 text-sm text-red-400 flex items-center';
+            element.innerHTML = `
+                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+                ${message}
+            `;
+            element.classList.remove('hidden');
+        }
+
+        // 显示输入警告
+        function showInputWarning(element, message) {
+            element.textContent = message;
+            element.className = 'mt-2 text-sm text-yellow-400 flex items-center';
+            element.innerHTML = `
+                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+                ${message}
+            `;
+            element.classList.remove('hidden');
+        }
+
+        // 显示输入成功
+        function showInputSuccess(element, message) {
+            element.textContent = message;
+            element.className = 'mt-2 text-sm text-green-400 flex items-center';
+            element.innerHTML = `
+                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                ${message}
+            `;
+            element.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
