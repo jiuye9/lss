@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六爻排盘功能测试</title>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-result {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .success { border-left: 4px solid #4CAF50; }
+        .error { border-left: 4px solid #f44336; }
+        .info { border-left: 4px solid #2196F3; }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>六爻排盘功能测试</h1>
+    <div id="test-results"></div>
+
+    <script>
+        // 测试用的简化数据结构
+        const HEXAGRAMS_FULL_DATA = [
+            {"palace":"乾宫","index":1,"symbol":"䷀","name":"乾为天","element":"金","six_relations":["子孙子水","妻财寅木","父母辰土","官鬼午火","兄弟申金","父母戌土"],"world_line":6,"peer_line":3,"hidden_god_rule":"无伏（本宫纯卦）","binary":"111111"},
+            {"palace":"乾宫","index":2,"symbol":"䷫","name":"天风姤","element":"金","six_relations":["父母丑土","子孙亥水","兄弟酉金","官鬼午火","父母辰土","兄弟申金"],"world_line":1,"peer_line":4,"hidden_god_rule":"伏子孙子水","binary":"111110"},
+            {"palace":"坤宫","index":8,"symbol":"䷁","name":"水地比","element":"土","six_relations":["子孙癸水","妻财卯木","兄弟辰土","父母丑土","妻财卯木","兄弟未土"],"world_line":3,"peer_line":6,"hidden_god_rule":"归魂，伏官鬼巳火","binary":"010000"}
+        ];
+
+        const SHENSHA_DATA = [
+            {
+                "name": "天乙贵人",
+                "type": "贵人",
+                "description": "最尊贵之吉神，主逢凶化吉、遇难成祥、得人扶持",
+                "method": "以日干查地支",
+                "rules": [
+                    {"day_gan": "甲", "branches": ["丑", "未"]},
+                    {"day_gan": "乙", "branches": ["子", "申"]},
+                    {"day_gan": "丙", "branches": ["亥", "酉"]}
+                ]
+            },
+            {
+                "name": "驿马",
+                "type": "动态",
+                "description": "主奔波、迁移、变动、外出之象",
+                "method": "以年支或日支查地支",
+                "rules": [
+                    {"trunk": "申子辰", "branches": ["寅"]},
+                    {"trunk": "巳酉丑", "branches": ["亥"]},
+                    {"trunk": "寅午戌", "branches": ["申"]}
+                ]
+            }
+        ];
+
+        // 测试函数定义
+        function calculateHiddenGods(hexBinary) {
+            const hexData = HEXAGRAMS_FULL_DATA.find(h => h.binary === hexBinary);
+            if (!hexData) {
+                return { hiddenGods: [], description: '未找到卦象数据' };
+            }
+
+            const hiddenGodRule = hexData.hidden_god_rule;
+            const hiddenGods = [];
+
+            if (hiddenGodRule.includes('无伏')) {
+                return { hiddenGods: [], description: hiddenGodRule };
+            }
+
+            // 解析伏神规则
+            const matches = hiddenGodRule.match(/伏([^，、]+)/g);
+            if (matches) {
+                matches.forEach(match => {
+                    const hiddenGod = match.replace('伏', '');
+                    hiddenGods.push(hiddenGod);
+                });
+            }
+
+            return { hiddenGods, description: hiddenGodRule };
+        }
+
+        function calculateShenSha(dayGan, dayZhi, yearZhi) {
+            const shenShaResults = [];
+
+            SHENSHA_DATA.forEach(shensha => {
+                let found = false;
+                let matchedBranches = [];
+
+                if (shensha.method === '以日干查地支') {
+                    const rule = shensha.rules.find(r => r.day_gan === dayGan);
+                    if (rule) {
+                        const checkBranches = [dayZhi, yearZhi];
+                        checkBranches.forEach(branch => {
+                            if (rule.branches.includes(branch)) {
+                                found = true;
+                                matchedBranches.push(branch);
+                            }
+                        });
+                    }
+                } else if (shensha.method === '以年支或日支查地支') {
+                    shensha.rules.forEach(rule => {
+                        const trunkBranches = rule.trunk.match(/.{1}/g);
+                        if (trunkBranches.includes(yearZhi) || trunkBranches.includes(dayZhi)) {
+                            rule.branches.forEach(targetBranch => {
+                                if ([dayZhi, yearZhi].includes(targetBranch)) {
+                                    found = true;
+                                    matchedBranches.push(targetBranch);
+                                }
+                            });
+                        }
+                    });
+                }
+
+                if (found) {
+                    shenShaResults.push({
+                        name: shensha.name,
+                        type: shensha.type,
+                        description: shensha.description,
+                        matchedBranches
+                    });
+                }
+            });
+
+            return shenShaResults;
+        }
+
+        // 测试用例
+        function runTests() {
+            const results = [];
+
+            // 测试1：伏神计算
+            console.log('开始测试伏神计算...');
+            try {
+                const hiddenGodsResult1 = calculateHiddenGods('111111'); // 乾为天
+                const hiddenGodsResult2 = calculateHiddenGods('111110'); // 天风姤
+
+                results.push({
+                    test: '伏神计算测试',
+                    status: 'success',
+                    details: {
+                        '乾为天(111111)': hiddenGodsResult1,
+                        '天风姤(111110)': hiddenGodsResult2
+                    }
+                });
+            } catch (error) {
+                results.push({
+                    test: '伏神计算测试',
+                    status: 'error',
+                    error: error.message
+                });
+            }
+
+            // 测试2：神煞计算
+            console.log('开始测试神煞计算...');
+            try {
+                const shenShaResult1 = calculateShenSha('甲', '丑', '子'); // 甲日丑时子年
+                const shenShaResult2 = calculateShenSha('乙', '申', '寅'); // 乙日申时寅年
+
+                results.push({
+                    test: '神煞计算测试',
+                    status: 'success',
+                    details: {
+                        '甲日丑时子年': shenShaResult1,
+                        '乙日申时寅年': shenShaResult2
+                    }
+                });
+            } catch (error) {
+                results.push({
+                    test: '神煞计算测试',
+                    status: 'error',
+                    error: error.message
+                });
+            }
+
+            // 测试3：数据完整性
+            console.log('开始测试数据完整性...');
+            try {
+                const dataIntegrityCheck = {
+                    'HEXAGRAMS_FULL_DATA数量': HEXAGRAMS_FULL_DATA.length,
+                    'SHENSHA_DATA数量': SHENSHA_DATA.length,
+                    '样本卦象数据': HEXAGRAMS_FULL_DATA[0],
+                    '样本神煞数据': SHENSHA_DATA[0]
+                };
+
+                results.push({
+                    test: '数据完整性测试',
+                    status: 'info',
+                    details: dataIntegrityCheck
+                });
+            } catch (error) {
+                results.push({
+                    test: '数据完整性测试',
+                    status: 'error',
+                    error: error.message
+                });
+            }
+
+            return results;
+        }
+
+        // 显示测试结果
+        function displayResults(results) {
+            const container = document.getElementById('test-results');
+
+            results.forEach(result => {
+                const div = document.createElement('div');
+                div.className = `test-result ${result.status}`;
+
+                let html = `<h3>${result.test}</h3>`;
+
+                if (result.status === 'error') {
+                    html += `<p><strong>错误：</strong>${result.error}</p>`;
+                } else {
+                    html += '<pre>' + JSON.stringify(result.details, null, 2) + '</pre>';
+                }
+
+                div.innerHTML = html;
+                container.appendChild(div);
+            });
+        }
+
+        // 执行测试
+        window.onload = function() {
+            const testResults = runTests();
+            displayResults(testResults);
+        };
+    </script>
+</body>
+</html>

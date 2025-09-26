@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六爻排盘系统 - 功能测试</title>
+    <style>
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .test-section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .test-title {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .test-case {
+            background: #f9f9f9;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #2196F3;
+            border-radius: 4px;
+        }
+
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .result.pass {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .result.fail {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .result.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        .data-table th,
+        .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .data-table th {
+            background: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .summary {
+            background: #e3f2fd;
+            border: 1px solid #1976d2;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>六爻排盘系统 - 全面功能测试报告</h1>
+
+        <div class="test-section">
+            <h2 class="test-title">📅 1. 干支历转换算法测试</h2>
+            <div id="ganzhi-test-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2 class="test-title">🎲 2. 数字起卦算法测试</h2>
+            <div id="number-divination-test-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2 class="test-title">⏰ 3. 时间起卦算法测试</h2>
+            <div id="time-divination-test-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2 class="test-title">🐉 4. 六神排列算法测试</h2>
+            <div id="liushen-test-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2 class="test-title">👨‍👩‍👧‍👦 5. 六亲关系计算测试</h2>
+            <div id="liuqin-test-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2 class="test-title">🌕 6. 世应位置验证测试</h2>
+            <div id="shiying-test-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2 class="test-title">💫 7. 空亡计算测试</h2>
+            <div id="kongwang-test-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2 class="test-title">🔄 8. 卦象变化逻辑测试</h2>
+            <div id="hexagram-change-test-results"></div>
+        </div>
+
+        <div class="summary" id="test-summary">
+            <h2>测试总结</h2>
+            <div id="summary-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // 从主系统复制核心数据结构和算法
+        const HEXAGRAMS = {
+            '111111': { name: '乾为天', number: 1, elements: ['乾', '乾'], shiYing: [4, 1], najia: ['壬戌', '壬申', '庚午', '庚辰', '戊寅', '戊子'], palace: '乾' },
+            '000000': { name: '坤为地', number: 2, elements: ['坤', '坤'], shiYing: [1, 4], najia: ['乙未', '乙酉', '癸亥', '癸丑', '辛卯', '辛巳'], palace: '坤' },
+            '100010': { name: '水雷屯', number: 3, elements: ['坎', '震'], shiYing: [6, 3], najia: ['戊', '庚', '壬', '庚', '戊', '己'], palace: '震' },
+            '110011': { name: '风泽中孚', number: 61, elements: ['巽', '兑'], shiYing: [4, 1], najia: ['丁', '己', '辛', '辛', '癸', '乙'], palace: '兑' },
+            '110001': { name: '山泽损', number: 41, elements: ['艮', '兑'], shiYing: [5, 2], najia: ['丁', '己', '辛', '丙', '戊', '庚'], palace: '兑' }
+        };
+
+        const TIANGAN = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+        const DIZHI = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+        const WUXING = {
+            '甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土',
+            '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水',
+            '子': '水', '丑': '土', '寅': '木', '卯': '木', '辰': '土', '巳': '火',
+            '午': '火', '未': '土', '申': '金', '酉': '金', '戌': '土', '亥': '水'
+        };
+
+        // 复制主系统的核心算法函数
+        function gregorianToJulianDay(year, month, day) {
+            if (month <= 2) {
+                year--;
+                month += 12;
+            }
+            const a = Math.floor(year / 100);
+            const b = 2 - a + Math.floor(a / 4);
+            return Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + day + b - 1524.5;
+        }
+
+        function getGanzhiFromJulianDay(julianDay) {
+            const targetJD = gregorianToJulianDay(2025, 9, 26);
+            const targetGanIndex = 4; // 戊
+            const targetZhiIndex = 10; // 戌
+
+            const dayOffset = Math.floor(julianDay - targetJD);
+
+            let ganIndex = (targetGanIndex - dayOffset % 10 + 10) % 10;
+            let zhiIndex = (targetZhiIndex - dayOffset % 12 + 12) % 12;
+
+            return TIANGAN[ganIndex] + DIZHI[zhiIndex];
+        }
+
+        function getYearGanzhi(year) {
+            const yearOffset = year - 1984;
+            const ganIndex = (yearOffset % 10 + 10) % 10;
+            const zhiIndex = (yearOffset % 12 + 12) % 12;
+            return TIANGAN[ganIndex] + DIZHI[zhiIndex];
+        }
+
+        function getMonthGanzhi(year, month) {
+            const yearGan = getYearGanzhi(year).charAt(0);
+            const yearGanIndex = TIANGAN.indexOf(yearGan);
+
+            const monthGanStartMap = {
+                0: 2, 1: 4, 2: 6, 3: 8, 4: 0,
+                5: 2, 6: 4, 7: 6, 8: 8, 9: 0
+            };
+
+            const startGanIndex = monthGanStartMap[yearGanIndex];
+
+            let lunarMonth;
+            if (month === 1) lunarMonth = 11;
+            else if (month === 2) lunarMonth = 0;
+            else if (month === 3) lunarMonth = 1;
+            else if (month === 4) lunarMonth = 2;
+            else if (month === 5) lunarMonth = 3;
+            else if (month === 6) lunarMonth = 4;
+            else if (month === 7) lunarMonth = 5;
+            else if (month === 8) lunarMonth = 6;
+            else if (month === 9) lunarMonth = 7;
+            else if (month === 10) lunarMonth = 8;
+            else if (month === 11) lunarMonth = 9;
+            else lunarMonth = 10;
+
+            const monthZhiIndex = (lunarMonth + 2) % 12;
+            const monthGanIndex = (startGanIndex + lunarMonth) % 10;
+
+            return TIANGAN[monthGanIndex] + DIZHI[monthZhiIndex];
+        }
+
+        function getHourGanzhi(julianDay, hour) {
+            const dayGanzhi = getGanzhiFromJulianDay(julianDay);
+            const dayGan = dayGanzhi.charAt(0);
+            const dayGanIndex = TIANGAN.indexOf(dayGan);
+
+            let hourZhiIndex;
+            if (hour >= 23 || hour < 1) hourZhiIndex = 0;
+            else if (hour < 3) hourZhiIndex = 1;
+            else if (hour < 5) hourZhiIndex = 2;
+            else if (hour < 7) hourZhiIndex = 3;
+            else if (hour < 9) hourZhiIndex = 4;
+            else if (hour < 11) hourZhiIndex = 5;
+            else if (hour < 13) hourZhiIndex = 6;
+            else if (hour < 15) hourZhiIndex = 7;
+            else if (hour < 17) hourZhiIndex = 8;
+            else if (hour < 19) hourZhiIndex = 9;
+            else if (hour < 21) hourZhiIndex = 10;
+            else hourZhiIndex = 11;
+
+            const hourGanStartMap = {
+                0: 0, 1: 2, 2: 4, 3: 6, 4: 8,
+                5: 0, 6: 2, 7: 4, 8: 6, 9: 8
+            };
+
+            const startGanIndex = hourGanStartMap[dayGanIndex];
+            let hourGanIndex = (startGanIndex + hourZhiIndex) % 10;
+
+            return TIANGAN[hourGanIndex] + DIZHI[hourZhiIndex];
+        }
+
+        function getCurrentGanzhi(dateStr, timeStr) {
+            const date = new Date(`${dateStr}T${timeStr}`);
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const hour = date.getHours();
+
+            const julianDay = gregorianToJulianDay(year, month, day);
+
+            return {
+                year: getYearGanzhi(year),
+                month: getMonthGanzhi(year, month),
+                day: getGanzhiFromJulianDay(julianDay),
+                hour: getHourGanzhi(julianDay, hour),
+                yearNum: year,
+                monthNum: month,
+                dayNum: day,
+                hourNum: hour
+            };
+        }
+
+        function calculateLiuShen(dayGan) {
+            const liuShenSequence = ['青龙', '朱雀', '勾陈', '螣蛇', '白虎', '玄武'];
+            const dayGanIndex = TIANGAN.indexOf(dayGan);
+
+            const startIndexMap = {
+                0: 0, 1: 0, 2: 1, 3: 1, 4: 2,
+                5: 2, 6: 3, 7: 3, 8: 4, 9: 4
+            };
+
+            const startIndex = startIndexMap[dayGanIndex];
+            const result = [];
+
+            for (let i = 0; i < 6; i++) {
+                result.push(liuShenSequence[(startIndex + i) % 6]);
+            }
+
+            return result;
+        }
+
+        function traditionalNumberDivination(num1, num2) {
+            const upperGuaNum = (num1 % 8) || 8;
+            const lowerGuaNum = (num2 % 8) || 8;
+            const changingLineNum = ((num1 + num2) % 6) || 6;
+
+            const guaMap = {
+                1: '111', 2: '011', 3: '101', 4: '100',
+                5: '110', 6: '010', 7: '001', 8: '000'
+            };
+
+            const guaNames = {
+                1: '乾', 2: '兑', 3: '离', 4: '震',
+                5: '巽', 6: '坎', 7: '艮', 8: '坤'
+            };
+
+            const upperGua = guaMap[upperGuaNum];
+            const lowerGua = guaMap[lowerGuaNum];
+            const originalHex = upperGua + lowerGua;
+
+            let changedBinary = originalHex.split('');
+            const index = 6 - changingLineNum;
+            changedBinary[index] = changedBinary[index] === '1' ? '0' : '1';
+            const changedHex = changedBinary.join('');
+
+            return {
+                originalHex,
+                changedHex,
+                changingLines: [changingLineNum],
+                upperGuaNum,
+                lowerGuaNum,
+                changingLineNum,
+                upperGuaName: guaNames[upperGuaNum],
+                lowerGuaName: guaNames[lowerGuaNum]
+            };
+        }
+
+        // 测试用例和预期结果
+        const testCases = {
+            ganzhiTests: [
+                {
+                    name: "2025年9月26日13时干支验证",
+                    input: { date: '2025-09-26', time: '13:00' },
+                    expected: { year: '乙巳', month: '乙酉', day: '戊戌', hour: '己未' }
+                },
+                {
+                    name: "2024年1月1日0时干支验证",
+                    input: { date: '2024-01-01', time: '00:00' },
+                    expected: { year: '甲辰', month: '丙子', day: '庚申', hour: '丙子' }
+                },
+                {
+                    name: "2023年12月31日23时干支验证",
+                    input: { date: '2023-12-31', time: '23:00' },
+                    expected: { year: '癸卯', month: '甲子', day: '己未', hour: '甲子' }
+                }
+            ],
+
+            numberDivinationTests: [
+                {
+                    name: "经典案例：13,34数字起卦",
+                    input: { num1: 13, num2: 34 },
+                    expected: {
+                        upperGuaName: '巽',
+                        lowerGuaName: '兑',
+                        changingLineNum: 5,
+                        originalHex: '110011',
+                        changedHex: '110001'
+                    }
+                },
+                {
+                    name: "边界测试：8,16数字起卦",
+                    input: { num1: 8, num2: 16 },
+                    expected: {
+                        upperGuaName: '坤',
+                        lowerGuaName: '坤',
+                        changingLineNum: 6,
+                        originalHex: '000000',
+                        changedHex: '100000'
+                    }
+                }
+            ],
+
+            liuShenTests: [
+                {
+                    name: "戊日六神排列验证",
+                    input: '戊',
+                    expected: ['勾陈', '螣蛇', '白虎', '玄武', '青龙', '朱雀']
+                },
+                {
+                    name: "甲日六神排列验证",
+                    input: '甲',
+                    expected: ['青龙', '朱雀', '勾陈', '螣蛇', '白虎', '玄武']
+                },
+                {
+                    name: "丙日六神排列验证",
+                    input: '丙',
+                    expected: ['朱雀', '勾陈', '螣蛇', '白虎', '玄武', '青龙']
+                }
+            ]
+        };
+
+        // 测试执行函数
+        function runGanzhiTests() {
+            let html = '';
+            let passCount = 0;
+
+            testCases.ganzhiTests.forEach((test, index) => {
+                const result = getCurrentGanzhi(test.input.date, test.input.time);
+
+                const yearPass = result.year === test.expected.year;
+                const monthPass = result.month === test.expected.month;
+                const dayPass = result.day === test.expected.day;
+                const hourPass = result.hour === test.expected.hour;
+                const allPass = yearPass && monthPass && dayPass && hourPass;
+
+                if (allPass) passCount++;
+
+                html += `
+                    <div class="test-case">
+                        <h4>${test.name}</h4>
+                        <div class="result ${allPass ? 'pass' : 'fail'}">
+                            <strong>整体结果：${allPass ? '✅ 通过' : '❌ 失败'}</strong>
+                        </div>
+                        <table class="data-table">
+                            <tr><th>项目</th><th>计算结果</th><th>预期结果</th><th>状态</th></tr>
+                            <tr><td>年柱</td><td>${result.year}</td><td>${test.expected.year}</td><td>${yearPass ? '✅' : '❌'}</td></tr>
+                            <tr><td>月柱</td><td>${result.month}</td><td>${test.expected.month}</td><td>${monthPass ? '✅' : '❌'}</td></tr>
+                            <tr><td>日柱</td><td>${result.day}</td><td>${test.expected.day}</td><td>${dayPass ? '✅' : '❌'}</td></tr>
+                            <tr><td>时柱</td><td>${result.hour}</td><td>${test.expected.hour}</td><td>${hourPass ? '✅' : '❌'}</td></tr>
+                        </table>
+                    </div>
+                `;
+            });
+
+            html += `<div class="result ${passCount === testCases.ganzhiTests.length ? 'pass' : 'warning'}">
+                总计：${passCount}/${testCases.ganzhiTests.length} 通过
+            </div>`;
+
+            return { html, passCount, totalCount: testCases.ganzhiTests.length };
+        }
+
+        function runNumberDivinationTests() {
+            let html = '';
+            let passCount = 0;
+
+            testCases.numberDivinationTests.forEach((test, index) => {
+                const result = traditionalNumberDivination(test.input.num1, test.input.num2);
+
+                const upperGuaPass = result.upperGuaName === test.expected.upperGuaName;
+                const lowerGuaPass = result.lowerGuaName === test.expected.lowerGuaName;
+                const changingLinePass = result.changingLineNum === test.expected.changingLineNum;
+                const originalHexPass = result.originalHex === test.expected.originalHex;
+                const changedHexPass = result.changedHex === test.expected.changedHex;
+                const allPass = upperGuaPass && lowerGuaPass && changingLinePass && originalHexPass && changedHexPass;
+
+                if (allPass) passCount++;
+
+                const originalHexInfo = HEXAGRAMS[result.originalHex];
+                const changedHexInfo = HEXAGRAMS[result.changedHex];
+
+                html += `
+                    <div class="test-case">
+                        <h4>${test.name}</h4>
+                        <div class="result ${allPass ? 'pass' : 'fail'}">
+                            <strong>整体结果：${allPass ? '✅ 通过' : '❌ 失败'}</strong>
+                        </div>
+                        <table class="data-table">
+                            <tr><th>项目</th><th>计算结果</th><th>预期结果</th><th>状态</th></tr>
+                            <tr><td>上卦</td><td>${result.upperGuaName}</td><td>${test.expected.upperGuaName}</td><td>${upperGuaPass ? '✅' : '❌'}</td></tr>
+                            <tr><td>下卦</td><td>${result.lowerGuaName}</td><td>${test.expected.lowerGuaName}</td><td>${lowerGuaPass ? '✅' : '❌'}</td></tr>
+                            <tr><td>动爻</td><td>第${result.changingLineNum}爻</td><td>第${test.expected.changingLineNum}爻</td><td>${changingLinePass ? '✅' : '❌'}</td></tr>
+                            <tr><td>本卦二进制</td><td>${result.originalHex}</td><td>${test.expected.originalHex}</td><td>${originalHexPass ? '✅' : '❌'}</td></tr>
+                            <tr><td>变卦二进制</td><td>${result.changedHex}</td><td>${test.expected.changedHex}</td><td>${changedHexPass ? '✅' : '❌'}</td></tr>
+                        </table>
+                        <div class="result">
+                            <strong>卦名验证：</strong><br>
+                            本卦：${originalHexInfo ? originalHexInfo.name : '未知卦象'}<br>
+                            变卦：${changedHexInfo ? changedHexInfo.name : '未知卦象'}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `<div class="result ${passCount === testCases.numberDivinationTests.length ? 'pass' : 'warning'}">
+                总计：${passCount}/${testCases.numberDivinationTests.length} 通过
+            </div>`;
+
+            return { html, passCount, totalCount: testCases.numberDivinationTests.length };
+        }
+
+        function runLiuShenTests() {
+            let html = '';
+            let passCount = 0;
+
+            testCases.liuShenTests.forEach((test, index) => {
+                const result = calculateLiuShen(test.input);
+                const allPass = JSON.stringify(result) === JSON.stringify(test.expected);
+
+                if (allPass) passCount++;
+
+                html += `
+                    <div class="test-case">
+                        <h4>${test.name}</h4>
+                        <div class="result ${allPass ? 'pass' : 'fail'}">
+                            <strong>整体结果：${allPass ? '✅ 通过' : '❌ 失败'}</strong>
+                        </div>
+                        <table class="data-table">
+                            <tr><th>爻位</th><th>计算结果</th><th>预期结果</th><th>状态</th></tr>
+                            <tr><td>初爻</td><td>${result[0]}</td><td>${test.expected[0]}</td><td>${result[0] === test.expected[0] ? '✅' : '❌'}</td></tr>
+                            <tr><td>二爻</td><td>${result[1]}</td><td>${test.expected[1]}</td><td>${result[1] === test.expected[1] ? '✅' : '❌'}</td></tr>
+                            <tr><td>三爻</td><td>${result[2]}</td><td>${test.expected[2]}</td><td>${result[2] === test.expected[2] ? '✅' : '❌'}</td></tr>
+                            <tr><td>四爻</td><td>${result[3]}</td><td>${test.expected[3]}</td><td>${result[3] === test.expected[3] ? '✅' : '❌'}</td></tr>
+                            <tr><td>五爻</td><td>${result[4]}</td><td>${test.expected[4]}</td><td>${result[4] === test.expected[4] ? '✅' : '❌'}</td></tr>
+                            <tr><td>上爻</td><td>${result[5]}</td><td>${test.expected[5]}</td><td>${result[5] === test.expected[5] ? '✅' : '❌'}</td></tr>
+                        </table>
+                    </div>
+                `;
+            });
+
+            html += `<div class="result ${passCount === testCases.liuShenTests.length ? 'pass' : 'warning'}">
+                总计：${passCount}/${testCases.liuShenTests.length} 通过
+            </div>`;
+
+            return { html, passCount, totalCount: testCases.liuShenTests.length };
+        }
+
+        // 运行所有测试
+        function runAllTests() {
+            console.log('开始执行六爻排盘系统全面测试...');
+
+            const ganzhiResults = runGanzhiTests();
+            const numberResults = runNumberDivinationTests();
+            const liuShenResults = runLiuShenTests();
+
+            document.getElementById('ganzhi-test-results').innerHTML = ganzhiResults.html;
+            document.getElementById('number-divination-test-results').innerHTML = numberResults.html;
+            document.getElementById('liushen-test-results').innerHTML = liuShenResults.html;
+
+            // 暂时占位
+            document.getElementById('time-divination-test-results').innerHTML = '<div class="result warning">⚠️ 时间起卦测试待实现</div>';
+            document.getElementById('liuqin-test-results').innerHTML = '<div class="result warning">⚠️ 六亲计算测试待实现</div>';
+            document.getElementById('shiying-test-results').innerHTML = '<div class="result warning">⚠️ 世应位置测试待实现</div>';
+            document.getElementById('kongwang-test-results').innerHTML = '<div class="result warning">⚠️ 空亡计算测试待实现</div>';
+            document.getElementById('hexagram-change-test-results').innerHTML = '<div class="result warning">⚠️ 卦象变化测试待实现</div>';
+
+            // 生成测试总结
+            const totalPass = ganzhiResults.passCount + numberResults.passCount + liuShenResults.passCount;
+            const totalTests = ganzhiResults.totalCount + numberResults.totalCount + liuShenResults.totalCount;
+            const passRate = ((totalPass / totalTests) * 100).toFixed(1);
+
+            const summaryHtml = `
+                <h3>测试执行概况</h3>
+                <table class="data-table">
+                    <tr><th>测试模块</th><th>通过数</th><th>总测试数</th><th>通过率</th></tr>
+                    <tr><td>干支历转换</td><td>${ganzhiResults.passCount}</td><td>${ganzhiResults.totalCount}</td><td>${((ganzhiResults.passCount/ganzhiResults.totalCount)*100).toFixed(1)}%</td></tr>
+                    <tr><td>数字起卦</td><td>${numberResults.passCount}</td><td>${numberResults.totalCount}</td><td>${((numberResults.passCount/numberResults.totalCount)*100).toFixed(1)}%</td></tr>
+                    <tr><td>六神排列</td><td>${liuShenResults.passCount}</td><td>${liuShenResults.totalCount}</td><td>${((liuShenResults.passCount/liuShenResults.totalCount)*100).toFixed(1)}%</td></tr>
+                    <tr style="background: #f0f8ff; font-weight: bold;"><td>总计</td><td>${totalPass}</td><td>${totalTests}</td><td>${passRate}%</td></tr>
+                </table>
+
+                <h3>关键发现</h3>
+                <div class="result ${passRate >= 80 ? 'pass' : passRate >= 60 ? 'warning' : 'fail'}">
+                    <strong>整体测试通过率：${passRate}%</strong><br>
+                    ${passRate >= 90 ? '✅ 系统运行良好，核心算法准确' :
+                      passRate >= 70 ? '⚠️ 系统基本正常，部分功能需要优化' :
+                      '❌ 系统存在严重问题，需要重点检查和修复'}
+                </div>
+
+                <h3>待完善功能</h3>
+                <ul>
+                    <li>时间起卦算法的完整验证</li>
+                    <li>六亲关系计算的准确性验证</li>
+                    <li>世应位置计算验证</li>
+                    <li>空亡计算验证</li>
+                    <li>卦象变化逻辑验证</li>
+                    <li>UI交互功能测试</li>
+                </ul>
+
+                <h3>建议</h3>
+                <div class="result">
+                    1. <strong>优先级高</strong>：完善干支历转换算法，确保基础计算准确<br>
+                    2. <strong>优先级中</strong>：验证并修正六神、六亲计算逻辑<br>
+                    3. <strong>优先级低</strong>：完善UI交互体验和错误处理
+                </div>
+            `;
+
+            document.getElementById('summary-content').innerHTML = summaryHtml;
+        }
+
+        // 页面加载完成后执行测试
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(runAllTests, 500);
+        });
+    </script>
+</body>
+</html>

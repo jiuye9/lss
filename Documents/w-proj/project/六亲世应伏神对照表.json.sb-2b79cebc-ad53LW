@@ -1,0 +1,1154 @@
+[
+  {
+    "palace": "乾宫",
+    "index": 1,
+    "symbol": "䷀",
+    "name": "乾为天",
+    "element": "金",
+    "six_relations": [
+      "子孙子水",
+      "妻财寅木",
+      "父母辰土",
+      "官鬼午火",
+      "兄弟申金",
+      "父母戌土"
+    ],
+    "world_line": 6,
+    "peer_line": 3,
+    "hidden_god_rule": "无伏（本宫纯卦）"
+  },
+  {
+    "palace": "乾宫",
+    "index": 2,
+    "symbol": "䷫",
+    "name": "天风姤",
+    "element": "金",
+    "six_relations": [
+      "父母丑土",
+      "子孙亥水",
+      "兄弟酉金",
+      "官鬼午火",
+      "父母辰土",
+      "兄弟申金"
+    ],
+    "world_line": 1,
+    "peer_line": 4,
+    "hidden_god_rule": "伏子孙子水"
+  },
+  {
+    "palace": "乾宫",
+    "index": 3,
+    "symbol": "䷠",
+    "name": "天山遁",
+    "element": "金",
+    "six_relations": [
+      "父母辰土",
+      "父母辰土",
+      "兄弟申金",
+      "官鬼午火",
+      "兄弟申金",
+      "父母戌土"
+    ],
+    "world_line": 2,
+    "peer_line": 5,
+    "hidden_god_rule": "伏子孙子水、妻财寅木"
+  },
+  {
+    "palace": "乾宫",
+    "index": 4,
+    "symbol": "䷋",
+    "name": "天地否",
+    "element": "金",
+    "six_relations": [
+      "妻财卯木",
+      "妻财卯木",
+      "父母辰土",
+      "官鬼巳火",
+      "兄弟申金",
+      "父母戌土"
+    ],
+    "world_line": 3,
+    "peer_line": 6,
+    "hidden_god_rule": "伏子孙子水"
+  },
+  {
+    "palace": "乾宫",
+    "index": 5,
+    "symbol": "䷓",
+    "name": "风地观",
+    "element": "金",
+    "six_relations": [
+      "父母未土",
+      "官鬼巳火",
+      "妻财卯木",
+      "官鬼巳火",
+      "父母辰土",
+      "兄弟申金"
+    ],
+    "world_line": 4,
+    "peer_line": 1,
+    "hidden_god_rule": "伏子孙子水、兄弟申金"
+  },
+  {
+    "palace": "乾宫",
+    "index": 6,
+    "symbol": "䷖",
+    "name": "山地剥",
+    "element": "金",
+    "six_relations": [
+      "父母未土",
+      "官鬼巳火",
+      "妻财卯木",
+      "兄弟酉金",
+      "子孙亥水",
+      "妻财寅木"
+    ],
+    "world_line": 5,
+    "peer_line": 2,
+    "hidden_god_rule": "伏父母辰土、兄弟申金"
+  },
+  {
+    "palace": "乾宫",
+    "index": 7,
+    "symbol": "䷍",
+    "name": "火地晋",
+    "element": "金",
+    "six_relations": [
+      "父母辰土",
+      "官鬼巳火",
+      "兄弟酉金",
+      "官鬼巳火",
+      "子孙未土",
+      "官鬼午火"
+    ],
+    "world_line": 4,
+    "peer_line": 1,
+    "hidden_god_rule": "伏妻财寅木、子孙子水"
+  },
+  {
+    "palace": "乾宫",
+    "index": 8,
+    "symbol": "䷍",
+    "name": "火天大有",
+    "element": "金",
+    "six_relations": [
+      "子孙子水",
+      "妻财寅木",
+      "父母辰土",
+      "官鬼午火",
+      "兄弟申金",
+      "父母戌土"
+    ],
+    "world_line": 5,
+    "peer_line": 2,
+    "hidden_god_rule": "无伏（归本宫）"
+  },
+  {
+    "palace": "兑宫",
+    "index": 1,
+    "symbol": "䷹",
+    "name": "兑为泽",
+    "element": "金",
+    "six_relations": [
+      "父母丑土",
+      "官鬼巳火",
+      "妻财卯木",
+      "子孙亥水",
+      "兄弟酉金",
+      "父母未土"
+    ],
+    "world_line": 6,
+    "peer_line": 3,
+    "hidden_god_rule": "无伏（本宫纯卦）"
+  },
+  {
+    "palace": "兑宫",
+    "index": 2,
+    "symbol": "䷮",
+    "name": "泽水困",
+    "element": "金",
+    "six_relations": [
+      "子孙子水",
+      "妻财卯木",
+      "父母未土",
+      "官鬼午火",
+      "兄弟酉金",
+      "父母未土"
+    ],
+    "world_line": 1,
+    "peer_line": 4,
+    "hidden_god_rule": "伏妻财寅木"
+  },
+  {
+    "palace": "兑宫",
+    "index": 3,
+    "symbol": "䷬",
+    "name": "泽地萃",
+    "element": "金",
+    "six_relations": [
+      "父母丑土",
+      "官鬼巳火",
+      "妻财卯木",
+      "兄弟申金",
+      "兄弟酉金",
+      "父母未土"
+    ],
+    "world_line": 2,
+    "peer_line": 5,
+    "hidden_god_rule": "伏妻财寅木、子孙子水"
+  },
+  {
+    "palace": "兑宫",
+    "index": 4,
+    "symbol": "䷺",
+    "name": "泽山咸",
+    "element": "金",
+    "six_relations": [
+      "子孙子水",
+      "妻财寅木",
+      "兄弟申金",
+      "子孙亥水",
+      "兄弟酉金",
+      "父母未土"
+    ],
+    "world_line": 3,
+    "peer_line": 6,
+    "hidden_god_rule": "伏父母辰土"
+  },
+  {
+    "palace": "兑宫",
+    "index": 5,
+    "symbol": "䷦",
+    "name": "水山蹇",
+    "element": "金",
+    "six_relations": [
+      "官鬼子水",
+      "父母丑土",
+      "兄弟申金",
+      "子孙亥水",
+      "妻财卯木",
+      "官鬼巳火"
+    ],
+    "world_line": 4,
+    "peer_line": 1,
+    "hidden_god_rule": "伏父母戌土、妻财寅木"
+  },
+  {
+    "palace": "兑宫",
+    "index": 6,
+    "symbol": "䷧",
+    "name": "地山谦",
+    "element": "金",
+    "six_relations": [
+      "父母丑土",
+      "妻财卯木",
+      "兄弟酉金",
+      "兄弟申金",
+      "妻财卯木",
+      "官鬼巳火"
+    ],
+    "world_line": 5,
+    "peer_line": 2,
+    "hidden_god_rule": "伏父母未土、子孙子水"
+  },
+  {
+    "palace": "兑宫",
+    "index": 7,
+    "symbol": "䷟",
+    "name": "雷山小过",
+    "element": "金",
+    "six_relations": [
+      "妻财寅木",
+      "子孙亥水",
+      "父母戌土",
+      "兄弟申金",
+      "子孙未土",
+      "官鬼巳火"
+    ],
+    "world_line": 4,
+    "peer_line": 1,
+    "hidden_god_rule": "伏父母辰土、妻财卯木"
+  },
+  {
+    "palace": "兑宫",
+    "index": 8,
+    "symbol": "䷵",
+    "name": "雷泽归妹",
+    "element": "金",
+    "six_relations": [
+      "妻财寅木",
+      "子孙亥水",
+      "父母戌土",
+      "父母丑土",
+      "兄弟酉金",
+      "父母未土"
+    ],
+    "world_line": 3,
+    "peer_line": 6,
+    "hidden_god_rule": "归魂，伏妻财卯木"
+  },
+  {
+    "palace": "离宫",
+    "index": 1,
+    "symbol": "䷝",
+    "name": "离为火",
+    "element": "火",
+    "six_relations": [
+      "妻财卯木",
+      "父母丑土",
+      "官鬼亥水",
+      "妻财酉金",
+      "子孙未土",
+      "兄弟巳火"
+    ],
+    "world_line": 6,
+    "peer_line": 3,
+    "hidden_god_rule": "无伏（本宫纯卦）"
+  },
+  {
+    "palace": "离宫",
+    "index": 2,
+    "symbol": "䷔",
+    "name": "火山旅",
+    "element": "火",
+    "six_relations": [
+      "兄弟巳火",
+      "子孙未土",
+      "妻财酉金",
+      "子孙申金",
+      "父母戌土",
+      "兄弟午火"
+    ],
+    "world_line": 1,
+    "peer_line": 4,
+    "hidden_god_rule": "伏官鬼亥水"
+  },
+  {
+    "palace": "离宫",
+    "index": 3,
+    "symbol": "䷣",
+    "name": "火风鼎",
+    "element": "火",
+    "six_relations": [
+      "子孙子水",
+      "妻财寅木",
+      "子孙亥水",
+      "妻财酉金",
+      "子孙未土",
+      "兄弟巳火"
+    ],
+    "world_line": 2,
+    "peer_line": 5,
+    "hidden_god_rule": "伏官鬼亥水"
+  },
+  {
+    "palace": "离宫",
+    "index": 4,
+    "symbol": "䷒",
+    "name": "火水未济",
+    "element": "火",
+    "six_relations": [
+      "官鬼戌土",
+      "兄弟午火",
+      "子孙申金",
+      "子孙亥水",
+      "妻财卯木",
+      "兄弟巳火"
+    ],
+    "world_line": 3,
+    "peer_line": 6,
+    "hidden_god_rule": "伏父母丑土"
+  },
+  {
+    "palace": "离宫",
+    "index": 5,
+    "symbol": "䷃",
+    "name": "山水蒙",
+    "element": "火",
+    "six_relations": [
+      "官鬼子水",
+      "妻财寅木",
+      "兄弟午火",
+      "子孙亥水",
+      "妻财卯木",
+      "官鬼丑土"
+    ],
+    "world_line": 4,
+    "peer_line": 1,
+    "hidden_god_rule": "伏父母未土"
+  },
+  {
+    "palace": "离宫",
+    "index": 6,
+    "symbol": "䷙",
+    "name": "风水涣",
+    "element": "火",
+    "six_relations": [
+      "官鬼巳火",
+      "父母未土",
+      "妻财卯木",
+      "子孙亥水",
+      "妻财寅木",
+      "子孙子水"
+    ],
+    "world_line": 5,
+    "peer_line": 2,
+    "hidden_god_rule": "伏父母丑土、官鬼亥水"
+  },
+  {
+    "palace": "离宫",
+    "index": 7,
+    "symbol": "䷌",
+    "name": "天水讼",
+    "element": "火",
+    "six_relations": [
+      "子孙申金",
+      "父母戌土",
+      "兄弟午火",
+      "子孙亥水",
+      "妻财寅木",
+      "官鬼子水"
+    ],
+    "world_line": 4,
+    "peer_line": 1,
+    "hidden_god_rule": "游魂，伏官鬼亥水"
+  },
+  {
+    "palace": "离宫",
+    "index": 8,
+    "symbol": "䷁",
+    "name": "天火同人",
+    "element": "火",
+    "six_relations": [
+      "妻财卯木",
+      "父母丑土",
+      "官鬼亥水",
+      "妻财酉金",
+      "子孙未土",
+      "兄弟巳火"
+    ],
+    "world_line": 3,
+    "peer_line": 6,
+    "hidden_god_rule": "归魂，伏父母未土"
+  },
+  {
+    "palace": "震宫",
+    "index": 1,
+    "symbol": "䷲",
+    "name": "震为雷",
+    "element": "木",
+    "six_relations": [
+      "父母子水",
+      "兄弟寅木",
+      "妻财辰土",
+      "子孙午火",
+      "官鬼申金",
+      "妻财戌土"
+    ],
+    "world_line": 6,
+    "peer_line": 3,
+    "hidden_god_rule": "无伏（本宫纯卦）"
+  },
+  {
+    "palace": "震宫",
+    "index": 2,
+    "symbol": "䷱",
+    "name": "雷地豫",
+    "element": "木",
+    "six_relations": [
+      "妻财未土",
+      "子孙巳火",
+      "兄弟卯木",
+      "子孙午火",
+      "官鬼申金",
+      "妻财戌土"
+    ],
+    "world_line": 1,
+    "peer_line": 4,
+    "hidden_god_rule": "伏父母子水"
+  },
+  {
+    "palace": "震宫",
+    "index": 3,
+    "symbol": "䷱",
+    "name": "雷水解",
+    "element": "木",
+    "six_relations": [
+      "兄弟寅木",
+      "妻财辰土",
+      "子孙子水",
+      "子孙午火",
+      "官鬼申金",
+      "妻财戌土"
+    ],
+    "world_line": 2,
+    "peer_line": 5,
+    "hidden_god_rule": "伏父母子水"
+  },
+  {
+    "palace": "震宫",
+    "index": 4,
+    "symbol": "䷲",
+    "name": "雷风恒",
+    "element": "木",
+    "six_relations": [
+      "父母子水",
+      "兄弟寅木",
+      "妻财辰土",
+      "兄弟寅木",
+      "妻财辰土",
+      "子孙午火"
+    ],
+    "world_line": 3,
+    "peer_line": 6,
+    "hidden_god_rule": "伏官鬼申金"
+  },
+  {
+    "palace": "震宫",
+    "index": 5,
+    "symbol": "䷪",
+    "name": "地风升",
+    "element": "木",
+    "six_relations": [
+      "父母子水",
+      "妻财寅木",
+      "兄弟卯木",
+      "兄弟寅木",
+      "妻财辰土",
+      "子孙午火"
+    ],
+    "world_line": 4,
+    "peer_line": 1,
+    "hidden_god_rule": "伏官鬼酉金"
+  },
+  {
+    "palace": "震宫",
+    "index": 6,
+    "symbol": "䷯",
+    "name": "水风井",
+    "element": "木",
+    "six_relations": [
+      "子孙子水",
+      "父母丑土",
+      "官鬼辰土",
+      "兄弟寅木",
+      "妻财辰土",
+      "子孙午火"
+    ],
+    "world_line": 5,
+    "peer_line": 2,
+    "hidden_god_rule": "伏官鬼申金"
+  },
+  {
+    "palace": "震宫",
+    "index": 7,
+    "symbol": "䷷",
+    "name": "泽风大过",
+    "element": "木",
+    "six_relations": [
+      "妻财丑土",
+      "官鬼亥水",
+      "子孙子水",
+      "兄弟寅木",
+      "子孙午火",
+      "妻财戌土"
+    ],
+    "world_line": 4,
+    "peer_line": 1,
+    "hidden_god_rule": "游魂，伏父母子水"
+  },
+  {
+    "palace": "震宫",
+    "index": 8,
+    "symbol": "䷮",
+    "name": "泽雷随",
+    "element": "木",
+    "six_relations": [
+      "父母子水",
+      "妻财丑土",
+      "官鬼辰土",
+      "妻财辰土",
+      "兄弟寅木",
+      "子孙午火"
+    ],
+    "world_line": 3,
+    "peer_line": 6,
+    "hidden_god_rule": "归魂，伏官鬼申金"
+  },
+  {
+    "palace": "巽宫",
+    "index": 1,
+    "symbol": "䷸",
+    "name": "巽为风",
+    "element": "木",
+    "six_relations": [
+      "子孙午火",
+      "妻财辰土",
+      "兄弟寅木",
+      "妻财卯木",
+      "父母丑土",
+      "官鬼巳火"
+    ],
+    "world_line": 6,
+    "peer_line": 3,
+    "hidden_god_rule": "无伏（本宫纯卦）"
+  },
+  {
+    "palace": "巽宫",
+    "index": 2,
+    "symbol": "䷴",
+    "name": "风天小畜",
+    "element": "木",
+    "six_relations": [
+      "官鬼巳火",
+      "父母未土",
+      "兄弟酉金",
+      "妻财卯木",
+      "父母辰土",
+      "兄弟寅木"
+    ],
+    "world_line": 1,
+    "peer_line": 4,
+    "hidden_god_rule": "伏子孙午火"
+  },
+  {
+    "palace": "巽宫",
+    "index": 3,
+    "symbol": "䷈",
+    "name": "风火家人",
+    "element": "木",
+    "six_relations": [
+      "子孙午火",
+      "妻财卯木",
+      "官鬼巳火",
+      "兄弟寅木",
+      "父母辰土",
+      "兄弟寅木"
+    ],
+    "world_line": 2,
+    "peer_line": 5,
+    "hidden_god_rule": "伏官鬼巳火"
+  },
+  {
+    "palace": "巽宫",
+    "index": 4,
+    "symbol": "䷝",
+    "name": "风雷益",
+    "element": "木",
+    "six_relations": [
+      "子孙午火",
+      "妻财卯木",
+      "兄弟寅木",
+      "子孙子水",
+      "父母丑土",
+      "官鬼巳火"
+    ],
+    "world_line": 3,
+    "peer_line": 6,
+    "hidden_god_rule": "伏官鬼酉金"
+  },
+  {
+    "palace": "巽宫",
+    "index": 5,
+    "symbol": "䷥",
+    "name": "天雷无妄",
+    "element": "木",
+    "six_relations": [
+      "妻财戌土",
+      "官鬼申金",
+      "子孙子水",
+      "子孙子水",
+      "父母丑土",
+      "官鬼巳火"
+    ],
+    "world_line": 4,
+    "peer_line": 1,
+    "hidden_god_rule": "伏兄弟寅木"
+  },
+  {
+    "palace": "巽宫",
+    "index": 6,
+    "symbol": "䷢",
+    "name": "火雷噬嗑",
+    "element": "木",
+    "six_relations": [
+      "子孙巳火",
+      "妻财未土",
+      "官鬼酉金",
+      "子孙子水",
+      "父母丑土",
+      "官鬼巳火"
+    ],
+    "world_line": 5,
+    "peer_line": 2,
+    "hidden_god_rule": "伏兄弟寅木"
+  },
+  {
+    "palace": "巽宫",
+    "index": 7,
+    "symbol": "䷚",
+    "name": "山雷颐",
+    "element": "木",
+    "six_relations": [
+      "兄弟寅木",
+      "父母子水",
+      "妻财戌土",
+      "子孙子水",
+      "父母丑土",
+      "官鬼巳火"
+    ],
+    "world_line": 4,
+    "peer_line": 1,
+    "hidden_god_rule": "游魂，伏子孙午火"
+  },
+  {
+    "palace": "巽宫",
+    "index": 8,
+    "symbol": "䷘",
+    "name": "山风蛊",
+    "element": "木",
+    "six_relations": [
+      "子孙申金",
+      "父母戌土",
+      "妻财未土",
+      "妻财卯木",
+      "父母丑土",
+      "官鬼巳火"
+    ],
+    "world_line": 3,
+    "peer_line": 6,
+    "hidden_god_rule": "归魂，伏兄弟寅木"
+  },
+  {
+    "palace": "坎宫",
+    "index": 1,
+    "symbol": "䷜",
+    "name": "坎为水",
+    "element": "水",
+    "six_relations": [
+      "兄弟子水",
+      "官鬼戌土",
+      "父母申金",
+      "妻财午火",
+      "官鬼辰土",
+      "父母寅木"
+    ],
+    "world_line": 6,
+    "peer_line": 3,
+    "hidden_god_rule": "无伏（本宫纯卦）"
+  },
+  {
+    "palace": "坎宫",
+    "index": 2,
+    "symbol": "䷫",
+    "name": "水泽节",
+    "element": "水",
+    "six_relations": [
+      "父母申金",
+      "妻财午火",
+      "官鬼辰土",
+      "官鬼丑土",
+      "子孙酉金",
+      "父母寅木"
+    ],
+    "world_line": 1,
+    "peer_line": 4,
+    "hidden_god_rule": "伏兄弟子水"
+  },
+  {
+    "palace": "坎宫",
+    "index": 3,
+    "symbol": "䷱",
+    "name": "水雷屯",
+    "element": "水",
+    "six_relations": [
+      "兄弟子水",
+      "官鬼戌土",
+      "父母申金",
+      "兄弟子水",
+      "妻财辰土",
+      "子孙寅木"
+    ],
+    "world_line": 2,
+    "peer_line": 5,
+    "hidden_god_rule": "伏妻财午火"
+  },
+  {
+    "palace": "坎宫",
+    "index": 4,
+    "symbol": "䷂",
+    "name": "水火既济",
+    "element": "水",
+    "six_relations": [
+      "兄弟子水",
+      "官鬼戌土",
+      "父母申金",
+      "兄弟戌土",
+      "官鬼申金",
+      "父母寅木"
+    ],
+    "world_line": 3,
+    "peer_line": 6,
+    "hidden_god_rule": "伏妻财午火"
+  },
+  {
+    "palace": "坎宫",
+    "index": 5,
+    "symbol": "䷐",
+    "name": "泽火革",
+    "element": "水",
+    "six_relations": [
+      "子孙酉金",
+      "妻财亥水",
+      "兄弟丑土",
+      "兄弟戌土",
+      "官鬼申金",
+      "父母寅木"
+    ],
+    "world_line": 4,
+    "peer_line": 1,
+    "hidden_god_rule": "伏妻财午火"
+  },
+  {
+    "palace": "坎宫",
+    "index": 6,
+    "symbol": "䷡",
+    "name": "雷火丰",
+    "element": "水",
+    "six_relations": [
+      "子孙寅木",
+      "妻财子水",
+      "兄弟戌土",
+      "兄弟戌土",
+      "官鬼申金",
+      "父母寅木"
+    ],
+    "world_line": 5,
+    "peer_line": 2,
+    "hidden_god_rule": "伏妻财午火"
+  },
+  {
+    "palace": "坎宫",
+    "index": 7,
+    "symbol": "䷆",
+    "name": "地火明夷",
+    "element": "水",
+    "six_relations": [
+      "父母酉金",
+      "兄弟亥水",
+      "官鬼丑土",
+      "兄弟戌土",
+      "官鬼申金",
+      "父母寅木"
+    ],
+    "world_line": 4,
+    "peer_line": 1,
+    "hidden_god_rule": "游魂，伏妻财午火"
+  },
+  {
+    "palace": "坎宫",
+    "index": 8,
+    "symbol": "䷾",
+    "name": "地水师",
+    "element": "水",
+    "six_relations": [
+      "兄弟戌土",
+      "子孙申金",
+      "父母寅木",
+      "妻财午火",
+      "官鬼辰土",
+      "父母寅木"
+    ],
+    "world_line": 3,
+    "peer_line": 6,
+    "hidden_god_rule": "归魂，伏兄弟子水"
+  },
+  {
+    "palace": "艮宫",
+    "index": 1,
+    "symbol": "䷳",
+    "name": "艮为山",
+    "element": "土",
+    "six_relations": [
+      "兄弟戌土",
+      "子孙申金",
+      "父母午火",
+      "官鬼寅木",
+      "妻财子水",
+      "兄弟辰土"
+    ],
+    "world_line": 6,
+    "peer_line": 3,
+    "hidden_god_rule": "无伏（本宫纯卦）"
+  },
+  {
+    "palace": "艮宫",
+    "index": 2,
+    "symbol": "䷺",
+    "name": "山火贲",
+    "element": "土",
+    "six_relations": [
+      "兄弟辰土",
+      "妻财寅木",
+      "子孙子水",
+      "官鬼寅木",
+      "父母午火",
+      "兄弟戌土"
+    ],
+    "world_line": 1,
+    "peer_line": 4,
+    "hidden_god_rule": "伏官鬼寅木"
+  },
+  {
+    "palace": "艮宫",
+    "index": 3,
+    "symbol": "䷽",
+    "name": "山天大畜",
+    "element": "土",
+    "six_relations": [
+      "妻财子水",
+      "兄弟戌土",
+      "子孙申金",
+      "官鬼寅木",
+      "父母午火",
+      "兄弟辰土"
+    ],
+    "world_line": 2,
+    "peer_line": 5,
+    "hidden_god_rule": "伏官鬼寅木"
+  },
+  {
+    "palace": "艮宫",
+    "index": 4,
+    "symbol": "䷓",
+    "name": "山泽损",
+    "element": "土",
+    "six_relations": [
+      "妻财亥水",
+      "官鬼丑土",
+      "兄弟辰土",
+      "子孙申金",
+      "父母午火",
+      "兄弟戌土"
+    ],
+    "world_line": 3,
+    "peer_line": 6,
+    "hidden_god_rule": "伏官鬼寅木"
+  },
+  {
+    "palace": "艮宫",
+    "index": 5,
+    "symbol": "䷪",
+    "name": "火泽睽",
+    "element": "土",
+    "six_relations": [
+      "父母巳火",
+      "兄弟未土",
+      "子孙申金",
+      "子孙申金",
+      "父母午火",
+      "兄弟戌土"
+    ],
+    "world_line": 4,
+    "peer_line": 1,
+    "hidden_god_rule": "伏官鬼寅木"
+  },
+  {
+    "palace": "艮宫",
+    "index": 6,
+    "symbol": "䷜",
+    "name": "天泽履",
+    "element": "土",
+    "six_relations": [
+      "兄弟戌土",
+      "子孙申金",
+      "父母午火",
+      "子孙申金",
+      "父母午火",
+      "兄弟辰土"
+    ],
+    "world_line": 5,
+    "peer_line": 2,
+    "hidden_god_rule": "伏官鬼寅木"
+  },
+  {
+    "palace": "艮宫",
+    "index": 7,
+    "symbol": "䷗",
+    "name": "风泽中孚",
+    "element": "土",
+    "six_relations": [
+      "官鬼卯木",
+      "父母巳火",
+      "兄弟未土",
+      "子孙申金",
+      "父母午火",
+      "兄弟辰土"
+    ],
+    "world_line": 4,
+    "peer_line": 1,
+    "hidden_god_rule": "游魂，伏官鬼寅木"
+  },
+  {
+    "palace": "艮宫",
+    "index": 8,
+    "symbol": "䷤",
+    "name": "风山渐",
+    "element": "土",
+    "six_relations": [
+      "官鬼卯木",
+      "父母巳火",
+      "兄弟未土",
+      "官鬼寅木",
+      "妻财子水",
+      "兄弟辰土"
+    ],
+    "world_line": 3,
+    "peer_line": 6,
+    "hidden_god_rule": "归魂，伏子孙申金"
+  },
+  {
+    "palace": "坤宫",
+    "index": 1,
+    "symbol": "䷁",
+    "name": "坤为地",
+    "element": "土",
+    "six_relations": [
+      "兄弟未土",
+      "妻财卯木",
+      "官鬼巳火",
+      "父母丑土",
+      "妻财卯木",
+      "兄弟辰土"
+    ],
+    "world_line": 6,
+    "peer_line": 3,
+    "hidden_god_rule": "无伏（本宫纯卦）"
+  },
+  {
+    "palace": "坤宫",
+    "index": 2,
+    "symbol": "䷂",
+    "name": "地雷复",
+    "element": "土",
+    "six_relations": [
+      "兄弟辰土",
+      "父母寅木",
+      "妻财子水",
+      "官鬼辰土",
+      "妻财卯木",
+      "兄弟未土"
+    ],
+    "world_line": 1,
+    "peer_line": 4,
+    "hidden_god_rule": "伏子孙申金"
+  },
+  {
+    "palace": "坤宫",
+    "index": 3,
+    "symbol": "䷃",
+    "name": "地泽临",
+    "element": "土",
+    "six_relations": [
+      "兄弟丑土",
+      "子孙酉金",
+      "妻财卯木",
+      "官鬼辰土",
+      "妻财卯木",
+      "兄弟未土"
+    ],
+    "world_line": 2,
+    "peer_line": 5,
+    "hidden_god_rule": "伏子孙申金"
+  },
+  {
+    "palace": "坤宫",
+    "index": 4,
+    "symbol": "䷄",
+    "name": "地天泰",
+    "element": "土",
+    "six_relations": [
+      "兄弟辰土",
+      "子孙酉金",
+      "妻财卯木",
+      "子孙申金",
+      "父母寅木",
+      "兄弟未土"
+    ],
+    "world_line": 3,
+    "peer_line": 6,
+    "hidden_god_rule": "伏官鬼巳火"
+  },
+  {
+    "palace": "坤宫",
+    "index": 5,
+    "symbol": "䷅",
+    "name": "雷天大壮",
+    "element": "土",
+    "six_relations": [
+      "妻财卯木",
+      "官鬼巳火",
+      "子孙申金",
+      "子孙申金",
+      "父母寅木",
+      "兄弟未土"
+    ],
+    "world_line": 4,
+    "peer_line": 1,
+    "hidden_god_rule": "伏兄弟丑土"
+  },
+  {
+    "palace": "坤宫",
+    "index": 6,
+    "symbol": "䷋",
+    "name": "泽天夬",
+    "element": "土",
+    "six_relations": [
+      "兄弟未土",
+      "子孙酉金",
+      "子孙申金",
+      "子孙申金",
+      "父母寅木",
+      "兄弟辰土"
+    ],
+    "world_line": 5,
+    "peer_line": 2,
+    "hidden_god_rule": "伏官鬼巳火"
+  },
+  {
+    "palace": "坤宫",
+    "index": 7,
+    "symbol": "䷚",
+    "name": "水天需",
+    "element": "土",
+    "six_relations": [
+      "父母子水",
+      "妻财卯木",
+      "兄弟辰土",
+      "子孙申金",
+      "父母寅木",
+      "兄弟未土"
+    ],
+    "world_line": 4,
+    "peer_line": 1,
+    "hidden_god_rule": "游魂，伏官鬼巳火"
+  },
+  {
+    "palace": "坤宫",
+    "index": 8,
+    "symbol": "䷝",
+    "name": "水地比",
+    "element": "土",
+    "six_relations": [
+      "子孙癸水",
+      "妻财卯木",
+      "兄弟辰土",
+      "父母丑土",
+      "妻财卯木",
+      "兄弟未土"
+    ],
+    "world_line": 3,
+    "peer_line": 6,
+    "hidden_god_rule": "归魂，伏官鬼巳火"
+  }
+]

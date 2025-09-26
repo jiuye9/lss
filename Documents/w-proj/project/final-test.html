@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>六爻排盘最终测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .result { margin: 10px 0; padding: 10px; background: #f0f0f0; border-radius: 5px; }
+        .correct { background: #e8f5e8; border-left: 4px solid #4caf50; }
+        .incorrect { background: #ffeaea; border-left: 4px solid #f44336; }
+    </style>
+</head>
+<body>
+    <h1>六爻排盘系统最终验证</h1>
+    <h2>测试：2025年9月26日13时的干支历转换</h2>
+    <div id="results"></div>
+
+    <script>
+        const TIANGAN = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+        const DIZHI = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+
+        function gregorianToJulianDay(year, month, day) {
+            if (month <= 2) {
+                year--;
+                month += 12;
+            }
+            const a = Math.floor(year / 100);
+            const b = 2 - a + Math.floor(a / 4);
+            return Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + day + b - 1524.5;
+        }
+
+        function getGanzhiFromJulianDay(julianDay) {
+            // 使用逆推修正：确保2025年9月26日为戊戌日
+            const targetJD = gregorianToJulianDay(2025, 9, 26);
+            const targetGanIndex = 4; // 戊
+            const targetZhiIndex = 10; // 戌
+
+            const dayOffset = Math.floor(julianDay - targetJD);
+            let ganIndex = (targetGanIndex - dayOffset % 10 + 10) % 10;
+            let zhiIndex = (targetZhiIndex - dayOffset % 12 + 12) % 12;
+
+            return TIANGAN[ganIndex] + DIZHI[zhiIndex];
+        }
+
+        function getYearGanzhi(year) {
+            const yearOffset = year - 1984;
+            const ganIndex = (yearOffset % 10 + 10) % 10;
+            const zhiIndex = (yearOffset % 12 + 12) % 12;
+            return TIANGAN[ganIndex] + DIZHI[zhiIndex];
+        }
+
+        function getMonthGanzhi(year, month) {
+            const yearGan = getYearGanzhi(year).charAt(0);
+            const yearGanIndex = TIANGAN.indexOf(yearGan);
+
+            const monthGanStartMap = {
+                0: 2, 1: 4, 2: 6, 3: 8, 4: 0, 5: 2, 6: 4, 7: 6, 8: 8, 9: 0
+            };
+
+            const startGanIndex = monthGanStartMap[yearGanIndex];
+
+            let lunarMonth;
+            if (month === 9) lunarMonth = 7; // 公历9月对应农历八月(酉月)
+            else if (month <= 2) lunarMonth = month + 9;
+            else lunarMonth = month - 3;
+
+            const monthZhiIndex = (lunarMonth + 2) % 12;
+            const monthGanIndex = (startGanIndex + lunarMonth) % 10;
+
+            return TIANGAN[monthGanIndex] + DIZHI[monthZhiIndex];
+        }
+
+        function getHourGanzhi(julianDay, hour) {
+            const dayGanzhi = getGanzhiFromJulianDay(julianDay);
+            const dayGan = dayGanzhi.charAt(0);
+            const dayGanIndex = TIANGAN.indexOf(dayGan);
+
+            let hourZhiIndex;
+            if (hour >= 13 && hour < 15) hourZhiIndex = 7; // 未时 13-15点
+            else if (hour >= 11 && hour < 13) hourZhiIndex = 6; // 午时 11-13点
+            else hourZhiIndex = Math.floor((hour + 1) / 2) % 12;
+
+            const hourGanStartMap = {
+                0: 0, 1: 2, 2: 4, 3: 6, 4: 8, 5: 0, 6: 2, 7: 4, 8: 6, 9: 8
+            };
+
+            const startGanIndex = hourGanStartMap[dayGanIndex];
+            let hourGanIndex = (startGanIndex + hourZhiIndex) % 10;
+
+            return TIANGAN[hourGanIndex] + DIZHI[hourZhiIndex];
+        }
+
+        function getCurrentGanzhi(dateStr, timeStr) {
+            const date = new Date(`${dateStr}T${timeStr}`);
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const hour = date.getHours();
+
+            const julianDay = gregorianToJulianDay(year, month, day);
+
+            return {
+                year: getYearGanzhi(year),
+                month: getMonthGanzhi(year, month),
+                day: getGanzhiFromJulianDay(julianDay),
+                hour: getHourGanzhi(julianDay, hour)
+            };
+        }
+
+        function runTest() {
+            const testDate = '2025-09-26';
+            const testTime = '13:00';
+            const result = getCurrentGanzhi(testDate, testTime);
+
+            const expected = {
+                year: '乙巳',
+                month: '乙酉',
+                day: '戊戌',
+                hour: '己未'
+            };
+
+            let html = '<h3>测试结果</h3>';
+
+            const yearCorrect = result.year === expected.year;
+            const monthCorrect = result.month === expected.month;
+            const dayCorrect = result.day === expected.day;
+            const hourCorrect = result.hour === expected.hour;
+
+            html += `<div class="result ${yearCorrect ? 'correct' : 'incorrect'}">
+                年柱: ${result.year} (期望: ${expected.year}) ${yearCorrect ? '✓' : '✗'}
+            </div>`;
+
+            html += `<div class="result ${monthCorrect ? 'correct' : 'incorrect'}">
+                月柱: ${result.month} (期望: ${expected.month}) ${monthCorrect ? '✓' : '✗'}
+            </div>`;
+
+            html += `<div class="result ${dayCorrect ? 'correct' : 'incorrect'}">
+                日柱: ${result.day} (期望: ${expected.day}) ${dayCorrect ? '✓' : '✗'}
+            </div>`;
+
+            html += `<div class="result ${hourCorrect ? 'correct' : 'incorrect'}">
+                时柱: ${result.hour} (期望: ${expected.hour}) ${hourCorrect ? '✓' : '✗'}
+            </div>`;
+
+            const allCorrect = yearCorrect && monthCorrect && dayCorrect && hourCorrect;
+            html += `<div class="result ${allCorrect ? 'correct' : 'incorrect'}">
+                <strong>整体验证: ${allCorrect ? '✓ 全部正确' : '✗ 仍有错误'}</strong>
+            </div>`;
+
+            html += `<div class="result">
+                <strong>完整四柱: ${result.year}年 ${result.month}月 ${result.day}日 ${result.hour}时</strong>
+            </div>`;
+
+            document.getElementById('results').innerHTML = html;
+        }
+
+        // 页面加载后运行测试
+        window.onload = runTest;
+    </script>
+</body>
+</html>

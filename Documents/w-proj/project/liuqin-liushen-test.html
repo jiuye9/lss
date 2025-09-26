@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>六亲六神验证测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; background: #f9f9f9; border-radius: 8px; }
+        .result { margin: 8px 0; }
+        .correct { color: #4caf50; font-weight: bold; }
+        .incorrect { color: #f44336; font-weight: bold; }
+        table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background: #667eea; color: white; }
+    </style>
+</head>
+<body>
+    <h1>六亲六神算法验证测试</h1>
+
+    <div class="test-section">
+        <h2>1. 六神测试（戊戌日）</h2>
+        <div id="liushen-test"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. 六亲测试（戊日 + 地支五行）</h2>
+        <div id="liuqin-test"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. 综合排盘示例</h2>
+        <div id="comprehensive-test"></div>
+    </div>
+
+    <script>
+        // 基础数据
+        const TIANGAN = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+        const DIZHI = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+        const WUXING = {
+            '甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土',
+            '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水',
+            '子': '水', '丑': '土', '寅': '木', '卯': '木', '辰': '土', '巳': '火',
+            '午': '火', '未': '土', '申': '金', '酉': '金', '戌': '土', '亥': '水'
+        };
+
+        // 六神计算
+        function calculateLiuShen(dayGan) {
+            const liuShenSequence = ['青龙', '朱雀', '勾陈', '螣蛇', '白虎', '玄武'];
+            const dayGanIndex = TIANGAN.indexOf(dayGan);
+
+            const startIndexMap = {
+                0: 0, 1: 0, // 甲乙起青龙
+                2: 1, 3: 1, // 丙丁起朱雀
+                4: 2, 5: 2, // 戊己起勾陈
+                6: 3, 7: 3, // 庚辛起螣蛇
+                8: 4, 9: 4  // 壬癸起白虎
+            };
+
+            const startIndex = startIndexMap[dayGanIndex];
+            const result = [];
+            for (let i = 0; i < 6; i++) {
+                result.push(liuShenSequence[(startIndex + i) % 6]);
+            }
+            return result;
+        }
+
+        // 六亲关系
+        function getLiuQinRelation(dayGanWuxing, naZhiWuxing) {
+            if (dayGanWuxing === naZhiWuxing) {
+                return '兄弟';
+            }
+
+            const relationMap = {
+                '木': { '土': '妻财', '金': '官鬼', '火': '子孙', '水': '父母' },
+                '火': { '金': '妻财', '水': '官鬼', '土': '子孙', '木': '父母' },
+                '土': { '水': '妻财', '木': '官鬼', '金': '子孙', '火': '父母' },
+                '金': { '木': '妻财', '火': '官鬼', '水': '子孙', '土': '父母' },
+                '水': { '火': '妻财', '土': '官鬼', '木': '子孙', '金': '父母' }
+            };
+
+            return relationMap[dayGanWuxing]?.[naZhiWuxing] || '兄弟';
+        }
+
+        // 六亲计算
+        function calculateLiuQin(dayGan, naZhi) {
+            const result = [];
+            const dayGanWuxing = WUXING[dayGan];
+
+            for (let i = 0; i < 6; i++) {
+                const zhiWuxing = WUXING[naZhi[i]];
+                const liuQin = getLiuQinRelation(dayGanWuxing, zhiWuxing);
+                result.push(liuQin);
+            }
+
+            return result;
+        }
+
+        function runTests() {
+            // 1. 六神测试
+            const liuShen = calculateLiuShen('戊');
+            const expectedLiuShen = ['勾陈', '螣蛇', '白虎', '玄武', '青龙', '朱雀'];
+            const liuShenCorrect = JSON.stringify(liuShen) === JSON.stringify(expectedLiuShen);
+
+            document.getElementById('liushen-test').innerHTML = `
+                <div class="result ${liuShenCorrect ? 'correct' : 'incorrect'}">
+                    戊日六神排列: ${liuShen.join(', ')}
+                </div>
+                <div class="result">
+                    期望排列: ${expectedLiuShen.join(', ')}
+                </div>
+                <div class="result ${liuShenCorrect ? 'correct' : 'incorrect'}">
+                    验证结果: ${liuShenCorrect ? '✓ 正确' : '✗ 错误'}
+                </div>
+                <div class="result" style="font-size: 0.9rem; color: #666;">
+                    说明：戊日起勾陈，从初爻到上爻依次为：勾陈→螣蛇→白虎→玄武→青龙→朱雀
+                </div>
+            `;
+
+            // 2. 六亲测试
+            const testNaZhi = ['子', '寅', '辰', '午', '申', '戌'];
+            const liuQin = calculateLiuQin('戊', testNaZhi);
+            const expectedLiuQin = ['妻财', '官鬼', '兄弟', '子孙', '子孙', '兄弟'];
+
+            let liuQinHtml = '<table><tr><th>地支</th><th>五行</th><th>与戊土关系</th><th>六亲</th></tr>';
+            for (let i = 0; i < 6; i++) {
+                const zhi = testNaZhi[i];
+                const wuxing = WUXING[zhi];
+                let relation = '';
+                if (wuxing === '土') relation = '同类';
+                else if (wuxing === '水') relation = '我克';
+                else if (wuxing === '木') relation = '克我';
+                else if (wuxing === '火') relation = '生我';
+                else if (wuxing === '金') relation = '我生';
+
+                liuQinHtml += `<tr><td>${zhi}</td><td>${wuxing}</td><td>${relation}</td><td>${liuQin[i]}</td></tr>`;
+            }
+            liuQinHtml += '</table>';
+
+            const liuQinCorrect = JSON.stringify(liuQin) === JSON.stringify(expectedLiuQin);
+            document.getElementById('liuqin-test').innerHTML = `
+                ${liuQinHtml}
+                <div class="result ${liuQinCorrect ? 'correct' : 'incorrect'}">
+                    六亲验证: ${liuQinCorrect ? '✓ 正确' : '✗ 错误'}
+                </div>
+                <div class="result" style="font-size: 0.9rem; color: #666;">
+                    说明：戊日(土)，子(水)为妻财，寅(木)为官鬼，辰戌(土)为兄弟，午(火)申(金)为子孙
+                </div>
+            `;
+
+            // 3. 综合测试
+            document.getElementById('comprehensive-test').innerHTML = `
+                <table>
+                    <tr><th>爻位</th><th>六神</th><th>六亲</th><th>纳支</th></tr>
+                    <tr><td>上爻</td><td>${liuShen[5]}</td><td>${liuQin[5]}</td><td>${testNaZhi[5]}</td></tr>
+                    <tr><td>五爻</td><td>${liuShen[4]}</td><td>${liuQin[4]}</td><td>${testNaZhi[4]}</td></tr>
+                    <tr><td>四爻</td><td>${liuShen[3]}</td><td>${liuQin[3]}</td><td>${testNaZhi[3]}</td></tr>
+                    <tr><td>三爻</td><td>${liuShen[2]}</td><td>${liuQin[2]}</td><td>${testNaZhi[2]}</td></tr>
+                    <tr><td>二爻</td><td>${liuShen[1]}</td><td>${liuQin[1]}</td><td>${testNaZhi[1]}</td></tr>
+                    <tr><td>初爻</td><td>${liuShen[0]}</td><td>${liuQin[0]}</td><td>${testNaZhi[0]}</td></tr>
+                </table>
+                <div class="result correct">
+                    综合排盘显示正常，六亲基于地支五行计算，六神基于日干排列
+                </div>
+            `;
+        }
+
+        window.onload = runTests;
+    </script>
+</body>
+</html>

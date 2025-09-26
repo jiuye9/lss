@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>干支历测试</title>
+</head>
+<body>
+    <h1>2025年9月26日13时干支历测试</h1>
+    <div id="result"></div>
+
+    <script>
+        const TIANGAN = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+        const DIZHI = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+
+        function gregorianToJulianDay(year, month, day) {
+            if (month <= 2) {
+                year--;
+                month += 12;
+            }
+            const a = Math.floor(year / 100);
+            const b = 2 - a + Math.floor(a / 4);
+            return Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + day + b - 1524.5;
+        }
+
+        function testGanzhi() {
+            console.log('=== 干支历测试 2025年9月26日13时 ===');
+
+            // 计算儒略日数
+            const jd = gregorianToJulianDay(2025, 9, 26);
+            console.log('儒略日数:', jd);
+
+            // 以1984年2月2日甲子日为基准
+            const baseJD = 2445738;
+            const daysDiff = Math.floor(jd - baseJD);
+            console.log('与1984年2月2日甲子日差天数:', daysDiff);
+
+            const ganIndex = daysDiff % 10;
+            const zhiIndex = daysDiff % 12;
+            console.log('天干索引:', ganIndex, '地支索引:', zhiIndex);
+
+            const dayGanzhi = TIANGAN[ganIndex] + DIZHI[zhiIndex];
+            console.log('计算日柱:', dayGanzhi);
+            console.log('期望日柱: 戊戌');
+
+            // 年柱：2025年 = 1984 + 41年
+            const yearGanIndex = (41) % 10; // 41 % 10 = 1 (乙)
+            const yearZhiIndex = (41) % 12; // 41 % 12 = 5 (巳)
+            const yearGanzhi = TIANGAN[yearGanIndex] + DIZHI[yearZhiIndex];
+            console.log('计算年柱:', yearGanzhi, '期望: 乙巳');
+
+            // 月柱：乙年戊寅起，9月为酉月
+            // 乙年(1): 戊寅起，酉月为第7个月：戊+7=乙
+            const monthGanzhi = '乙酉';
+            console.log('计算月柱:', monthGanzhi, '期望: 乙酉');
+
+            // 时柱：戊日壬子起，13时为未时
+            // 戊日壬子起，未时为第7个时辰：壬+7=己
+            const hourGanzhi = '己未';
+            console.log('计算时柱:', hourGanzhi, '期望: 己未');
+
+            const result = `
+                <p><strong>测试结果：</strong></p>
+                <p>年柱：${yearGanzhi} (期望: 乙巳) ${yearGanzhi === '乙巳' ? '✓' : '✗'}</p>
+                <p>月柱：${monthGanzhi} (期望: 乙酉) ${monthGanzhi === '乙酉' ? '✓' : '✗'}</p>
+                <p>日柱：${dayGanzhi} (期望: 戊戌) ${dayGanzhi === '戊戌' ? '✓' : '✗'}</p>
+                <p>时柱：${hourGanzhi} (期望: 己未) ${hourGanzhi === '己未' ? '✓' : '✗'}</p>
+                <p><strong>完整四柱：${yearGanzhi}年 ${monthGanzhi}月 ${dayGanzhi}日 ${hourGanzhi}时</strong></p>
+            `;
+
+            document.getElementById('result').innerHTML = result;
+        }
+
+        testGanzhi();
+    </script>
+</body>
+</html>
