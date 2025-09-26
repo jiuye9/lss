@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六爻排盘系统 - 传统易学工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 3rem;
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            opacity: 0.85;
+            margin-bottom: 3rem;
+            line-height: 1.8;
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .app-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .app-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .app-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #ffd700;
+        }
+
+        .app-description {
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+
+        .app-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .app-features li {
+            margin-bottom: 0.5rem;
+            opacity: 0.85;
+        }
+
+        .app-features li:before {
+            content: "✓ ";
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4a 100%);
+            color: #2c3e50;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,215,0,0.3);
+        }
+
+        .footer {
+            margin-top: 3rem;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .tech-tag {
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .apps-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .app-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">六爻排盘系统</h1>
+            <p class="subtitle">传统易学智能工具 | 现代技术与古典智慧的完美结合</p>
+            <p class="description">
+                基于传统六爻理论，结合现代Web技术打造的专业排盘工具。
+                支持多种起卦方式，完整实现六亲、世应、伏神、神煞等核心算法，
+                为易学爱好者和专业从业者提供精准可靠的排盘服务。
+            </p>
+        </div>
+
+        <div class="apps-grid">
+            <div class="app-card" onclick="window.open('liuyao-calculator.html', '_blank')">
+                <div class="app-title">六爻排盘计算器</div>
+                <div class="app-description">
+                    专业六爻排盘工具，支持多种起卦方式，完整实现传统六爻理论算法
+                </div>
+                <ul class="app-features">
+                    <li>时间起卦 - 根据占卜时间自动生成卦象</li>
+                    <li>数字起卦 - 支持传统摇卦起卦方式</li>
+                    <li>铜钱起卦 - 模拟真实摇钱起卦过程</li>
+                    <li>手动指定 - 灵活的卦象手动配置</li>
+                    <li>完整解析 - 六亲、世应、伏神、神煞全覆盖</li>
+                </ul>
+                <a href="liuyao-calculator.html" class="btn" target="_blank">开始排盘</a>
+            </div>
+
+            <div class="app-card" onclick="window.open('enhanced-bazi-calculator.html', '_blank')">
+                <div class="app-title">八字排盘计算器</div>
+                <div class="app-description">
+                    精准八字排盘工具，基于天文算法计算真太阳时，支持十神分析
+                </div>
+                <ul class="app-features">
+                    <li>真太阳时修正 - 地理坐标精确时间计算</li>
+                    <li>节气精算 - 高精度节气时间确定</li>
+                    <li>十神分析 - 完整的十神关系计算</li>
+                    <li>多端适配 - 响应式设计支持各种设备</li>
+                    <li>专业界面 - 直观的排盘结果展示</li>
+                </ul>
+                <a href="enhanced-bazi-calculator.html" class="btn" target="_blank">八字排盘</a>
+            </div>
+
+            <div class="app-card" onclick="window.open('mobile-bazi-calculator.html', '_blank')">
+                <div class="app-title">移动端八字排盘</div>
+                <div class="app-description">
+                    专为移动设备优化的八字排盘工具，简洁高效的操作体验
+                </div>
+                <ul class="app-features">
+                    <li>移动优化 - 专为手机端设计的界面</li>
+                    <li>触控友好 - 优化的触控操作体验</li>
+                    <li>快速计算 - 高效的排盘算法</li>
+                    <li>离线可用 - 无需网络连接即可使用</li>
+                    <li>轻量设计 - 快速加载和响应</li>
+                </ul>
+                <a href="mobile-bazi-calculator.html" class="btn" target="_blank">移动排盘</a>
+            </div>
+        </div>
+
+        <div class="tech-stack">
+            <span class="tech-tag">纯前端技术</span>
+            <span class="tech-tag">无服务器架构</span>
+            <span class="tech-tag">响应式设计</span>
+            <span class="tech-tag">离线可用</span>
+            <span class="tech-tag">开源免费</span>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 六爻排盘系统 | 基于传统易学理论开发 | 仅供学习研究使用</p>
+            <p>技术栈: HTML5 + CSS3 + Vanilla JavaScript | GitHub Pages 部署</p>
+        </div>
+    </div>
+
+    <script>
+        // 简单的页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.app-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+
+        // 卡片点击效果
+        document.querySelectorAll('.app-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (e.target.tagName !== 'A') {
+                    const link = this.querySelector('.btn');
+                    if (link) {
+                        window.open(link.href, '_blank');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
