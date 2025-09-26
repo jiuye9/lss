@@ -3277,7 +3277,7 @@
             // 下卦数 = num2 除以 8 的余数，如果余数为0则取8
             const lowerGuaNum = (num2 % 8) || 8;
             // 动爻位 = (num1 + num2) 除以 6 的余数，如果余数为0则取6
-            const changingLineNum = ((num1 + num2) % 6) || 6;
+            const changingLineNum = ((num1 + num2 - 1) % 6) + 1;
 
             // 根据数据库中的卦象对照修正八卦二进制
             const guaMap = {
@@ -3380,7 +3380,7 @@
             if (upperNumber && lowerNumber && upperNumber > 0 && lowerNumber > 0) {
                 const upperGuaNum = (upperNumber % 8) || 8;
                 const lowerGuaNum = (lowerNumber % 8) || 8;
-                const changingLineNum = ((upperNumber + lowerNumber) % 6) || 6;
+                const changingLineNum = ((upperNumber + lowerNumber - 1) % 6) + 1;
 
                 document.getElementById('calc-upper').textContent = `${upperGuaNum} ${guaNames[upperGuaNum]}`;
                 document.getElementById('calc-lower').textContent = `${lowerGuaNum} ${guaNames[lowerGuaNum]}`;
