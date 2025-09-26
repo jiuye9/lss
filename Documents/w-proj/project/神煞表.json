@@ -1,0 +1,256 @@
+[
+  {
+    "name": "天乙贵人",
+    "type": "贵人",
+    "description": "最尊贵之吉神，主逢凶化吉、遇难成祥、得人扶持。",
+    "method": "以日干查地支",
+    "rules": [
+      { "day_gan": "甲", "branches": ["丑", "未"] },
+      { "day_gan": "乙", "branches": ["子", "申"] },
+      { "day_gan": "丙", "branches": ["亥", "酉"] },
+      { "day_gan": "丁", "branches": ["酉", "未"] },
+      { "day_gan": "戊", "branches": ["丑", "未"] },
+      { "day_gan": "己", "branches": ["子", "申"] },
+      { "day_gan": "庚", "branches": ["亥", "酉"] },
+      { "day_gan": "辛", "branches": ["午", "寅"] },
+      { "day_gan": "壬", "branches": ["卯", "巳"] },
+      { "day_gan": "癸", "branches": ["卯", "巳"] }
+    ],
+    "note": "甲戊庚牛羊，乙己鼠猴乡，丙丁猪鸡位，壬癸兔蛇藏，辛逢虎马贵，玉女好成双。"
+  },
+  {
+    "name": "太极贵人",
+    "type": "贵人",
+    "description": "主聪明好学、信仰玄学、有灵性、得神佛庇佑。",
+    "method": "以日干查地支",
+    "rules": [
+      { "day_gan": "甲", "branches": ["子", "午"] },
+      { "day_gan": "乙", "branches": ["巳", "亥"] },
+      { "day_gan": "丙", "branches": ["卯", "酉"] },
+      { "day_gan": "丁", "branches": ["卯", "酉"] },
+      { "day_gan": "戊", "branches": ["子", "午"] },
+      { "day_gan": "己", "branches": ["子", "午"] },
+      { "day_gan": "庚", "branches": ["卯", "酉"] },
+      { "day_gan": "辛", "branches": ["子", "午"] },
+      { "day_gan": "壬", "branches": ["卯", "酉"] },
+      { "day_gan": "癸", "branches": ["巳", "亥"] }
+    ],
+    "note": "甲乙生人子午中，丙丁鸡兔定亨通，戊己两干临四季，庚辛寅戌两相逢，壬癸辰申为正位，此是贵人命中逢。"
+  },
+  {
+    "name": "文昌贵人",
+    "type": "贵人",
+    "description": "主聪明才智、文采出众、利于考试、学术、文艺。",
+    "method": "以日干查地支",
+    "rules": [
+      { "day_gan": "甲", "branches": ["亥"] },
+      { "day_gan": "乙", "branches": ["午"] },
+      { "day_gan": "丙", "branches": ["申"] },
+      { "day_gan": "丁", "branches": ["酉"] },
+      { "day_gan": "戊", "branches": ["申"] },
+      { "day_gan": "己", "branches": ["酉"] },
+      { "day_gan": "庚", "branches": ["巳"] },
+      { "day_gan": "辛", "branches": ["巳"] },
+      { "day_gan": "壬", "branches": ["寅"] },
+      { "day_gan": "癸", "branches": ["卯"] }
+    ],
+    "note": "文昌以日干为主，查地支。甲日见亥为文昌。"
+  },
+  {
+    "name": "华盖",
+    "type": "贵人/孤",
+    "description": "主聪明、艺术天赋、玄学兴趣，但亦主孤独、清高、六亲缘薄。",
+    "method": "以年支或日支查地支",
+    "rules": [
+      { "trunk": "寅午戌", "branches": ["戌"] },
+      { "trunk": "亥卯未", "branches": ["未"] },
+      { "trunk": "申子辰", "branches": ["辰"] },
+      { "trunk": "巳酉丑", "branches": ["丑"] }
+    ],
+    "note": "寅午戌见戌，亥卯未见未，申子辰见辰，巳酉丑见丑。"
+  },
+  {
+    "name": "将星",
+    "type": "贵人",
+    "description": "主领导才能、组织能力、有威仪、适合管理、军警、武职。",
+    "method": "以年支或日支查地支",
+    "rules": [
+      { "trunk": "寅午戌", "branches": ["午"] },
+      { "trunk": "亥卯未", "branches": ["卯"] },
+      { "trunk": "申子辰", "branches": ["子"] },
+      { "trunk": "巳酉丑", "branches": ["酉"] }
+    ],
+    "note": "三合局中为将星。"
+  },
+  {
+    "name": "金舆",
+    "type": "贵人",
+    "description": "主富贵、车马荣华、生活优裕、出行顺利。",
+    "method": "以日干查地支",
+    "rules": [
+      { "day_gan": "甲", "branches": ["辰"] },
+      { "day_gan": "乙", "branches": ["辰"] },
+      { "day_gan": "丙", "branches": ["辰"] },
+      { "day_gan": "丁", "branches": ["巳"] },
+      { "day_gan": "戊", "branches": ["辰"] },
+      { "day_gan": "己", "branches": ["辰"] },
+      { "day_gan": "庚", "branches": ["戌"] },
+      { "day_gan": "辛", "branches": ["戌"] },
+      { "day_gan": "壬", "branches": ["戌"] },
+      { "day_gan": "癸", "branches": ["亥"] }
+    ],
+    "note": "甲乙丙辰丁己巳，戊己辰来庚辛戌，壬癸之日遇戌亥，必定金舆命中出。"
+  },
+  {
+    "name": "天德贵人",
+    "type": "贵人",
+    "description": "第一贵神，主仁慈祥和、化解灾厄、得天地庇佑。",
+    "method": "以月支查天干",
+    "rules": [
+      { "month_branch": "寅", "heavenly_stems": ["丁"] },
+      { "month_branch": "卯", "heavenly_stems": ["申"] },
+      { "month_branch": "辰", "heavenly_stems": ["壬"] },
+      { "month_branch": "巳", "heavenly_stems": ["庚"] },
+      { "month_branch": "午", "heavenly_stems": ["辛"] },
+      { "month_branch": "未", "heavenly_stems": ["甲"] },
+      { "month_branch": "申", "heavenly_stems": ["癸"] },
+      { "month_branch": "酉", "heavenly_stems": ["辛"] },
+      { "month_branch": "戌", "heavenly_stems": ["甲"] },
+      { "month_branch": "亥", "heavenly_stems": ["壬"] },
+      { "month_branch": "子", "heavenly_stems": ["癸"] },
+      { "month_branch": "丑", "heavenly_stems": ["庚"] }
+    ],
+    "note": "正月丁，二月申，三月壬，四月庚，五月辛，六月甲，七月癸，八月辛，九月甲，十月壬，十一月癸，十二月庚。"
+  },
+  {
+    "name": "月德贵人",
+    "type": "贵人",
+    "description": "主温和善良、逢凶化吉、得长辈提携。",
+    "method": "以月支查天干",
+    "rules": [
+      { "month_branch": "寅", "heavenly_stems": ["丙"] },
+      { "month_branch": "卯", "heavenly_stems": ["甲"] },
+      { "month_branch": "辰", "heavenly_stems": ["壬"] },
+      { "month_branch": "巳", "heavenly_stems": ["丙"] },
+      { "month_branch": "午", "heavenly_stems": ["丙"] },
+      { "month_branch": "未", "heavenly_stems": ["甲"] },
+      { "month_branch": "申", "heavenly_stems": ["壬"] },
+      { "month_branch": "酉", "heavenly_stems": ["丙"] },
+      { "month_branch": "戌", "heavenly_stems": ["丙"] },
+      { "month_branch": "亥", "heavenly_stems": ["甲"] },
+      { "month_branch": "子", "heavenly_stems": ["壬"] },
+      { "month_branch": "丑", "heavenly_stems": ["甲"] }
+    ],
+    "note": "寅午戌月丙，申子辰月壬，亥卯未月甲，巳酉丑月庚。"
+  },
+  {
+    "name": "福星贵人",
+    "type": "贵人",
+    "description": "主福气深厚、一生安稳、衣食无忧、逢凶化吉。",
+    "method": "以日干查地支",
+    "rules": [
+      { "day_gan": "甲", "branches": ["戌"] },
+      { "day_gan": "乙", "branches": ["未"] },
+      { "day_gan": "丙", "branches": ["辰"] },
+      { "day_gan": "丁", "branches": ["辰"] },
+      { "day_gan": "戊", "branches": ["辰"] },
+      { "day_gan": "己", "branches": ["辰"] },
+      { "day_gan": "庚", "branches": ["戌"] },
+      { "day_gan": "辛", "branches": ["戌"] },
+      { "day_gan": "壬", "branches": ["丑"] },
+      { "day_gan": "癸", "branches": ["丑"] }
+    ],
+    "note": "甲乙未戌，丙丁辰，戊己辰，庚辛戌，壬癸丑。"
+  },
+  {
+    "name": "驿马",
+    "type": "动神",
+    "description": "主动荡、奔波、旅行、迁移、职业变动、出国、交通。",
+    "method": "以年支或日支查地支",
+    "rules": [
+      { "trunk": "寅午戌", "branches": ["申"] },
+      { "trunk": "亥卯未", "branches": ["巳"] },
+      { "trunk": "申子辰", "branches": ["寅"] },
+      { "trunk": "巳酉丑", "branches": ["亥"] }
+    ],
+    "note": "寅午戌见申，亥卯未见巳，申子辰见寅，巳酉丑见亥。"
+  },
+  {
+    "name": "亡神",
+    "type": "凶煞",
+    "description": "主破财、失物、官司、疾病、精神恍惚、记忆差。",
+    "method": "以年支或日支查地支",
+    "rules": [
+      { "trunk": "寅午戌", "branches": ["巳"] },
+      { "trunk": "亥卯未", "branches": ["寅"] },
+      { "trunk": "申子辰", "branches": ["亥"] },
+      { "trunk": "巳酉丑", "branches": ["申"] }
+    ],
+    "note": "三合前一位为亡神。"
+  },
+  {
+    "name": "劫煞",
+    "type": "凶煞",
+    "description": "主破财、意外、是非、官非、小人、灾祸。",
+    "method": "以年支查地支",
+    "rules": [
+      { "month_branch": "寅", "branches": ["巳"] },
+      { "month_branch": "卯", "branches": ["申"] },
+      { "month_branch": "辰", "branches": ["亥"] },
+      { "month_branch": "巳", "branches": ["寅"] },
+      { "month_branch": "午", "branches": ["巳"] },
+      { "month_branch": "未", "branches": ["申"] },
+      { "month_branch": "申", "branches": ["亥"] },
+      { "month_branch": "酉", "branches": ["寅"] },
+      { "month_branch": "戌", "branches": ["巳"] },
+      { "month_branch": "亥", "branches": ["申"] },
+      { "month_branch": "子", "branches": ["亥"] },
+      { "month_branch": "丑", "branches": ["寅"] }
+    ],
+    "note": "申子辰年见巳，亥卯未年见申，寅午戌年见亥，巳酉丑年见寅。"
+  },
+  {
+    "name": "十灵日",
+    "type": "特殊日",
+    "description": "主聪明伶俐、反应快、有灵性、适合玄学、艺术。",
+    "method": "看日柱天干地支",
+    "rules": [
+      { "day_stem_branch": "甲子" },
+      { "day_stem_branch": "乙丑" },
+      { "day_stem_branch": "丙子" },
+      { "day_stem_branch": "丁亥" },
+      { "day_stem_branch": "戊子" },
+      { "day_stem_branch": "己亥" },
+      { "day_stem_branch": "庚子" },
+      { "day_stem_branch": "辛亥" },
+      { "day_stem_branch": "壬子" },
+      { "day_stem_branch": "癸亥" }
+    ],
+    "note": "日柱为甲子、乙丑、丙子、丁亥、戊子、己亥、庚子、辛亥、壬子、癸亥者为十灵日。"
+  },
+  {
+    "name": "金神",
+    "type": "特殊神煞",
+    "description": "主刚毅、果断、适合武职、军警、技术，喜火制。",
+    "method": "看日柱或时柱地支",
+    "rules": [
+      { "day_or_hour_branch": "巳" },
+      { "day_or_hour_branch": "午" },
+      { "day_or_hour_branch": "未" }
+    ],
+    "note": "日柱或时柱地支为巳、午、未，且日干为乙、己、癸者为金神。"
+  },
+  {
+    "name": "童子煞",
+    "type": "婚煞",
+    "description": "主婚姻不顺、晚婚、夫妻缘薄、感情波折。",
+    "method": "查日柱地支",
+    "rules": [
+      { "day_branch": "子", "condition": "年支为午或日支为午" },
+      { "day_branch": "午", "condition": "年支为子或日支为子" },
+      { "day_branch": "卯", "condition": "年支为酉或日支为酉" },
+      { "day_branch": "酉", "condition": "年支为卯或日支为卯" }
+    ],
+    "note": "子午卯酉日柱，且年支或日支对冲者多为童子煞。"
+  }
+]

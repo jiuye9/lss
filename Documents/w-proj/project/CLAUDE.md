@@ -2,16 +2,24 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+### 交流规则
+使用中文自然语言沟通.
+
+### CSS框架
+使用tailwind4
+
 ## Project Structure
 
 This repository contains a Chinese traditional astrology application focused on 八字排盘 (BaZi chart calculation). The project is organized as follows:
 
 ```
-lss/
-├── enhanced-bazi-calculator.html    # Desktop version (~2162 lines)
-├── mobile-bazi-calculator.html      # Mobile version (~1190 lines)
-├── README.md                        # Chinese documentation
-└── CLAUDE.md                        # Project instructions for Claude Code
+project/
+├── mingli/                    # Main application directory
+│   ├── enhanced-bazi-calculator.html    # Desktop version (~2162 lines)
+│   ├── mobile-bazi-calculator.html      # Mobile version (~1190 lines)
+│   └── README.md                        # Chinese documentation
+└── commands/
+    └── code_review.md                   # Custom slash command definition
 ```
 
 ## Application Overview
