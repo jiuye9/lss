@@ -1,0 +1,45 @@
+[build]
+  publish = "."
+  command = "echo 'Static site deployment'"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+# Redirect rules for better user experience
+[[redirects]]
+  from = "/六爻"
+  to = "/liuyao-calculator.html"
+  status = 301
+
+[[redirects]]
+  from = "/八字"
+  to = "/enhanced-bazi-calculator.html"
+  status = 301
+
+[[redirects]]
+  from = "/mobile"
+  to = "/mobile-bazi-calculator.html"
+  status = 301
