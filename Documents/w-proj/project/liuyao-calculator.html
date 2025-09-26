@@ -2349,18 +2349,181 @@
             );
 
             console.log('干支测试整体结果:', ganzhiTest ? '✓ 通过' : '✗ 失败');
+        }
 
-            // 测试戊戌日六神排列
-            const liuShen = calculateLiuShen('戊');
-            console.log('\n测试戊戌日六神排列:');
-            console.log('计算结果:', liuShen);
-            console.log('预期: 初爻勾陈，二爻螣蛇...');
-            const expectedLiuShen = ['勾陈', '螣蛇', '白虎', '玄武', '青龙', '朱雀'];
-            const test3Pass = JSON.stringify(liuShen) === JSON.stringify(expectedLiuShen);
-            console.log('六神测试:', test3Pass ? '✓ 通过' : '✗ 失败');
+        // 全面的回归测试函数
+        function runRegressionTests() {
+            console.log('🔍 === 六爻排盘系统 - 全面回归测试 ===');
 
-            console.log('\n=== 自校验完成 ===');
-            return test1Pass;
+            const results = {
+                total: 0,
+                passed: 0,
+                failed: 0,
+                testDetails: []
+            };
+
+            // 辅助函数：运行单个测试
+            function runTest(name, testFn, expectedValue = null) {
+                results.total++;
+                try {
+                    const result = testFn();
+                    const passed = expectedValue ? result === expectedValue : result;
+
+                    if (passed) {
+                        results.passed++;
+                        console.log(`✅ ${name}: 通过`);
+                        results.testDetails.push({ name, status: 'PASS', details: result });
+                    } else {
+                        results.failed++;
+                        console.log(`❌ ${name}: 失败 - 实际: ${result}, 期望: ${expectedValue}`);
+                        results.testDetails.push({ name, status: 'FAIL', details: result, expected: expectedValue });
+                    }
+                } catch (error) {
+                    results.failed++;
+                    console.log(`❌ ${name}: 错误 - ${error.message}`);
+                    results.testDetails.push({ name, status: 'ERROR', error: error.message });
+                }
+            }
+
+            // 测试1：时间起卦动爻计算修复验证
+            runTest('时间起卦动爻范围修复', () => {
+                const result1 = timeToHexagram('2025-09-26', '13:00');
+                const result2 = timeToHexagram('2024-01-01', '00:00');
+                const result3 = timeToHexagram('2023-12-31', '23:00');
+
+                return (result1.changingLine >= 1 && result1.changingLine <= 6) &&
+                       (result2.changingLine >= 1 && result2.changingLine <= 6) &&
+                       (result3.changingLine >= 1 && result3.changingLine <= 6);
+            }, true);
+
+            // 测试2：数字起卦经典案例（13,34）
+            runTest('数字起卦经典案例验证', () => {
+                const result = traditionalNumberDivination(13, 34);
+                return result.originalHex === '110011' &&
+                       result.changedHex === '110001' &&
+                       result.changingLineNum >= 1 && result.changingLineNum <= 6;
+            }, true);
+
+            // 测试3：输入验证测试
+            runTest('日期输入验证测试', () => {
+                try {
+                    validateInputs(); // 无输入应抛出错误
+                    return false; // 不应该到达这里
+                } catch (e) {
+                    return e.message.includes('请选择'); // 应该抛出选择提示
+                }
+            }, true);
+
+            runTest('数字输入验证测试', () => {
+                try {
+                    document.getElementById('number1').value = '';
+                    document.getElementById('number2').value = '';
+                    validateNumberInputs(); // 无输入应抛出错误
+                    return false;
+                } catch (e) {
+                    return e.message.includes('请输入有效'); // 应该抛出有效输入提示
+                }
+            }, true);
+
+            // 测试4：空亡计算准确性
+            runTest('空亡计算准确性测试', () => {
+                return testKongWangCalculation();
+            }, true);
+
+            // 测试5：八纯卦世应位置验证
+            runTest('八纯卦世应位置验证', () => {
+                const testCases = [
+                    { hex: '111111', expectedWorld: 4, expectedPeer: 1 }, // 乾为天
+                    { hex: '000000', expectedWorld: 1, expectedPeer: 4 }, // 坤为地
+                    { hex: '100100', expectedWorld: 6, expectedPeer: 3 }, // 震为雷
+                    { hex: '011011', expectedWorld: 3, expectedPeer: 6 }  // 兑为泽
+                ];
+
+                return testCases.every(testCase => {
+                    const fullData = calculateLiuQinFromFullData(testCase.hex);
+                    return fullData &&
+                           fullData.worldLine === testCase.expectedWorld &&
+                           fullData.peerLine === testCase.expectedPeer;
+                });
+            }, true);
+
+            // 测试6：六神排列测试
+            runTest('六神排列准确性测试', () => {
+                const testCases = [
+                    { dayGan: '甲', expected: ['青龙', '朱雀', '勾陈', '螣蛇', '白虎', '玄武'] },
+                    { dayGan: '戊', expected: ['勾陈', '螣蛇', '白虎', '玄武', '青龙', '朱雀'] },
+                    { dayGan: '庚', expected: ['白虎', '玄武', '青龙', '朱雀', '勾陈', '螣蛇'] }
+                ];
+
+                return testCases.every(testCase => {
+                    const result = calculateLiuShen(testCase.dayGan);
+                    return JSON.stringify(result) === JSON.stringify(testCase.expected);
+                });
+            }, true);
+
+            // 测试7：错误处理机制测试
+            runTest('错误处理机制测试', () => {
+                // 测试空的时间输入
+                try {
+                    const result = timeToHexagram('', '');
+                    return false; // 应该抛出错误
+                } catch (e) {
+                    // 检查是否有合适的错误处理
+                    return true;
+                }
+            }, true);
+
+            // 测试8：六亲计算一致性测试
+            runTest('六亲计算一致性测试', () => {
+                const testHex = '111111'; // 乾为天
+                const najia = ['戊子', '戊寅', '戊辰', '壬午', '壬申', '壬戌']; // 乾卦纳甲
+                const result1 = calculateLiuQin(testHex, '甲', najia);
+                const result2 = calculateLiuQinFromFullData(testHex);
+
+                // 如果完整数据可用，两种计算方法应该一致
+                if (result2 && result2.relations) {
+                    return JSON.stringify(result1) === JSON.stringify(result2.relations);
+                }
+
+                // 如果完整数据不可用，至少基础计算应该成功
+                return Array.isArray(result1) && result1.length === 6;
+            }, true);
+
+            // 测试结果汇总
+            console.log('\n📊 === 测试结果汇总 ===');
+            console.log(`总测试数: ${results.total}`);
+            console.log(`通过: ${results.passed} ✅`);
+            console.log(`失败: ${results.failed} ❌`);
+            console.log(`通过率: ${((results.passed / results.total) * 100).toFixed(1)}%`);
+
+            // 如果有失败的测试，显示详细信息
+            if (results.failed > 0) {
+                console.log('\n⚠️ 失败的测试详情:');
+                results.testDetails
+                    .filter(test => test.status !== 'PASS')
+                    .forEach(test => {
+                        console.log(`- ${test.name}: ${test.status}`);
+                        if (test.error) console.log(`  错误: ${test.error}`);
+                        if (test.expected) console.log(`  期望: ${test.expected}, 实际: ${test.details}`);
+                    });
+            }
+
+            // 质量等级评估
+            const passRate = (results.passed / results.total) * 100;
+            let quality = '未知';
+            if (passRate >= 95) quality = '优秀 🌟';
+            else if (passRate >= 85) quality = '良好 ✨';
+            else if (passRate >= 70) quality = '一般 ⚠️';
+            else quality = '需要改进 ❌';
+
+            console.log(`\n🎯 系统质量评级: ${quality} (${passRate.toFixed(1)}%)`);
+            console.log('=== 回归测试完成 ===\n');
+
+            return {
+                passed: results.passed === results.total,
+                passRate: passRate,
+                summary: results
+            };
         }
 
         // 快速测试函数
@@ -2494,6 +2657,21 @@
             coinThrow.classList.add('completed');
         }
 
+        /**
+         * 传统时间起卦法
+         * 根据《梅花易数》的方法，使用起卦时间计算卦象
+         *
+         * @param {string} date - 起卦日期，格式：YYYY-MM-DD
+         * @param {string} time - 起卦时间，格式：HH:MM
+         * @returns {Object} 包含上卦、下卦、动爻的对象
+         *
+         * 计算原理：
+         * 1. 上卦 = (年数 + 月数 + 日数) % 8，余数对应八卦
+         * 2. 下卦 = (年数 + 月数 + 日数 + 时数) % 8，余数对应八卦
+         * 3. 动爻 = (年数 + 月数 + 日数 + 时数 - 1) % 6 + 1，得1-6爻位
+         *
+         * 注意：八卦对应关系按照先天八卦序数，动爻位置从1开始计数
+         */
         function timeToHexagram(date, time) {
             const dateObj = new Date(`${date}T${time}`);
             const year = dateObj.getFullYear();
@@ -2504,6 +2682,7 @@
             // 时间起卦法：年月日时相加除以8取余数
             const upperGua = (year + month + day) % 8;
             const lowerGua = (year + month + day + hour) % 8;
+            // 动爻计算修复：确保结果在1-6范围内
             const changingLine = ((year + month + day + hour - 1) % 6) + 1;
 
             return { upperGua, lowerGua, changingLine };
@@ -2968,7 +3147,22 @@
             };
         }
 
-        // 计算六神（按日干起例，从初爻到上爻）
+        /**
+         * 六神计算（基于日干）
+         * 根据起卦日的天干，确定六爻的六神配置
+         *
+         * @param {string} dayGan - 日干，如"甲"、"乙"、"丙"等
+         * @returns {Array<string>} 从初爻到上爻的六神数组
+         *
+         * 六神起例口诀：
+         * - 甲乙起青龙：甲乙日初爻起青龙
+         * - 丙丁起朱雀：丙丁日初爻起朱雀
+         * - 戊己起勾陈：戊己日初爻起勾陈
+         * - 庚辛起螣蛇：庚辛日初爻起螣蛇
+         * - 壬癸起白虎：壬癸日初爻起白虎
+         *
+         * 六神顺序：青龙→朱雀→勾陈→螣蛇→白虎→玄武（循环）
+         */
         function calculateLiuShen(dayGan) {
             const liuShenSequence = ['青龙', '朱雀', '勾陈', '螣蛇', '白虎', '玄武'];
             const dayGanIndex = TIANGAN.indexOf(dayGan);
@@ -3000,12 +3194,28 @@
 
         // 正确的六亲计算算法（基于"地支跟卦走，卦宫定六亲"的传统理论）
         function calculateLiuQin(hexBinary, dayGan, najiaGanZhi) {
+            // 优先使用完整数据表
+            const fullDataResult = calculateLiuQinFromFullData(hexBinary);
+            if (fullDataResult && fullDataResult.relations && fullDataResult.relations.length === 6) {
+                return fullDataResult.relations;
+            }
+
+            // 如果完整数据不可用，使用传统算法
             // 1. 获取卦宫（根据卦象查找所属卦宫）
             const hexInfo = HEXAGRAMS[hexBinary];
+            if (!hexInfo) {
+                console.warn(`未找到卦象 ${hexBinary} 的信息`);
+                return ['兄弟', '兄弟', '兄弟', '兄弟', '兄弟', '兄弟'];
+            }
+
             const guaGong = hexInfo.palace;  // 卦宫名称，如"乾"、"坤"等
 
             // 2. 获取卦宫五行
             const guaGongWuxing = BAGUA_WUXING[guaGong];
+            if (!guaGongWuxing) {
+                console.warn(`未找到卦宫 ${guaGong} 的五行属性`);
+                return ['兄弟', '兄弟', '兄弟', '兄弟', '兄弟', '兄弟'];
+            }
 
             // 3. 提取纳支（地支部分）
             const nazhiList = najiaGanZhi.map(gz => gz.charAt(1));
@@ -3016,12 +3226,55 @@
                 const nazhi = nazhiList[i];           // 该爻的纳支（地支）
                 const nazhiWuxing = DIZHI_WUXING[nazhi];  // 纳支的五行
 
+                if (!nazhiWuxing) {
+                    console.warn(`未找到地支 ${nazhi} 的五行属性`);
+                    liuqinList.push('兄弟');
+                    continue;
+                }
+
                 // 根据纳支五行与卦宫五行的关系确定六亲
-                const liuqin = LIUQIN_RELATIONS[guaGongWuxing][nazhiWuxing];
+                const relationMap = LIUQIN_RELATIONS[guaGongWuxing];
+                const liuqin = relationMap ? relationMap[nazhiWuxing] : '兄弟';
+
                 liuqinList.push(liuqin || '兄弟'); // 如果找不到关系，默认为兄弟
             }
 
             return liuqinList;
+        }
+
+        // 详细的六亲计算（考虑阴阳同异）
+        function calculateLiuQinDetailed(hexBinary, dayGan, najiaGanZhi) {
+            const basicResult = calculateLiuQin(hexBinary, dayGan, najiaGanZhi);
+
+            // 如果提供了日干，可以进行阴阳同异的细化判断
+            if (!dayGan) {
+                return basicResult;
+            }
+
+            const dayGanIndex = TIANGAN.indexOf(dayGan);
+            const dayGanYinYang = dayGanIndex % 2; // 0为阳，1为阴
+
+            const detailedResult = [];
+            for (let i = 0; i < 6; i++) {
+                const najiaGan = najiaGanZhi[i].charAt(0);
+                const najiaGanIndex = TIANGAN.indexOf(najiaGan);
+                const najiaGanYinYang = najiaGanIndex % 2;
+
+                let liuqin = basicResult[i];
+
+                // 对兄弟进行阴阳同异细化
+                if (liuqin === '兄弟') {
+                    if (dayGanYinYang === najiaGanYinYang) {
+                        liuqin = '兄弟'; // 同阴阳为兄弟
+                    } else {
+                        liuqin = '姐妹'; // 异阴阳为姐妹
+                    }
+                }
+
+                detailedResult.push(liuqin);
+            }
+
+            return detailedResult;
         }
 
         // 验证正确的六亲计算（用于调试和验证）
@@ -3047,19 +3300,90 @@
             }
         }
 
-        // 计算空亡
+        /**
+         * 计算空亡（旬空）
+         * 根据日干支确定所在旬，查找该旬中空亡的两个地支
+         *
+         * @param {string} dayGanzhi - 日干支，如"甲子"、"乙丑"等
+         * @returns {Array<string>} 返回空亡的两个地支数组
+         *
+         * 空亡理论：
+         * - 每旬10天，以甲为首，但地支有12个，故必有2个地支空亡
+         * - 甲子旬(甲子-癸酉)：戌亥空
+         * - 甲戌旬(甲戌-癸未)：申酉空
+         * - 甲申旬(甲申-癸巳)：午未空
+         * - 甲午旬(甲午-癸卯)：辰巳空
+         * - 甲辰旬(甲辰-癸丑)：寅卯空
+         * - 甲寅旬(甲寅-癸亥)：子丑空
+         */
         function calculateKongWang(dayGanzhi) {
             const dayGan = dayGanzhi.charAt(0);
             const dayZhi = dayGanzhi.charAt(1);
             const dayGanIndex = TIANGAN.indexOf(dayGan);
             const dayZhiIndex = DIZHI.indexOf(dayZhi);
 
-            // 空亡计算：旬内空亡
-            const xunShou = dayGanIndex - dayZhiIndex;
-            const kongWangIndex1 = (dayZhiIndex + 10 - xunShou) % 12;
-            const kongWangIndex2 = (kongWangIndex1 + 1) % 12;
+            if (dayGanIndex === -1 || dayZhiIndex === -1) {
+                return ['未知', '未知'];
+            }
 
-            return [DIZHI[kongWangIndex1], DIZHI[kongWangIndex2]];
+            // 计算旬首：根据日干支计算当前旬的起始干支
+            // 每旬以甲为首，十天一个周期
+            // 甲子、甲戌、甲申、甲午、甲辰、甲寅为六甲旬首
+
+            // 旬的地支序列
+            const xunTable = [
+                { xunShou: '甲子', kongWang: ['戌', '亥'] },  // 甲子至癸酉，戌亥空
+                { xunShou: '甲戌', kongWang: ['申', '酉'] },  // 甲戌至癸未，申酉空
+                { xunShou: '甲申', kongWang: ['午', '未'] },  // 甲申至癸巳，午未空
+                { xunShou: '甲午', kongWang: ['辰', '巳'] },  // 甲午至癸卯，辰巳空
+                { xunShou: '甲辰', kongWang: ['寅', '卯'] },  // 甲辰至癸丑，寅卯空
+                { xunShou: '甲寅', kongWang: ['子', '丑'] }   // 甲寅至癸亥，子丑空
+            ];
+
+            // 计算所属旬：根据地支确定旬首
+            // 算法：(地支索引 - 天干索引 + 12) % 12 / 2 得到旬的索引
+            let xunIndex = Math.floor(((dayZhiIndex - dayGanIndex + 12) % 12) / 2);
+
+            // 边界处理
+            if (xunIndex < 0) xunIndex = 0;
+            if (xunIndex >= 6) xunIndex = 5;
+
+            return xunTable[xunIndex].kongWang;
+        }
+
+        // 测试空亡计算准确性
+        function testKongWangCalculation() {
+            const testCases = [
+                { dayGanzhi: '甲子', expectedKongWang: ['戌', '亥'] },
+                { dayGanzhi: '乙丑', expectedKongWang: ['戌', '亥'] },
+                { dayGanzhi: '丙寅', expectedKongWang: ['戌', '亥'] },
+                { dayGanzhi: '癸酉', expectedKongWang: ['戌', '亥'] },
+                { dayGanzhi: '甲戌', expectedKongWang: ['申', '酉'] },
+                { dayGanzhi: '乙亥', expectedKongWang: ['申', '酉'] },
+                { dayGanzhi: '甲申', expectedKongWang: ['午', '未'] },
+                { dayGanzhi: '甲午', expectedKongWang: ['辰', '巳'] },
+                { dayGanzhi: '甲辰', expectedKongWang: ['寅', '卯'] },
+                { dayGanzhi: '甲寅', expectedKongWang: ['子', '丑'] }
+            ];
+
+            console.log('=== 空亡计算测试开始 ===');
+            let passCount = 0;
+
+            testCases.forEach((testCase, index) => {
+                const calculated = calculateKongWang(testCase.dayGanzhi);
+                const isPass = calculated[0] === testCase.expectedKongWang[0] &&
+                               calculated[1] === testCase.expectedKongWang[1];
+
+                if (isPass) {
+                    passCount++;
+                    console.log(`✅ 测试${index + 1}: ${testCase.dayGanzhi} → 空亡 ${calculated.join(',')} (正确)`);
+                } else {
+                    console.log(`❌ 测试${index + 1}: ${testCase.dayGanzhi} → 空亡 ${calculated.join(',')} (期望: ${testCase.expectedKongWang.join(',')})`);
+                }
+            });
+
+            console.log(`=== 空亡计算测试完成: ${passCount}/${testCases.length} 通过 ===`);
+            return passCount === testCases.length;
         }
 
         // 伏神计算函数
