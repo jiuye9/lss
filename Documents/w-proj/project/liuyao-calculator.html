@@ -320,6 +320,103 @@
             }
         }
 
+        .manual-method-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: var(--bg-color);
+            border-radius: 8px;
+        }
+
+        .manual-method-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 10px 15px;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .manual-method-btn:hover {
+            border-color: var(--accent-color);
+            background: rgba(218, 165, 32, 0.1);
+        }
+
+        .manual-method-btn.active {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .manual-method {
+            display: none;
+        }
+
+        .manual-method.active {
+            display: block;
+        }
+
+        .lines-input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .line-input {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: var(--bg-color);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .line-input label {
+            min-width: 50px;
+            margin: 0;
+            margin-right: 15px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .line-select {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--card-bg);
+        }
+
+        input[type="number"] small,
+        input[type="text"] + small {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+            font-style: italic;
+        }
+
+        .gua-reference {
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--bg-color);
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-color);
+            font-size: 0.9rem;
+        }
+
+        .gua-reference h4 {
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+
         .btn {
             display: inline-block;
             padding: 15px 35px;
@@ -710,20 +807,141 @@
 
                         <div id="manual-tab" class="tab-content">
                             <p class="tab-description">
-                                ✋ 直接指定本卦和变卦，适合已知卦象的情况。
+                                ✋ 多种方式直接指定卦象，适合已知卦象或特定需求的情况。
                             </p>
-                            <div class="manual-inputs">
-                                <div class="form-group">
-                                    <label for="original-hex">本卦：</label>
-                                    <select id="original-hex">
-                                        <option value="">请选择本卦</option>
-                                    </select>
+
+                            <div class="manual-method-tabs">
+                                <button class="manual-method-btn active" data-manual="hexname">卦名选择</button>
+                                <button class="manual-method-btn" data-manual="numbers">数字起卦</button>
+                                <button class="manual-method-btn" data-manual="binary">二进制</button>
+                                <button class="manual-method-btn" data-manual="lines">逐爻指定</button>
+                            </div>
+
+                            <div id="hexname-method" class="manual-method active">
+                                <div class="manual-inputs">
+                                    <div class="form-group">
+                                        <label for="original-hex">本卦：</label>
+                                        <select id="original-hex">
+                                            <option value="">请选择本卦</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="changed-hex">变卦：</label>
+                                        <select id="changed-hex">
+                                            <option value="">请选择变卦（可选）</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="numbers-method" class="manual-method">
+                                <div class="manual-inputs">
+                                    <div class="form-group">
+                                        <label for="upper-number">上卦数：</label>
+                                        <input type="number" id="upper-number" min="1" max="8" placeholder="1-8">
+                                        <small>乾1 兑2 离3 震4 巽5 坎6 艮7 坤8</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="lower-number">下卦数：</label>
+                                        <input type="number" id="lower-number" min="1" max="8" placeholder="1-8">
+                                        <small>乾1 兑2 离3 震4 巽5 坎6 艮7 坤8</small>
+                                    </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="changed-hex">变卦：</label>
-                                    <select id="changed-hex">
-                                        <option value="">请选择变卦（可选）</option>
-                                    </select>
+                                    <label for="changing-line-number">动爻位置：</label>
+                                    <input type="number" id="changing-line-number" min="0" max="6" placeholder="0-6（0表示无动爻）">
+                                    <small>1=初爻, 2=二爻, 3=三爻, 4=四爻, 5=五爻, 6=上爻</small>
+                                </div>
+                                <div class="gua-reference">
+                                    <h4>八卦数字对照表：</h4>
+                                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; font-size: 0.9rem;">
+                                        <div>1 乾 ☰ (天)</div>
+                                        <div>2 兑 ☱ (泽)</div>
+                                        <div>3 离 ☲ (火)</div>
+                                        <div>4 震 ☳ (雷)</div>
+                                        <div>5 巽 ☴ (风)</div>
+                                        <div>6 坎 ☵ (水)</div>
+                                        <div>7 艮 ☶ (山)</div>
+                                        <div>8 坤 ☷ (地)</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="binary-method" class="manual-method">
+                                <div class="form-group">
+                                    <label for="binary-input">二进制卦象：</label>
+                                    <input type="text" id="binary-input" maxlength="6" placeholder="例如：111111（6位二进制，1=阳爻，0=阴爻）">
+                                    <small>从上到下：上爻→五爻→四爻→三爻→二爻→初爻</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="changing-lines-input">动爻位置：</label>
+                                    <input type="text" id="changing-lines-input" placeholder="例如：1,3,6（多个动爻用逗号分隔，留空表示静卦）">
+                                    <small>1=初爻, 2=二爻, 3=三爻, 4=四爻, 5=五爻, 6=上爻</small>
+                                </div>
+                            </div>
+
+                            <div id="lines-method" class="manual-method">
+                                <div class="lines-input-container">
+                                    <div class="line-input" data-line="6">
+                                        <label>上爻：</label>
+                                        <select class="line-select">
+                                            <option value="">请选择</option>
+                                            <option value="老阳">老阳 ⚊ ○</option>
+                                            <option value="少阳">少阳 ⚊</option>
+                                            <option value="少阴">少阴 ⚋</option>
+                                            <option value="老阴">老阴 ⚋ ×</option>
+                                        </select>
+                                    </div>
+                                    <div class="line-input" data-line="5">
+                                        <label>五爻：</label>
+                                        <select class="line-select">
+                                            <option value="">请选择</option>
+                                            <option value="老阳">老阳 ⚊ ○</option>
+                                            <option value="少阳">少阳 ⚊</option>
+                                            <option value="少阴">少阴 ⚋</option>
+                                            <option value="老阴">老阴 ⚋ ×</option>
+                                        </select>
+                                    </div>
+                                    <div class="line-input" data-line="4">
+                                        <label>四爻：</label>
+                                        <select class="line-select">
+                                            <option value="">请选择</option>
+                                            <option value="老阳">老阳 ⚊ ○</option>
+                                            <option value="少阳">少阳 ⚊</option>
+                                            <option value="少阴">少阴 ⚋</option>
+                                            <option value="老阴">老阴 ⚋ ×</option>
+                                        </select>
+                                    </div>
+                                    <div class="line-input" data-line="3">
+                                        <label>三爻：</label>
+                                        <select class="line-select">
+                                            <option value="">请选择</option>
+                                            <option value="老阳">老阳 ⚊ ○</option>
+                                            <option value="少阳">少阳 ⚊</option>
+                                            <option value="少阴">少阴 ⚋</option>
+                                            <option value="老阴">老阴 ⚋ ×</option>
+                                        </select>
+                                    </div>
+                                    <div class="line-input" data-line="2">
+                                        <label>二爻：</label>
+                                        <select class="line-select">
+                                            <option value="">请选择</option>
+                                            <option value="老阳">老阳 ⚊ ○</option>
+                                            <option value="少阳">少阳 ⚊</option>
+                                            <option value="少阴">少阴 ⚋</option>
+                                            <option value="老阴">老阴 ⚋ ×</option>
+                                        </select>
+                                    </div>
+                                    <div class="line-input" data-line="1">
+                                        <label>初爻：</label>
+                                        <select class="line-select">
+                                            <option value="">请选择</option>
+                                            <option value="老阳">老阳 ⚊ ○</option>
+                                            <option value="少阳">少阳 ⚊</option>
+                                            <option value="少阴">少阴 ⚋</option>
+                                            <option value="老阴">老阴 ⚋ ×</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -757,7 +975,65 @@
             '100010': { name: '水雷屯', number: 3, elements: ['坎', '震'], shiYing: [6, 3], najia: ['戊', '庚', '壬', '庚', '戊', '己'], palace: '震' },
             '010001': { name: '山水蒙', number: 4, elements: ['艮', '坎'], shiYing: [3, 6], najia: ['丙', '戊', '庚', '辛', '癸', '乙'], palace: '坎' },
             '111010': { name: '水天需', number: 5, elements: ['坎', '乾'], shiYing: [5, 2], najia: ['戊', '戊', '庚', '辛', '癸', '乙'], palace: '乾' },
-            '010111': { name: '天水讼', number: 6, elements: ['乾', '坎'], shiYing: [2, 5], najia: ['戊', '戊', '庚', '壬', '戊', '庚'], palace: '乾' }
+            '010111': { name: '天水讼', number: 6, elements: ['乾', '坎'], shiYing: [2, 5], najia: ['戊', '戊', '庚', '壬', '戊', '庚'], palace: '乾' },
+            '010000': { name: '地水师', number: 7, elements: ['坤', '坎'], shiYing: [4, 1], najia: ['戊', '庚', '壬', '癸', '乙', '乙'], palace: '坎' },
+            '000010': { name: '水地比', number: 8, elements: ['坎', '坤'], shiYing: [1, 4], najia: ['乙', '癸', '辛', '辛', '癸', '乙'], palace: '坤' },
+            '111011': { name: '风天小畜', number: 9, elements: ['巽', '乾'], shiYing: [6, 3], najia: ['戊', '戊', '庚', '辛', '癸', '乙'], palace: '乾' },
+            '110111': { name: '天泽履', number: 10, elements: ['乾', '兑'], shiYing: [3, 6], najia: ['戊', '戊', '庚', '丁', '己', '辛'], palace: '乾' },
+            '111000': { name: '地天泰', number: 11, elements: ['坤', '乾'], shiYing: [5, 2], najia: ['戊', '戊', '庚', '乙', '癸', '辛'], palace: '乾' },
+            '000111': { name: '天地否', number: 12, elements: ['乾', '坤'], shiYing: [2, 5], najia: ['戊', '戊', '庚', '辛', '癸', '乙'], palace: '乾' },
+            '101111': { name: '天火同人', number: 13, elements: ['乾', '离'], shiYing: [4, 1], najia: ['戊', '戊', '庚', '己', '辛', '癸'], palace: '乾' },
+            '111101': { name: '火天大有', number: 14, elements: ['离', '乾'], shiYing: [1, 4], najia: ['戊', '戊', '庚', '己', '辛', '癸'], palace: '乾' },
+            '001000': { name: '地山谦', number: 15, elements: ['坤', '艮'], shiYing: [6, 3], najia: ['丙', '戊', '庚', '癸', '乙', '乙'], palace: '艮' },
+            '000100': { name: '雷地豫', number: 16, elements: ['震', '坤'], shiYing: [3, 6], najia: ['乙', '癸', '辛', '庚', '戊', '己'], palace: '坤' },
+            '100110': { name: '泽雷随', number: 17, elements: ['兑', '震'], shiYing: [5, 2], najia: ['庚', '戊', '己', '己', '辛', '癸'], palace: '震' },
+            '011001': { name: '山风蛊', number: 18, elements: ['艮', '巽'], shiYing: [2, 5], najia: ['辛', '癸', '乙', '丙', '戊', '庚'], palace: '巽' },
+            '110000': { name: '地泽临', number: 19, elements: ['坤', '兑'], shiYing: [4, 1], najia: ['丁', '己', '辛', '癸', '乙', '乙'], palace: '兑' },
+            '000011': { name: '风地观', number: 20, elements: ['巽', '坤'], shiYing: [1, 4], najia: ['乙', '癸', '辛', '辛', '癸', '乙'], palace: '坤' },
+            '100101': { name: '火雷噬嗑', number: 21, elements: ['离', '震'], shiYing: [6, 3], najia: ['庚', '戊', '己', '己', '辛', '癸'], palace: '震' },
+            '101001': { name: '山火贲', number: 22, elements: ['艮', '离'], shiYing: [3, 6], najia: ['己', '辛', '癸', '丙', '戊', '庚'], palace: '离' },
+            '000001': { name: '山地剥', number: 23, elements: ['艮', '坤'], shiYing: [5, 2], najia: ['乙', '癸', '辛', '丙', '戊', '庚'], palace: '坤' },
+            '100000': { name: '地雷复', number: 24, elements: ['坤', '震'], shiYing: [2, 5], najia: ['庚', '戊', '己', '癸', '乙', '乙'], palace: '震' },
+            '100111': { name: '天雷无妄', number: 25, elements: ['乾', '震'], shiYing: [4, 1], najia: ['庚', '戊', '己', '壬', '戊', '庚'], palace: '震' },
+            '111001': { name: '山天大畜', number: 26, elements: ['艮', '乾'], shiYing: [1, 4], najia: ['戊', '戊', '庚', '丙', '戊', '庚'], palace: '乾' },
+            '100001': { name: '山雷颐', number: 27, elements: ['艮', '震'], shiYing: [6, 3], najia: ['庚', '戊', '己', '丙', '戊', '庚'], palace: '震' },
+            '011110': { name: '泽风大过', number: 28, elements: ['兑', '巽'], shiYing: [3, 6], najia: ['辛', '癸', '乙', '己', '辛', '癸'], palace: '巽' },
+            '010010': { name: '坎为水', number: 29, elements: ['坎', '坎'], shiYing: [5, 2], najia: ['戊', '庚', '壬', '戊', '庚', '壬'], palace: '坎' },
+            '101101': { name: '离为火', number: 30, elements: ['离', '离'], shiYing: [2, 5], najia: ['己', '辛', '癸', '己', '辛', '癸'], palace: '离' },
+            '001110': { name: '泽山咸', number: 31, elements: ['兑', '艮'], shiYing: [4, 1], najia: ['丙', '戊', '庚', '己', '辛', '癸'], palace: '艮' },
+            '011100': { name: '雷风恒', number: 32, elements: ['震', '巽'], shiYing: [1, 4], najia: ['辛', '癸', '乙', '庚', '戊', '己'], palace: '巽' },
+            '001111': { name: '天山遁', number: 33, elements: ['乾', '艮'], shiYing: [6, 3], najia: ['丙', '戊', '庚', '壬', '戊', '庚'], palace: '艮' },
+            '111100': { name: '雷天大壮', number: 34, elements: ['震', '乾'], shiYing: [3, 6], najia: ['戊', '戊', '庚', '庚', '戊', '己'], palace: '乾' },
+            '000101': { name: '火地晋', number: 35, elements: ['离', '坤'], shiYing: [5, 2], najia: ['乙', '癸', '辛', '己', '辛', '癸'], palace: '坤' },
+            '101000': { name: '地火明夷', number: 36, elements: ['坤', '离'], shiYing: [2, 5], najia: ['己', '辛', '癸', '癸', '乙', '乙'], palace: '离' },
+            '101011': { name: '风火家人', number: 37, elements: ['巽', '离'], shiYing: [4, 1], najia: ['己', '辛', '癸', '辛', '癸', '乙'], palace: '离' },
+            '110101': { name: '火泽睽', number: 38, elements: ['离', '兑'], shiYing: [1, 4], najia: ['丁', '己', '辛', '己', '辛', '癸'], palace: '兑' },
+            '001010': { name: '水山蹇', number: 39, elements: ['坎', '艮'], shiYing: [6, 3], najia: ['丙', '戊', '庚', '戊', '庚', '壬'], palace: '艮' },
+            '010100': { name: '雷水解', number: 40, elements: ['震', '坎'], shiYing: [3, 6], najia: ['戊', '庚', '壬', '庚', '戊', '己'], palace: '坎' },
+            '110001': { name: '山泽损', number: 41, elements: ['艮', '兑'], shiYing: [5, 2], najia: ['丁', '己', '辛', '丙', '戊', '庚'], palace: '兑' },
+            '100011': { name: '风雷益', number: 42, elements: ['巽', '震'], shiYing: [2, 5], najia: ['庚', '戊', '己', '辛', '癸', '乙'], palace: '震' },
+            '111110': { name: '泽天夬', number: 43, elements: ['兑', '乾'], shiYing: [4, 1], najia: ['戊', '戊', '庚', '己', '辛', '癸'], palace: '乾' },
+            '011111': { name: '天风姤', number: 44, elements: ['乾', '巽'], shiYing: [1, 4], najia: ['戊', '戊', '庚', '辛', '癸', '乙'], palace: '乾' },
+            '000110': { name: '泽地萃', number: 45, elements: ['兑', '坤'], shiYing: [6, 3], najia: ['乙', '癸', '辛', '己', '辛', '癸'], palace: '坤' },
+            '011000': { name: '地风升', number: 46, elements: ['坤', '巽'], shiYing: [3, 6], najia: ['辛', '癸', '乙', '癸', '乙', '乙'], palace: '巽' },
+            '010110': { name: '泽水困', number: 47, elements: ['兑', '坎'], shiYing: [5, 2], najia: ['戊', '庚', '壬', '己', '辛', '癸'], palace: '坎' },
+            '011010': { name: '水风井', number: 48, elements: ['坎', '巽'], shiYing: [2, 5], najia: ['辛', '癸', '乙', '戊', '庚', '壬'], palace: '巽' },
+            '101110': { name: '泽火革', number: 49, elements: ['兑', '离'], shiYing: [4, 1], najia: ['己', '辛', '癸', '己', '辛', '癸'], palace: '离' },
+            '011101': { name: '火风鼎', number: 50, elements: ['离', '巽'], shiYing: [1, 4], najia: ['辛', '癸', '乙', '己', '辛', '癸'], palace: '巽' },
+            '100100': { name: '震为雷', number: 51, elements: ['震', '震'], shiYing: [6, 3], najia: ['庚', '戊', '己', '庚', '戊', '己'], palace: '震' },
+            '001001': { name: '艮为山', number: 52, elements: ['艮', '艮'], shiYing: [3, 6], najia: ['丙', '戊', '庚', '丙', '戊', '庚'], palace: '艮' },
+            '001011': { name: '风山渐', number: 53, elements: ['巽', '艮'], shiYing: [5, 2], najia: ['丙', '戊', '庚', '辛', '癸', '乙'], palace: '艮' },
+            '110100': { name: '雷泽归妹', number: 54, elements: ['震', '兑'], shiYing: [2, 5], najia: ['丁', '己', '辛', '庚', '戊', '己'], palace: '兑' },
+            '101100': { name: '雷火丰', number: 55, elements: ['震', '离'], shiYing: [4, 1], najia: ['己', '辛', '癸', '庚', '戊', '己'], palace: '离' },
+            '001101': { name: '火山旅', number: 56, elements: ['离', '艮'], shiYing: [1, 4], najia: ['丙', '戊', '庚', '己', '辛', '癸'], palace: '艮' },
+            '011011': { name: '巽为风', number: 57, elements: ['巽', '巽'], shiYing: [6, 3], najia: ['辛', '癸', '乙', '辛', '癸', '乙'], palace: '巽' },
+            '110110': { name: '兑为泽', number: 58, elements: ['兑', '兑'], shiYing: [3, 6], najia: ['丁', '己', '辛', '丁', '己', '辛'], palace: '兑' },
+            '010011': { name: '风水涣', number: 59, elements: ['巽', '坎'], shiYing: [5, 2], najia: ['戊', '庚', '壬', '辛', '癸', '乙'], palace: '坎' },
+            '110010': { name: '水泽节', number: 60, elements: ['坎', '兑'], shiYing: [2, 5], najia: ['丁', '己', '辛', '戊', '庚', '壬'], palace: '兑' },
+            '110011': { name: '风泽中孚', number: 61, elements: ['巽', '兑'], shiYing: [4, 1], najia: ['丁', '己', '辛', '辛', '癸', '乙'], palace: '兑' },
+            '001100': { name: '雷山小过', number: 62, elements: ['震', '艮'], shiYing: [1, 4], najia: ['丙', '戊', '庚', '庚', '戊', '己'], palace: '艮' },
+            '101010': { name: '水火既济', number: 63, elements: ['坎', '离'], shiYing: [6, 3], najia: ['己', '辛', '癸', '戊', '庚', '壬'], palace: '离' },
+            '010101': { name: '火水未济', number: 64, elements: ['离', '坎'], shiYing: [3, 6], najia: ['戊', '庚', '壬', '己', '辛', '癸'], palace: '坎' }
         };
 
         // 天干地支和五行
@@ -780,7 +1056,9 @@
         };
 
         let currentMethod = 'time';
+        let currentManualMethod = 'hexname';
         let coinResults = {};
+        let lineResults = {};
 
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
@@ -820,6 +1098,20 @@
                     document.getElementById(`${method}-tab`).classList.add('active');
 
                     currentMethod = method;
+                });
+            });
+
+            // 设置手动指定的子标签页
+            document.querySelectorAll('.manual-method-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.manual-method-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.manual-method').forEach(m => m.classList.remove('active'));
+
+                    this.classList.add('active');
+                    const manualMethod = this.dataset.manual;
+                    document.getElementById(`${manualMethod}-method`).classList.add('active');
+
+                    currentManualMethod = manualMethod;
                 });
             });
         }
@@ -916,15 +1208,55 @@
                     changedHex = changedBinary;
 
                 } else if (currentMethod === 'manual') {
-                    originalHex = document.getElementById('original-hex').value;
-                    changedHex = document.getElementById('changed-hex').value;
+                    if (currentManualMethod === 'hexname') {
+                        originalHex = document.getElementById('original-hex').value;
+                        changedHex = document.getElementById('changed-hex').value;
 
-                    if (!originalHex) {
-                        throw new Error('请选择本卦');
-                    }
+                        if (!originalHex) {
+                            throw new Error('请选择本卦');
+                        }
 
-                    if (!changedHex) {
-                        changedHex = originalHex;
+                        if (!changedHex) {
+                            changedHex = originalHex;
+                        }
+                    } else if (currentManualMethod === 'numbers') {
+                        const upperNum = parseInt(document.getElementById('upper-number').value);
+                        const lowerNum = parseInt(document.getElementById('lower-number').value);
+                        const changingLineNum = parseInt(document.getElementById('changing-line-number').value) || 0;
+
+                        if (!upperNum || !lowerNum || upperNum < 1 || upperNum > 8 || lowerNum < 1 || lowerNum > 8) {
+                            throw new Error('请输入正确的上下卦数字（1-8）');
+                        }
+
+                        const result = numberToHexagram(upperNum, lowerNum, changingLineNum);
+                        originalHex = result.originalHex;
+                        changedHex = result.changedHex;
+                        changingLines = result.changingLines;
+                    } else if (currentManualMethod === 'binary') {
+                        const binaryInput = document.getElementById('binary-input').value;
+                        const changingLinesInput = document.getElementById('changing-lines-input').value;
+
+                        if (!binaryInput || binaryInput.length !== 6 || !/^[01]+$/.test(binaryInput)) {
+                            throw new Error('请输入6位二进制数字（只能包含0和1）');
+                        }
+
+                        originalHex = binaryInput;
+                        changedHex = binaryInput;
+
+                        if (changingLinesInput) {
+                            changingLines = changingLinesInput.split(',').map(n => parseInt(n.trim())).filter(n => n >= 1 && n <= 6);
+                            let changedBinary = binaryInput.split('');
+                            changingLines.forEach(lineNum => {
+                                const index = 6 - lineNum;
+                                changedBinary[index] = changedBinary[index] === '1' ? '0' : '1';
+                            });
+                            changedHex = changedBinary.join('');
+                        }
+                    } else if (currentManualMethod === 'lines') {
+                        const result = linesToHexagram();
+                        originalHex = result.originalHex;
+                        changedHex = result.changedHex;
+                        changingLines = result.changingLines;
                     }
                 }
 
@@ -1094,9 +1426,82 @@
             switch (currentMethod) {
                 case 'time': return '时间起卦';
                 case 'coins': return '铜钱起卦';
-                case 'manual': return '手动指定';
+                case 'manual': return '手动指定 - ' + getManualMethodName();
                 default: return '未知方式';
             }
+        }
+
+        function getManualMethodName() {
+            switch (currentManualMethod) {
+                case 'hexname': return '卦名选择';
+                case 'numbers': return '数字起卦';
+                case 'binary': return '二进制输入';
+                case 'lines': return '逐爻指定';
+                default: return '未知方式';
+            }
+        }
+
+        // 数字转卦象
+        function numberToHexagram(upperNum, lowerNum, changingLineNum) {
+            const guaMap = {
+                1: '111', 2: '110', 3: '101', 4: '100',
+                5: '011', 6: '010', 7: '001', 8: '000'
+            };
+
+            const upperGua = guaMap[upperNum];
+            const lowerGua = guaMap[lowerNum];
+            const originalHex = upperGua + lowerGua;
+
+            let changedHex = originalHex;
+            let changingLines = [];
+
+            if (changingLineNum > 0) {
+                changingLines = [changingLineNum];
+                let changedBinary = originalHex.split('');
+                const index = 6 - changingLineNum;
+                changedBinary[index] = changedBinary[index] === '1' ? '0' : '1';
+                changedHex = changedBinary.join('');
+            }
+
+            return { originalHex, changedHex, changingLines };
+        }
+
+        // 逐爻指定转卦象
+        function linesToHexagram() {
+            let originalBinary = '';
+            let changedBinary = '';
+            let changingLines = [];
+
+            for (let i = 6; i >= 1; i--) {
+                const select = document.querySelector(`.line-input[data-line="${i}"] .line-select`);
+                const value = select.value;
+
+                if (!value) {
+                    throw new Error(`请选择${getLineName(i)}爻的阴阳属性`);
+                }
+
+                if (value === '老阳') {
+                    originalBinary += '1';
+                    changedBinary += '0';
+                    changingLines.push(i);
+                } else if (value === '少阳') {
+                    originalBinary += '1';
+                    changedBinary += '1';
+                } else if (value === '少阴') {
+                    originalBinary += '0';
+                    changedBinary += '0';
+                } else if (value === '老阴') {
+                    originalBinary += '0';
+                    changedBinary += '1';
+                    changingLines.push(i);
+                }
+            }
+
+            return {
+                originalHex: originalBinary,
+                changedHex: changedBinary,
+                changingLines: changingLines
+            };
         }
     </script>
 </body>
