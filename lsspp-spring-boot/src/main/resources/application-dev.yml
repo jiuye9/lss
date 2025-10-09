@@ -1,0 +1,54 @@
+# 开发环境配置
+server:
+  port: 8080
+
+spring:
+  # 数据源配置
+  datasource:
+    url: jdbc:postgresql://localhost:5432/lsspp_dev
+    username: lsspp_dev
+    password: dev123
+
+  # JPA配置
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+  # Redis配置
+  redis:
+    host: localhost
+    port: 6379
+    database: 1
+
+# 占卜算法配置
+lsspp:
+  jwt:
+    secret: lsspp-dev-jwt-secret-key
+    expiration: 43200000 # 12小时
+
+# 日志配置
+logging:
+  level:
+    com.lsspp: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# 开发工具
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+# Swagger开发模式
+springdoc:
+  swagger-ui:
+    enabled: true
+    try-it-out-enabled: true

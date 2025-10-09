@@ -1,0 +1,33 @@
+# macOS
+.DS_Store
+*.DS_Store
+
+# Node modules
+node_modules/
+*/node_modules/
+
+# Build outputs
+dist/
+build/
+target/
+*.jar
+*.war
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Temporary files
+tmp/
+*.tmp
+*.log
+
+# Environment files
+.env.local
+.env.*.local
+
+# Cache
+.cache/
+.vite/
+*.cache

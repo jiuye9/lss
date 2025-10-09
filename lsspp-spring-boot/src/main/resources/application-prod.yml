@@ -1,0 +1,60 @@
+# 生产环境配置
+server:
+  port: 8080
+
+spring:
+  # 数据源配置
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/lsspp_prod}
+    username: ${DATABASE_USERNAME:lsspp_prod}
+    password: ${DATABASE_PASSWORD:prod_secure_password}
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 50
+
+  # JPA配置
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+  # Redis配置
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    database: ${REDIS_DATABASE:0}
+    password: ${REDIS_PASSWORD:}
+
+# 占卜算法配置
+lsspp:
+  jwt:
+    secret: ${JWT_SECRET:lsspp-prod-jwt-secret-very-secure-key-2025}
+    expiration: ${JWT_EXPIRATION:86400000}
+
+# 日志配置
+logging:
+  level:
+    com.lsspp: INFO
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+  file:
+    name: /var/log/lsspp/application.log
+    max-size: 200MB
+    max-history: 60
+
+# 生产监控
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# Swagger生产模式
+springdoc:
+  swagger-ui:
+    enabled: false
+  api-docs:
+    enabled: false
