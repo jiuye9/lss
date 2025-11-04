@@ -221,4 +221,114 @@ class DivinationServiceTest {
                    wuxing.getHuo() + wuxing.getTu();
         assertEquals(8, total, "五行总数应为8");
     }
+
+    /**
+     * 测试经典用神算法 - 1978年2月5日15:52
+     * 八字: 戊午 甲寅 戊戌 庚申
+     * 分析:
+     * - 日主: 戊土
+     * - 出生季节: 春季(寅月)
+     * - 月令: 寅木旺,土死
+     * - 预期: 身弱,需要火土帮扶
+     */
+    @Test
+    void testYongshenAnalysis_1978() {
+        DivinationRequest request = DivinationRequest.builder()
+            .divinationType("BAZI")
+            .birthYear(1978)
+            .birthMonth(2)
+            .birthDay(5)
+            .birthHour(15)
+            .birthMinute(52)
+            .gender("MALE")
+            .lunarCalendar(false)
+            .build();
+
+        DivinationResponse response = divinationService.calculate(request);
+
+        assertNotNull(response.getYongshenAnalysis(), "用神分析不应为空");
+
+        DivinationResponse.YongshenAnalysis yongshen = response.getYongshenAnalysis();
+
+        System.out.println("========================================");
+        System.out.println("经典用神分析测试 - 1978年2月5日15:52");
+        System.out.println("八字: " + response.getBaziString());
+        System.out.println("日主: " + response.getDayMaster() + " (" + response.getDayMasterWuxing() + ")");
+        System.out.println("----------------------------------------");
+        System.out.println("用神: " + yongshen.getYongshen());
+        System.out.println("喜神: " + yongshen.getXishen());
+        System.out.println("忌神: " + yongshen.getJishen());
+        System.out.println("仇神: " + yongshen.getChousen());
+        System.out.println("========================================");
+
+        // 验证用神分析结果不为空
+        assertNotNull(yongshen.getYongshen(), "用神不应为空");
+        assertNotNull(yongshen.getXishen(), "喜神不应为空");
+        assertNotNull(yongshen.getJishen(), "忌神不应为空");
+        assertNotNull(yongshen.getChousen(), "仇神不应为空");
+    }
+
+    /**
+     * 测试冬季调候用神 - 1987年3月24日11:35
+     * 八字: 丁卯 癸卯 壬申 丙午
+     * 分析:
+     * - 日主: 壬水
+     * - 出生季节: 春季(卯月)
+     * - 应考虑调候因素
+     */
+    @Test
+    void testYongshenAnalysis_SpringSeason() {
+        DivinationRequest request = DivinationRequest.builder()
+            .divinationType("BAZI")
+            .birthYear(1987)
+            .birthMonth(3)
+            .birthDay(24)
+            .birthHour(11)
+            .birthMinute(35)
+            .gender("MALE")
+            .lunarCalendar(false)
+            .build();
+
+        DivinationResponse response = divinationService.calculate(request);
+
+        System.out.println("========================================");
+        System.out.println("春季调候用神测试 - 1987年3月24日11:35");
+        System.out.println("八字: " + response.getBaziString());
+        System.out.println("日主: " + response.getDayMaster() + " (" + response.getDayMasterWuxing() + ")");
+        System.out.println("----------------------------------------");
+        System.out.println("用神: " + response.getYongshenAnalysis().getYongshen());
+        System.out.println("喜神: " + response.getYongshenAnalysis().getXishen());
+        System.out.println("忌神: " + response.getYongshenAnalysis().getJishen());
+        System.out.println("仇神: " + response.getYongshenAnalysis().getChousen());
+        System.out.println("========================================");
+    }
+
+    /**
+     * 测试夏季调候用神 - 需要水润
+     */
+    @Test
+    void testYongshenAnalysis_SummerSeason() {
+        DivinationRequest request = DivinationRequest.builder()
+            .divinationType("BAZI")
+            .birthYear(1990)
+            .birthMonth(6)
+            .birthDay(15)
+            .birthHour(14)
+            .birthMinute(0)
+            .gender("MALE")
+            .lunarCalendar(false)
+            .build();
+
+        DivinationResponse response = divinationService.calculate(request);
+
+        System.out.println("========================================");
+        System.out.println("夏季调候用神测试 - 1990年6月15日14:00");
+        System.out.println("八字: " + response.getBaziString());
+        System.out.println("日主: " + response.getDayMaster() + " (" + response.getDayMasterWuxing() + ")");
+        System.out.println("----------------------------------------");
+        System.out.println("用神: " + response.getYongshenAnalysis().getYongshen());
+        System.out.println("喜神: " + response.getYongshenAnalysis().getXishen());
+        System.out.println("备注: 夏季炎热,应考虑水调候");
+        System.out.println("========================================");
+    }
 }

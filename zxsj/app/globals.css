@@ -1,0 +1,119 @@
+@import "tailwindcss";
+
+:root {
+  /* 全球限量定制发行网 - 优雅配色方案 */
+  --background: #fafaf9;            /* 柔和米白 - 主背景 */
+  --background-alt: #f5f5f4;        /* 浅灰 - 次级背景 */
+  --foreground: #1c1917;            /* 深石墨 - 主文字 */
+  --accent-gold: #d4af37;           /* 尊贵金 - 代表高端定制 */
+  --accent-silver: #a8a29e;         /* 银灰 - 代表品质保证 */
+  --accent-limited: #dc2626;        /* 限量红 - 强调稀缺性 */
+  --accent-exclusive: #7c3aed;      /* 专属紫 - 代表独家发行 */
+  --muted: #e7e5e4;                 /* 柔和灰 - 分隔区域 */
+  --border: #d6d3d1;                /* 边框色 */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-background-alt: var(--background-alt);
+  --color-foreground: var(--foreground);
+  --color-accent-gold: var(--accent-gold);
+  --color-accent-silver: var(--accent-silver);
+  --color-accent-limited: var(--accent-limited);
+  --color-accent-exclusive: var(--accent-exclusive);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  overflow-x: hidden;
+}
+
+/* 平滑滚动 */
+html {
+  scroll-behavior: smooth;
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--muted);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-gold);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-limited);
+}
+
+/* 动画关键帧 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 工具类 */
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 1s ease-out forwards;
+}
+
+/* 金色渐变文字 */
+.text-gradient-gold {
+  background: linear-gradient(135deg, #d4af37 0%, #f4e8c1 50%, #d4af37 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 容器最大宽度 */
+.container-custom {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+@media (max-width: 768px) {
+  .container-custom {
+    padding: 0 1rem;
+  }
+}
+
+/* 隐藏滚动条但保留滚动功能 */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

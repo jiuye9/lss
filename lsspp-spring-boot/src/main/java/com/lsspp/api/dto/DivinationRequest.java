@@ -181,7 +181,7 @@ public class DivinationRequest {
             case "time":
                 return true; // 时间起卦无需额外参数
             case "number":
-                return numbers != null && numbers.length > 0;
+                return numbers != null && numbers.length >= 2; // 数字起卦需要至少2个数字
             case "coin":
                 return coinResults != null && coinResults.length == 6;
             case "manual":

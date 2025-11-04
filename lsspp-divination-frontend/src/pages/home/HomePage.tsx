@@ -172,12 +172,6 @@ const features = [
     icon: <ThunderboltOutlined />,
     path: '/liuyao'
   },
-  {
-    title: '占星排盘',
-    description: '结合西方占星学精华，精准计算星盘位置，分析行星相位、宫位含义，提供深入的性格和运势分析。',
-    icon: <StarOutlined />,
-    path: '/astrology'
-  }
 ];
 
 // 统计数据
@@ -229,7 +223,7 @@ const HomePage: React.FC = () => {
             <HeroTitle level={1}>六神算派</HeroTitle>
             <HeroSubtitle>
               融合中华传统数术智慧与现代科技，为您提供专业的命理占卜服务。
-              无论是八字排盘、六爻起卦还是占星排盘，都能帮助您洞察命运走向。
+              精准的八字排盘、专业的六爻起卦，助您洞察命运走向。
             </HeroSubtitle>
             <Space size="large">
               <PrimaryButton 
@@ -243,18 +237,18 @@ const HomePage: React.FC = () => {
               >
                 立即体验
               </PrimaryButton>
-              <Button 
-                size="large" 
+              <Button
+                size="large"
                 variant="ghost"
-                onClick={() => navigate('/docs')}
-                style={{ 
-                  color: 'white', 
+                onClick={() => navigate('/liuyao')}
+                style={{
+                  color: 'white',
                   borderColor: 'rgba(255,255,255,0.3)',
                   background: 'rgba(255,255,255,0.1)',
                   backdropFilter: 'blur(10px)'
                 }}
               >
-                了解更多
+                六爻起卦
               </Button>
             </Space>
           </div>
@@ -264,15 +258,15 @@ const HomePage: React.FC = () => {
       {/* 功能特色 */}
       <FeaturesSection>
         <div className="section-title">
-          <Title level={2}>主要功能</Title>
+          <Title level={2}>核心功能</Title>
           <Paragraph>
-            三大核心功能模块，满足您对命理占卜的全方位需求
+            传统中华命理精髓，专业排盘计算工具
           </Paragraph>
         </div>
         
-        <Row gutter={[24, 24]}>
+        <Row gutter={[24, 24]} justify="center">
           {features.map((feature, index) => (
-            <Col xs={24} md={8} key={feature.title}>
+            <Col xs={24} md={12} lg={10} key={feature.title}>
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -354,14 +348,6 @@ const HomePage: React.FC = () => {
               onClick={() => navigate('/liuyao')}
             >
               六爻起卦
-            </Button>
-            <Button 
-              size="large" 
-              variant="outline"
-              icon={<StarOutlined />}
-              onClick={() => navigate('/astrology')}
-            >
-              占星排盘
             </Button>
           </div>
         </QuickActions>

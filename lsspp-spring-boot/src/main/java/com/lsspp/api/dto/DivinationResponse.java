@@ -75,6 +75,38 @@ public class DivinationResponse {
     @JsonProperty("suggestion")
     private Suggestion suggestion;
 
+    // ===== 经典命理分析字段（源自《三命通会》《子平真诠》《渊海子平》） =====
+
+    /**
+     * 格局分析
+     */
+    @JsonProperty("gejuAnalysis")
+    private GejuAnalysis gejuAnalysis;
+
+    /**
+     * 神煞分析
+     */
+    @JsonProperty("shenshaAnalysis")
+    private ShenshaAnalysis shenshaAnalysis;
+
+    /**
+     * 调候分析
+     */
+    @JsonProperty("tiaohouAnalysis")
+    private TiaohouAnalysis tiaohouAnalysis;
+
+    /**
+     * 十神分布
+     */
+    @JsonProperty("shishenMap")
+    private Map<String, String> shishenMap;
+
+    /**
+     * 经典命理综合分析
+     */
+    @JsonProperty("classicalAnalysis")
+    private ClassicalAnalysis classicalAnalysis;
+
     // ===== 六爻响应字段 =====
 
     /**
@@ -225,6 +257,19 @@ public class DivinationResponse {
 
         @JsonProperty("chousen")
         private String chousen;
+
+        // 新增字段 - 百分制五行权重算法
+        @JsonProperty("rizhuStatus")
+        private String rizhuStatus;  // 日主状态: 从强/身强/中和/身弱/从弱
+
+        @JsonProperty("rizhuScore")
+        private Double rizhuScore;   // 日主得分
+
+        @JsonProperty("wuxingScores")
+        private Map<String, Double> wuxingScores;  // 五行得分
+
+        @JsonProperty("calculationDetails")
+        private List<String> calculationDetails;  // 计算详情
     }
 
     /**
@@ -274,14 +319,33 @@ public class DivinationResponse {
     @AllArgsConstructor
     @Builder
     public static class LiuyaoAnalysis {
+        /** 主卦六亲配置(6个,从初爻到上爻) */
         @JsonProperty("sixRelatives")
         private List<String> sixRelatives;
 
+        /** 六神配置(6个,主卦和变卦共用) */
         @JsonProperty("sixAnimals")
         private List<String> sixAnimals;
 
+        /** 主卦五行配置(6个,从初爻到上爻) */
         @JsonProperty("elements")
         private List<String> elements;
+
+        /** 主卦纳甲地支(6个,从初爻到上爻) */
+        @JsonProperty("najiaDizhi")
+        private List<String> najiaDizhi;
+
+        /** 变卦六亲配置(6个,从初爻到上爻) */
+        @JsonProperty("changedSixRelatives")
+        private List<String> changedSixRelatives;
+
+        /** 变卦五行配置(6个,从初爻到上爻) */
+        @JsonProperty("changedElements")
+        private List<String> changedElements;
+
+        /** 变卦纳甲地支(6个,从初爻到上爻) */
+        @JsonProperty("changedNajiaDizhi")
+        private List<String> changedNajiaDizhi;
     }
 
     /**
@@ -336,6 +400,119 @@ public class DivinationResponse {
 
         @JsonProperty("health")
         private String health;
+    }
+
+    // ===== 经典命理分析嵌套类 =====
+
+    /**
+     * 格局分析（源自《子平真诠》）
+     */
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class GejuAnalysis {
+        @JsonProperty("mainGeju")
+        private String mainGeju;        // 主格局
+
+        @JsonProperty("subGeju")
+        private String subGeju;         // 子格局
+
+        @JsonProperty("isZhengge")
+        private Boolean isZhengge;      // 是否正格
+
+        @JsonProperty("isCongge")
+        private Boolean isCongge;       // 是否从格
+
+        @JsonProperty("isHuage")
+        private Boolean isHuage;        // 是否化格
+
+        @JsonProperty("isZhuanwang")
+        private Boolean isZhuanwang;    // 是否专旺格
+
+        @JsonProperty("yongshen")
+        private String yongshen;        // 格局用神
+
+        @JsonProperty("xishen")
+        private String xishen;          // 格局喜神
+
+        @JsonProperty("jishen")
+        private String jishen;          // 格局忌神
+
+        @JsonProperty("analysis")
+        private List<String> analysis;  // 格局分析
+
+        @JsonProperty("strength")
+        private Integer strength;       // 格局强度(1-10)
+    }
+
+    /**
+     * 神煞分析（源自《三命通会》）
+     */
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class ShenshaAnalysis {
+        @JsonProperty("jixing")
+        private List<String> jixing;           // 吉星列表
+
+        @JsonProperty("xiongshen")
+        private List<String> xiongshen;        // 凶神列表
+
+        @JsonProperty("meaning")
+        private Map<String, String> meaning;   // 神煞含义
+
+        @JsonProperty("analysis")
+        private List<String> analysis;         // 分析说明
+    }
+
+    /**
+     * 调候分析（源自《子平真诠》）
+     */
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class TiaohouAnalysis {
+        @JsonProperty("climate")
+        private String climate;           // 气候（寒、暖、燥、湿）
+
+        @JsonProperty("tiaohou")
+        private String tiaohou;           // 调候用神
+
+        @JsonProperty("reason")
+        private String reason;            // 理由
+
+        @JsonProperty("analysis")
+        private List<String> analysis;    // 分析
+    }
+
+    /**
+     * 经典命理综合分析
+     */
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class ClassicalAnalysis {
+        @JsonProperty("xingge")
+        private String xingge;            // 性格分析
+
+        @JsonProperty("shiye")
+        private String shiye;             // 事业分析
+
+        @JsonProperty("caiyun")
+        private String caiyun;            // 财运分析
+
+        @JsonProperty("hunyin")
+        private String hunyin;            // 婚姻分析
+
+        @JsonProperty("jiankang")
+        private String jiankang;          // 健康分析
+
+        @JsonProperty("suggestions")
+        private List<String> suggestions; // 生活建议
     }
 
     /**

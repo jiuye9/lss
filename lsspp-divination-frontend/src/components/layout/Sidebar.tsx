@@ -4,12 +4,7 @@ import {
   HomeOutlined,
   CalendarOutlined,
   ThunderboltOutlined,
-  GlobalOutlined,
-  HistoryOutlined,
-  UserOutlined,
-  BookOutlined,
-  QuestionCircleOutlined,
-  StarOutlined,
+  UnorderedListOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
@@ -173,7 +168,7 @@ const MenuSection = styled.div<{ collapsed: boolean }>`
 const menuItems = [
   {
     key: 'main',
-    title: '主要功能',
+    title: '核心功能',
     items: [
       {
         key: '/',
@@ -188,52 +183,16 @@ const menuItems = [
         path: '/bazi'
       },
       {
+        key: '/bazi/records',
+        icon: <UnorderedListOutlined />,
+        label: '排盘记录',
+        path: '/bazi/records'
+      },
+      {
         key: '/liuyao',
         icon: <ThunderboltOutlined />,
         label: '六爻起卦',
         path: '/liuyao'
-      },
-      {
-        key: '/astrology',
-        icon: <StarOutlined />,
-        label: '占星排盘',
-        path: '/astrology'
-      },
-    ]
-  },
-  {
-    key: 'user',
-    title: '个人中心',
-    items: [
-      {
-        key: '/profile',
-        icon: <UserOutlined />,
-        label: '个人资料',
-        path: '/profile'
-      },
-      {
-        key: '/history',
-        icon: <HistoryOutlined />,
-        label: '历史记录',
-        path: '/history'
-      },
-    ]
-  },
-  {
-    key: 'other',
-    title: '其他',
-    items: [
-      {
-        key: '/docs',
-        icon: <BookOutlined />,
-        label: '使用指南',
-        path: '/docs'
-      },
-      {
-        key: '/help',
-        icon: <QuestionCircleOutlined />,
-        label: '帮助中心',
-        path: '/help'
       },
     ]
   }
@@ -257,16 +216,28 @@ const Sidebar: React.FC<SidebarProps> = ({
   // 获取当前选中的菜单项
   const getSelectedKeys = () => {
     const path = location.pathname;
-    
-    // 精确匹配
+
+    // 收集所有匹配的路径
+    const matches: { key: string; pathLength: number }[] = [];
+
     for (const section of menuItems) {
       for (const item of section.items) {
+        // 精确匹配或前缀匹配
         if (item.path === path || (item.path !== '/' && path.startsWith(item.path))) {
-          return [item.key];
+          matches.push({
+            key: item.key,
+            pathLength: item.path.length
+          });
         }
       }
     }
-    
+
+    // 如果有匹配，返回最长路径的那个（最具体的路径）
+    if (matches.length > 0) {
+      matches.sort((a, b) => b.pathLength - a.pathLength);
+      return [matches[0].key];
+    }
+
     return ['/'];
   };
   
@@ -280,8 +251,8 @@ const Sidebar: React.FC<SidebarProps> = ({
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <Text className="sidebar-title">数理命理</Text>
-            <Text className="sidebar-subtitle">探索命运奥秘</Text>
+            <Text className="sidebar-title">六神算派</Text>
+            <Text className="sidebar-subtitle">传统命理排盘</Text>
           </motion.div>
         )}
       </SidebarHeader>

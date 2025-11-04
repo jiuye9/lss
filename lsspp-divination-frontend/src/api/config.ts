@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ApiResponse } from '@/types';
 
 // API 基础配置
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:8080';
 const API_TIMEOUT = 30000; // 30秒超时
 
 // 创建 axios 实例
@@ -66,18 +66,8 @@ api.interceptors.response.use(
     
     // 处理 HTTP 状态码错误
     const { status, data } = error.response;
-    
+
     switch (status) {
-      case 401:
-        // 未授权，清除 token 并跳转到登录页
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        window.location.href = '/login';
-        error.message = '登录已过期，请重新登录';
-        break;
-      case 403:
-        error.message = '没有权限访问该资源';
-        break;
       case 404:
         error.message = '请求的资源不存在';
         break;
@@ -123,64 +113,20 @@ export default api;
 
 // API 端点常量
 export const API_ENDPOINTS = {
-  // 用户相关
-  AUTH: {
-    LOGIN: '/auth/login',
-    REGISTER: '/auth/register',
-    LOGOUT: '/auth/logout',
-    REFRESH: '/auth/refresh',
-    PROFILE: '/auth/profile',
-    UPDATE_PROFILE: '/auth/profile',
-    CHANGE_PASSWORD: '/auth/password',
-  },
-  
   // 八字排盘
   BAZI: {
-    CALCULATE: '/bazi/calculate',
-    HISTORY: '/bazi/history',
-    SAVE: '/bazi/save',
-    DELETE: '/bazi/delete',
-    DETAIL: '/bazi/detail',
+    CALCULATE: '/api/divination/calculate',
   },
-  
+
   // 六爻起卦
   LIUYAO: {
-    TIME_DIVINATION: '/liuyao/time',
-    NUMBER_DIVINATION: '/liuyao/number',
-    MANUAL_DIVINATION: '/liuyao/manual',
-    COIN_DIVINATION: '/liuyao/coin',
-    HISTORY: '/liuyao/history',
-    SAVE: '/liuyao/save',
-    DELETE: '/liuyao/delete',
-    DETAIL: '/liuyao/detail',
+    CALCULATE: '/api/divination/calculate',
   },
-  
-  // 占星排盘
-  ASTROLOGY: {
-    NATAL_CHART: '/astrology/natal',
-    TRANSIT_CHART: '/astrology/transit',
-    PROGRESSION_CHART: '/astrology/progression',
-    COMPOSITE_CHART: '/astrology/composite',
-    HISTORY: '/astrology/history',
-    SAVE: '/astrology/save',
-    DELETE: '/astrology/delete',
-    DETAIL: '/astrology/detail',
-  },
-  
+
   // 其他
-  LOCATION: {
-    SEARCH: '/location/search',
-    TIMEZONE: '/location/timezone',
-  },
-  
   CALENDAR: {
     LUNAR_CONVERT: '/calendar/lunar',
     SOLAR_CONVERT: '/calendar/solar',
-  },
-  
-  UPLOAD: {
-    IMAGE: '/upload/image',
-    AVATAR: '/upload/avatar',
   },
 };
 

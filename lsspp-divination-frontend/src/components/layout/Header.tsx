@@ -1,12 +1,7 @@
 import React from 'react';
-import { Layout, Button, Dropdown, Avatar, Badge, Space, Typography } from 'antd';
-import { 
-  MenuUnfoldOutlined, 
-  MenuFoldOutlined, 
-  BellOutlined, 
-  UserOutlined, 
-  SettingOutlined, 
-  LogoutOutlined,
+import { Layout, Button, Typography } from 'antd';
+import {
+  MenuUnfoldOutlined,
   SunOutlined,
   MoonOutlined
 } from '@ant-design/icons';
@@ -16,7 +11,6 @@ import { motion } from 'framer-motion';
 
 import { useTheme } from '@/hooks/useTheme';
 import { colors } from '@/styles/theme';
-import { userManager } from '@/api/auth';
 
 const { Header: AntHeader } = Layout;
 const { Text } = Typography;
@@ -108,62 +102,15 @@ const RightSection = styled.div`
   }
 `;
 
-const UserInfo = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  
-  .user-name {
-    @media (max-width: 640px) {
-      display: none;
-    }
-  }
-`;
-
 // 头部组件
-const Header: React.FC<HeaderProps> = ({ 
-  onMenuClick, 
-  showMenuButton = true 
+const Header: React.FC<HeaderProps> = ({
+  onMenuClick,
+  showMenuButton = true
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
-  
-  // 获取当前用户信息
-  const currentUser = userManager.getUser();
-  const isLoggedIn = userManager.isLoggedIn();
-  
-  // 处理登出
-  const handleLogout = () => {
-    userManager.clearUser();
-    navigate('/login');
-  };
-  
-  // 用户下拉菜单
-  const userMenuItems = [
-    {
-      key: 'profile',
-      icon: <UserOutlined />,
-      label: '个人中心',
-      onClick: () => navigate('/profile'),
-    },
-    {
-      key: 'settings',
-      icon: <SettingOutlined />,
-      label: '设置',
-      onClick: () => navigate('/settings'),
-    },
-    {
-      type: 'divider' as const,
-    },
-    {
-      key: 'logout',
-      icon: <LogoutOutlined />,
-      label: '退出登录',
-      onClick: handleLogout,
-    },
-  ];
-  
+
   // 获取页面标题
   const getPageTitle = () => {
     const path = location.pathname;
@@ -171,19 +118,15 @@ const Header: React.FC<HeaderProps> = ({
       '/': '首页',
       '/bazi': '八字排盘',
       '/liuyao': '六爻起卦',
-      '/astrology': '占星排盘',
-      '/profile': '个人中心',
-      '/history': '历史记录',
-      '/settings': '设置',
     };
-    
+
     // 处理动态路由
     for (const [route, title] of Object.entries(titles)) {
       if (path.startsWith(route)) {
         return title;
       }
     }
-    
+
     return '六神算派';
   };
   
@@ -226,55 +169,6 @@ const Header: React.FC<HeaderProps> = ({
           className="header-btn"
           title={theme.mode === 'dark' ? '切换到亮色模式' : '切换到暗黑模式'}
         />
-        
-        {/* 通知 */}
-        {isLoggedIn && (
-          <Badge count={0} size="small">
-            <Button
-              type="text"
-              icon={<BellOutlined />}
-              className="header-btn"
-              title="通知"
-            />
-          </Badge>
-        )}
-        
-        {/* 用户信息 */}
-        {isLoggedIn ? (
-          <Dropdown 
-            menu={{ items: userMenuItems }}
-            placement="bottomRight"
-            trigger={['click']}
-          >
-            <UserInfo>
-              <Avatar 
-                src={currentUser?.avatar} 
-                icon={<UserOutlined />}
-                size="small"
-              />
-              <Text className="user-name">
-                {currentUser?.nickname || currentUser?.username}
-              </Text>
-            </UserInfo>
-          </Dropdown>
-        ) : (
-          <Space>
-            <Button 
-              type="text" 
-              onClick={() => navigate('/login')}
-              className="header-btn"
-            >
-              登录
-            </Button>
-            <Button 
-              type="primary" 
-              onClick={() => navigate('/register')}
-              size="small"
-            >
-              注册
-            </Button>
-          </Space>
-        )}
       </RightSection>
     </StyledHeader>
   );

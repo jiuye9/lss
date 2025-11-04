@@ -1,0 +1,409 @@
+/* 六爻页面星空科技风格全局覆盖 - Aotake青竹色协调主题 */
+
+/* 按钮样式 */
+.ant-btn-primary {
+  background: linear-gradient(135deg, rgba(126, 190, 171, 0.70) 0%, rgba(165, 214, 199, 0.65) 100%);
+  border: 1px solid rgba(126, 190, 171, 0.45);
+  color: rgba(240, 250, 248, 0.95);
+  text-shadow: 0 0 6px rgba(126, 190, 171, 0.4);
+  box-shadow: 0 0 12px rgba(126, 190, 171, 0.3);
+  transition: all 0.3s ease;
+}
+
+.ant-btn-primary:hover {
+  background: linear-gradient(135deg, rgba(126, 190, 171, 0.85) 0%, rgba(165, 214, 199, 0.80) 100%);
+  border-color: rgba(126, 190, 171, 0.65);
+  box-shadow: 0 0 20px rgba(126, 190, 171, 0.5);
+  transform: translateY(-2px);
+}
+
+.ant-btn-primary:active {
+  background: linear-gradient(135deg, rgba(126, 190, 171, 0.95) 0%, rgba(165, 214, 199, 0.90) 100%);
+  box-shadow: 0 0 25px rgba(126, 190, 171, 0.6);
+}
+
+/* 输入框样式 */
+.ant-input,
+.ant-input-number {
+  background: rgba(30, 50, 46, 0.60) !important;
+  border: 1px solid rgba(126, 190, 171, 0.28) !important;
+  color: rgba(200, 230, 220, 0.92) !important;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+}
+
+.ant-input::placeholder,
+.ant-input-number::placeholder {
+  color: rgba(232, 245, 233, 0.5) !important;
+}
+
+.ant-input:hover,
+.ant-input-number:hover {
+  border-color: rgba(126, 190, 171, 0.45) !important;
+  box-shadow: 0 0 8px rgba(126, 190, 171, 0.22);
+}
+
+.ant-input:focus,
+.ant-input-number:focus,
+.ant-input-number-focused {
+  border-color: rgba(126, 190, 171, 0.55) !important;
+  box-shadow: 0 0 12px rgba(126, 190, 171, 0.35) !important;
+}
+
+/* 单选框样式 */
+.ant-radio-button-wrapper {
+  background: rgba(30, 50, 46, 0.60) !important;
+  border: 1px solid rgba(165, 214, 199, 0.3) !important;
+  color: rgba(200, 230, 220, 0.92) !important;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+}
+
+.ant-radio-button-wrapper:hover {
+  background: rgba(126, 190, 171, 0.25) !important;
+  border-color: rgba(165, 214, 199, 0.5) !important;
+  box-shadow: 0 0 8px rgba(126, 190, 171, 0.22);
+}
+
+.ant-radio-button-wrapper-checked {
+  background: linear-gradient(135deg, rgba(126, 190, 171, 0.5) 0%, rgba(165, 214, 199, 0.45) 100%) !important;
+  border-color: rgba(126, 190, 171, 0.55) !important;
+  color: #fff !important;
+  box-shadow: 0 0 12px rgba(126, 190, 171, 0.42) !important;
+  text-shadow: 0 0 6px rgba(126, 190, 171, 0.45);
+}
+
+.ant-radio-button-wrapper-checked:hover {
+  background: linear-gradient(135deg, rgba(126, 190, 171, 0.65) 0%, rgba(165, 214, 199, 0.6) 100%) !important;
+  box-shadow: 0 0 16px rgba(126, 190, 171, 0.50) !important;
+}
+
+/* 单选框内的小文字 */
+.ant-radio-button-wrapper div[style*="font-size: 12px"] {
+  color: rgba(232, 245, 233, 0.7) !important;
+}
+
+.ant-radio-button-wrapper-checked div[style*="font-size: 12px"] {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Alert提示框 */
+.ant-alert-info {
+  background: rgba(30, 50, 46, 0.60) !important;
+  border: 1px solid rgba(165, 214, 199, 0.35) !important;
+  backdrop-filter: blur(5px);
+}
+
+.ant-alert-info .ant-alert-message {
+  color: rgba(200, 230, 220, 0.92) !important;
+  font-weight: 600;
+}
+
+.ant-alert-info .ant-alert-description {
+  color: rgba(232, 245, 233, 0.8) !important;
+}
+
+/* Tabs标签页 */
+.ant-tabs-tab {
+  color: rgba(232, 245, 233, 0.7) !important;
+  transition: all 0.3s ease;
+}
+
+.ant-tabs-tab:hover {
+  color: rgba(200, 230, 220, 0.92) !important;
+}
+
+.ant-tabs-tab-active {
+  color: rgba(200, 230, 220, 0.92) !important;
+  text-shadow: 0 0 8px rgba(126, 190, 171, 0.48);
+}
+
+.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: rgba(200, 230, 220, 0.92) !important;
+}
+
+.ant-tabs-ink-bar {
+  background: linear-gradient(90deg, rgba(126, 190, 171, 0.8) 0%, rgba(165, 214, 199, 0.8) 100%) !important;
+  box-shadow: 0 0 10px rgba(126, 190, 171, 0.7);
+  height: 3px !important;
+}
+
+/* Divider分割线 */
+.ant-divider {
+  border-top-color: rgba(165, 214, 199, 0.3) !important;
+}
+
+/* Tag标签 */
+.ant-tag-blue {
+  background: rgba(126, 190, 171, 0.25) !important;
+  border-color: rgba(165, 214, 199, 0.5) !important;
+  color: #c5e1a5 !important;
+  backdrop-filter: blur(5px);
+}
+
+.ant-tag-green {
+  background: rgba(82, 196, 26, 0.25) !important;
+  border-color: rgba(82, 196, 26, 0.5) !important;
+  color: #95de64 !important;
+  backdrop-filter: blur(5px);
+}
+
+.ant-tag-red {
+  background: rgba(255, 107, 157, 0.25) !important;
+  border-color: rgba(255, 107, 157, 0.5) !important;
+  color: #ff9eb9 !important;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 0 10px rgba(255, 107, 157, 0.3);
+}
+
+/* Card小卡片 */
+.ant-card-small {
+  background: rgba(30, 50, 46, 0.60) !important;
+  border: 1px solid rgba(165, 214, 199, 0.35) !important;
+  backdrop-filter: blur(5px);
+}
+
+.ant-card-small .ant-card-head {
+  background: rgba(126, 190, 171, 0.25) !important;
+  border-bottom: 1px solid rgba(165, 214, 199, 0.3) !important;
+}
+
+.ant-card-small .ant-card-head-title {
+  color: rgba(200, 230, 220, 0.92) !important;
+  font-weight: 600;
+}
+
+.ant-card-small .ant-card-body {
+  background: transparent !important;
+}
+
+/* Paragraph段落 */
+.ant-typography {
+  color: rgba(232, 245, 233, 0.9) !important;
+}
+
+/* Form表单标签 */
+.ant-form-item-label > label {
+  color: rgba(200, 230, 220, 0.92) !important;
+  font-weight: 500;
+}
+
+.ant-form-item-label > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
+  color: #ff9eb9 !important;
+}
+
+/* Radio普通单选框 */
+.ant-radio-wrapper {
+  color: rgba(200, 230, 220, 0.92) !important;
+}
+
+.ant-radio-inner {
+  background: rgba(30, 50, 46, 0.60) !important;
+  border-color: rgba(165, 214, 199, 0.5) !important;
+}
+
+.ant-radio-checked .ant-radio-inner {
+  border-color: rgba(126, 190, 171, 0.55) !important;
+  background: linear-gradient(135deg, rgba(126, 190, 171, 0.5) 0%, rgba(165, 214, 199, 0.45) 100%) !important;
+}
+
+.ant-radio-checked .ant-radio-inner::after {
+  background-color: #fff !important;
+  box-shadow: 0 0 8px rgba(126, 190, 171, 0.7);
+}
+
+/* Spin加载 */
+.ant-spin-dot-item {
+  background-color: rgba(126, 190, 171, 0.8) !important;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(40, 60, 55, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(126, 190, 171, 0.6) 0%, rgba(165, 214, 199, 0.6) 100%);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(126, 190, 171, 0.8) 0%, rgba(165, 214, 199, 0.8) 100%);
+}
+
+/* ===== 移动端响应式样式 ===== */
+
+/* 平板设备 (768px 及以下) */
+@media (max-width: 768px) {
+  /* Tabs 标签页垂直排列 */
+  .ant-tabs-nav {
+    flex-direction: column !important;
+  }
+
+  .ant-tabs-tab {
+    padding: 12px 16px !important;
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* 按钮增大触摸区域 */
+  .ant-btn {
+    min-height: 44px;
+    padding: 8px 20px;
+  }
+
+  .ant-btn-lg {
+    min-height: 50px;
+    font-size: 16px;
+  }
+
+  /* Radio Button 增大触摸区域 */
+  .ant-radio-button-wrapper {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px !important;
+  }
+
+  /* 输入框增大 */
+  .ant-input,
+  .ant-input-number {
+    min-height: 44px;
+    font-size: 16px !important;
+  }
+
+  /* Alert 提示框紧凑布局 */
+  .ant-alert {
+    padding: 12px !important;
+  }
+
+  .ant-alert-message {
+    font-size: 14px !important;
+  }
+
+  .ant-alert-description {
+    font-size: 13px !important;
+  }
+
+  /* 表格横向滚动 */
+  .ant-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Card 紧凑布局 */
+  .ant-card-small .ant-card-head {
+    padding: 10px 12px !important;
+  }
+
+  .ant-card-small .ant-card-body {
+    padding: 12px !important;
+  }
+
+  /* Form 表单项间距 */
+  .ant-form-item {
+    margin-bottom: 16px !important;
+  }
+
+  /* Col 栅格全宽 */
+  .ant-col-8 {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* 手机设备 (480px 及以下) */
+@media (max-width: 480px) {
+  /* 标题字号缩小 */
+  .ant-card-head-title {
+    font-size: 16px !important;
+  }
+
+  /* 按钮字号缩小 */
+  .ant-btn {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+
+  /* Radio Button 紧凑排列 */
+  .ant-radio-button-wrapper {
+    font-size: 13px !important;
+    padding: 6px 8px !important;
+  }
+
+  .ant-radio-button-wrapper div[style*="font-size: 12px"] {
+    font-size: 11px !important;
+  }
+
+  /* 输入框字号 */
+  .ant-input,
+  .ant-input-number {
+    font-size: 14px !important;
+  }
+
+  /* Tag 标签缩小 */
+  .ant-tag {
+    font-size: 11px !important;
+    padding: 2px 6px !important;
+  }
+
+  /* Divider 分割线缩小间距 */
+  .ant-divider {
+    margin: 12px 0 !important;
+  }
+
+  /* Alert 更紧凑 */
+  .ant-alert {
+    padding: 8px !important;
+  }
+
+  .ant-alert-message {
+    font-size: 13px !important;
+  }
+
+  .ant-alert-description {
+    font-size: 12px !important;
+  }
+
+  /* Card 更紧凑 */
+  .ant-card-small .ant-card-head {
+    padding: 8px 10px !important;
+  }
+
+  .ant-card-small .ant-card-body {
+    padding: 10px !important;
+  }
+
+  /* Form 表单项间距 */
+  .ant-form-item {
+    margin-bottom: 12px !important;
+  }
+
+  .ant-form-item-label {
+    padding-bottom: 4px !important;
+  }
+}
+
+/* 横屏手机优化 (landscape) */
+@media (max-width: 768px) and (orientation: landscape) {
+  .ant-tabs-nav {
+    flex-direction: row !important;
+  }
+
+  .ant-tabs-tab {
+    width: auto;
+  }
+
+  .ant-col-8 {
+    flex: 0 0 50% !important;
+    max-width: 50% !important;
+  }
+}

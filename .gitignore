@@ -31,3 +31,8 @@ tmp/
 .cache/
 .vite/
 *.cache
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3

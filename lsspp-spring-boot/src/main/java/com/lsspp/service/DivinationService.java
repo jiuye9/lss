@@ -26,6 +26,14 @@ import java.util.*;
 @Slf4j
 public class DivinationService {
 
+    private final YongshenAnalyzer yongshenAnalyzer;
+    private final LiuyaoDiviner liuyaoDiviner;
+
+    public DivinationService(YongshenAnalyzer yongshenAnalyzer, LiuyaoDiviner liuyaoDiviner) {
+        this.yongshenAnalyzer = yongshenAnalyzer;
+        this.liuyaoDiviner = liuyaoDiviner;
+    }
+
     // 天干地支常量 - 与Node.js版本完全一致
     private static final String[] TIANGAN = {"甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"};
     private static final String[] DIZHI = {"子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"};
@@ -89,15 +97,48 @@ public class DivinationService {
             // 3. 五行分析
             WuxingAnalysis wuxingAnalysis = analyzeWuXing(yearColumn, monthColumn, dayColumn, hourColumn);
 
-            // 4. 用神分析
-            YongshenAnalysis yongshenAnalysis = analyzeYongshen(dayColumn.getGan(), wuxingAnalysis);
+            // 4. 用神分析 - 使用百分制五行权重算法(YongshenCalculator)
+            YongshenAnalysis yongshenAnalysis = calculateYongshenWithNewAlgorithm(
+                yearColumn, monthColumn, dayColumn, hourColumn);
 
             // 5. 生活建议
             Suggestion suggestion = generateSuggestion(dayColumn.getGan(), yongshenAnalysis);
 
+            // 6. 经典命理分析（《三命通会》《子平真诠》《渊海子平》）
+            String[] tiangan = {yearColumn.getGan(), monthColumn.getGan(), dayColumn.getGan(), hourColumn.getGan()};
+            String[] dizhi = {yearColumn.getZhi(), monthColumn.getZhi(), dayColumn.getZhi(), hourColumn.getZhi()};
+            String gender = request.getGender() != null ? request.getGender() : "MALE";
+
+            // 综合命理分析
+            com.lsspp.util.BaziAnalyzer.ComprehensiveResult classicalResult =
+                com.lsspp.util.BaziAnalyzer.comprehensiveAnalysis(tiangan, dizhi, gender);
+
+            // 转换格局分析
+            GejuAnalysis gejuAnalysis = convertGejuAnalysis(classicalResult.geju);
+
+            // 转换神煞分析
+            ShenshaAnalysis shenshaAnalysis = convertShenshaAnalysis(classicalResult.shensha);
+
+            // 转换调候分析
+            TiaohouAnalysis tiaohouAnalysis = convertTiaohouAnalysis(classicalResult.tiaohou);
+
+            // 转换综合分析
+            ClassicalAnalysis classicalAnalysis = ClassicalAnalysis.builder()
+                .xingge(classicalResult.xingge)
+                .shiye(classicalResult.shiye)
+                .caiyun(classicalResult.caiyun)
+                .hunyin(classicalResult.hunyin)
+                .jiankang(classicalResult.jiankang)
+                .suggestions(classicalResult.suggestions)
+                .build();
+
             log.info("✅ 八字计算成功: {} {} {} {}",
                 yearColumn.toString(), monthColumn.toString(),
                 dayColumn.toString(), hourColumn.toString());
+            log.info("📚 经典命理分析: 格局={}, 吉星={}, 调候={}",
+                classicalResult.geju.mainGeju,
+                classicalResult.shensha.jixing,
+                classicalResult.tiaohou.tiaohou);
 
             return DivinationResponse.builder()
                 .yearColumn(yearColumn)
@@ -109,6 +150,12 @@ public class DivinationService {
                 .wuxingAnalysis(wuxingAnalysis)
                 .yongshenAnalysis(yongshenAnalysis)
                 .suggestion(suggestion)
+                // 经典命理分析
+                .gejuAnalysis(gejuAnalysis)
+                .shenshaAnalysis(shenshaAnalysis)
+                .tiaohouAnalysis(tiaohouAnalysis)
+                .shishenMap(classicalResult.shishenMap)
+                .classicalAnalysis(classicalAnalysis)
                 .build();
 
         } catch (Exception e) {
@@ -118,7 +165,7 @@ public class DivinationService {
     }
 
     /**
-     * 处理农历/公历日期转换 - 使用lunar-java库
+     * 处理农历/公历日期转换 - 使用SolarTermsCalendar工具类
      */
     private LocalDateTime processBirthDateTime(DivinationRequest request) {
         if (Boolean.TRUE.equals(request.getLunarCalendar())) {
@@ -127,24 +174,18 @@ public class DivinationService {
                 request.getBirthDay(), request.getBirthHour());
 
             try {
-                // 农历转公历
-                Lunar lunar = Lunar.fromYmd(
+                // 使用工具类进行农历转公历
+                LocalDateTime birthDateTime = com.lsspp.util.SolarTermsCalendar.lunarToSolar(
                     request.getBirthYear(),
                     request.getBirthMonth(),
-                    request.getBirthDay()
-                );
-                Solar solar = lunar.getSolar();
-
-                LocalDateTime birthDateTime = LocalDateTime.of(
-                    solar.getYear(),
-                    solar.getMonth(),
-                    solar.getDay(),
+                    request.getBirthDay(),
                     request.getBirthHour(),
                     request.getBirthMinute() != null ? request.getBirthMinute() : 0
                 );
 
-                log.info("🔄 农历转公历: {} → {}年{}月{}日",
-                    lunar, solar.getYear(), solar.getMonth(), solar.getDay());
+                log.info("🔄 农历转公历: 农历{}年{}月{}日 → {}",
+                    request.getBirthYear(), request.getBirthMonth(), request.getBirthDay(),
+                    birthDateTime);
 
                 return birthDateTime;
             } catch (Exception e) {
@@ -164,35 +205,21 @@ public class DivinationService {
     }
 
     /**
-     * 年柱计算 - 使用lunar-java库的立春精确计算
+     * 年柱计算 - 使用SolarTermsCalendar工具类
      */
     private ColumnInfo calculateYearColumn(LocalDateTime birthDateTime) {
         try {
-            // 使用lunar-java库创建Solar对象
-            Solar solar = Solar.fromYmdHms(
-                birthDateTime.getYear(),
-                birthDateTime.getMonthValue(),
-                birthDateTime.getDayOfMonth(),
-                birthDateTime.getHour(),
-                birthDateTime.getMinute(),
-                birthDateTime.getSecond()
-            );
+            com.lsspp.util.SolarTermsCalendar.GanZhiPillar yearPillar =
+                com.lsspp.util.SolarTermsCalendar.calculateYearPillar(birthDateTime);
 
-            // 获取对应的农历对象
-            Lunar lunar = solar.getLunar();
-
-            // 使用立春精确换年的方法
-            String yearGan = lunar.getYearGanByLiChun();
-            String yearZhi = lunar.getYearZhiByLiChun();
-
-            log.debug("年柱计算: {}年{}月{}日 → {}{}",
+            log.debug("年柱计算: {}年{}月{}日 → {}",
                 birthDateTime.getYear(), birthDateTime.getMonthValue(),
-                birthDateTime.getDayOfMonth(), yearGan, yearZhi);
+                birthDateTime.getDayOfMonth(), yearPillar);
 
             return ColumnInfo.builder()
-                .gan(yearGan)
-                .zhi(yearZhi)
-                .wuxing(getWuXing(yearGan))
+                .gan(yearPillar.getGan())
+                .zhi(yearPillar.getZhi())
+                .wuxing(yearPillar.getWuxing())
                 .build();
         } catch (Exception e) {
             log.error("年柱计算失败: {}", e.getMessage());
@@ -201,33 +228,21 @@ public class DivinationService {
     }
 
     /**
-     * 月柱计算 - 使用lunar-java库的节气精确边界
+     * 月柱计算 - 使用SolarTermsCalendar工具类
      */
     private ColumnInfo calculateMonthColumn(LocalDateTime birthDateTime, ColumnInfo yearColumn) {
         try {
-            Solar solar = Solar.fromYmdHms(
-                birthDateTime.getYear(),
-                birthDateTime.getMonthValue(),
-                birthDateTime.getDayOfMonth(),
-                birthDateTime.getHour(),
-                birthDateTime.getMinute(),
-                birthDateTime.getSecond()
-            );
+            com.lsspp.util.SolarTermsCalendar.GanZhiPillar monthPillar =
+                com.lsspp.util.SolarTermsCalendar.calculateMonthPillar(birthDateTime);
 
-            Lunar lunar = solar.getLunar();
-
-            // 使用节气精确边界的方法
-            String monthGan = lunar.getMonthGanExact();
-            String monthZhi = lunar.getMonthZhiExact();
-
-            log.debug("月柱计算: {}年{}月{}日 → {}{}",
+            log.debug("月柱计算: {}年{}月{}日 → {}",
                 birthDateTime.getYear(), birthDateTime.getMonthValue(),
-                birthDateTime.getDayOfMonth(), monthGan, monthZhi);
+                birthDateTime.getDayOfMonth(), monthPillar);
 
             return ColumnInfo.builder()
-                .gan(monthGan)
-                .zhi(monthZhi)
-                .wuxing(getWuXing(monthGan))
+                .gan(monthPillar.getGan())
+                .zhi(monthPillar.getZhi())
+                .wuxing(monthPillar.getWuxing())
                 .build();
         } catch (Exception e) {
             log.error("月柱计算失败: {}", e.getMessage());
@@ -236,33 +251,21 @@ public class DivinationService {
     }
 
     /**
-     * 日柱计算 - 使用lunar-java库的精确日柱
+     * 日柱计算 - 使用SolarTermsCalendar工具类
      */
     private ColumnInfo calculateDayColumn(LocalDateTime birthDateTime) {
         try {
-            Solar solar = Solar.fromYmdHms(
-                birthDateTime.getYear(),
-                birthDateTime.getMonthValue(),
-                birthDateTime.getDayOfMonth(),
-                birthDateTime.getHour(),
-                birthDateTime.getMinute(),
-                birthDateTime.getSecond()
-            );
+            com.lsspp.util.SolarTermsCalendar.GanZhiPillar dayPillar =
+                com.lsspp.util.SolarTermsCalendar.calculateDayPillar(birthDateTime);
 
-            Lunar lunar = solar.getLunar();
-
-            // 使用精确日柱方法
-            String dayGan = lunar.getDayGanExact();
-            String dayZhi = lunar.getDayZhiExact();
-
-            log.debug("日柱计算: {}年{}月{}日 → {}{}",
+            log.debug("日柱计算: {}年{}月{}日 → {}",
                 birthDateTime.getYear(), birthDateTime.getMonthValue(),
-                birthDateTime.getDayOfMonth(), dayGan, dayZhi);
+                birthDateTime.getDayOfMonth(), dayPillar);
 
             return ColumnInfo.builder()
-                .gan(dayGan)
-                .zhi(dayZhi)
-                .wuxing(getWuXing(dayGan))
+                .gan(dayPillar.getGan())
+                .zhi(dayPillar.getZhi())
+                .wuxing(dayPillar.getWuxing())
                 .build();
         } catch (Exception e) {
             log.error("日柱计算失败: {}", e.getMessage());
@@ -271,34 +274,22 @@ public class DivinationService {
     }
 
     /**
-     * 时柱计算 - 使用lunar-java库
+     * 时柱计算 - 使用SolarTermsCalendar工具类
      */
     private ColumnInfo calculateHourColumn(LocalDateTime birthDateTime, ColumnInfo dayColumn) {
         try {
-            Solar solar = Solar.fromYmdHms(
-                birthDateTime.getYear(),
-                birthDateTime.getMonthValue(),
-                birthDateTime.getDayOfMonth(),
-                birthDateTime.getHour(),
-                birthDateTime.getMinute(),
-                birthDateTime.getSecond()
-            );
+            com.lsspp.util.SolarTermsCalendar.GanZhiPillar hourPillar =
+                com.lsspp.util.SolarTermsCalendar.calculateHourPillar(birthDateTime);
 
-            Lunar lunar = solar.getLunar();
-
-            // 使用lunar库的时柱方法
-            String timeGan = lunar.getTimeGan();
-            String timeZhi = lunar.getTimeZhi();
-
-            log.debug("时柱计算: {}年{}月{}日{}时 → {}{}",
+            log.debug("时柱计算: {}年{}月{}日{}时 → {}",
                 birthDateTime.getYear(), birthDateTime.getMonthValue(),
                 birthDateTime.getDayOfMonth(), birthDateTime.getHour(),
-                timeGan, timeZhi);
+                hourPillar);
 
             return ColumnInfo.builder()
-                .gan(timeGan)
-                .zhi(timeZhi)
-                .wuxing(getWuXing(timeGan))
+                .gan(hourPillar.getGan())
+                .zhi(hourPillar.getZhi())
+                .wuxing(hourPillar.getWuxing())
                 .build();
         } catch (Exception e) {
             log.error("时柱计算失败: {}", e.getMessage());
@@ -331,9 +322,12 @@ public class DivinationService {
     }
 
     /**
-     * 用神分析
+     * 用神分析 - 已迁移到YongshenAnalyzer类使用经典算法
+     * 保留此方法以便向后兼容,但实际调用已经替换为yongshenAnalyzer.analyze()
      */
+    @Deprecated
     private YongshenAnalysis analyzeYongshen(String dayMaster, WuxingAnalysis wuxingAnalysis) {
+        // 此方法已废弃,实际使用YongshenAnalyzer类中的经典算法
         String dayMasterWuxing = getWuXing(dayMaster);
         int currentIndex = Arrays.asList(WUXING_ORDER).indexOf(dayMasterWuxing);
 
@@ -342,6 +336,50 @@ public class DivinationService {
             .xishen(WUXING_ORDER[(currentIndex + 2) % 5])
             .jishen(WUXING_ORDER[(currentIndex + 3) % 5])
             .chousen(WUXING_ORDER[(currentIndex + 4) % 5])
+            .build();
+    }
+
+    /**
+     * 用神分析 - 使用百分制五行权重算法(YongshenCalculator)
+     */
+    private YongshenAnalysis calculateYongshenWithNewAlgorithm(
+            ColumnInfo yearColumn, ColumnInfo monthColumn,
+            ColumnInfo dayColumn, ColumnInfo hourColumn) {
+
+        // 1. 提取天干地支数组
+        String[] tiangan = new String[] {
+            yearColumn.getGan(),
+            monthColumn.getGan(),
+            dayColumn.getGan(),
+            hourColumn.getGan()
+        };
+
+        String[] dizhi = new String[] {
+            yearColumn.getZhi(),
+            monthColumn.getZhi(),
+            dayColumn.getZhi(),
+            hourColumn.getZhi()
+        };
+
+        // 2. 调用YongshenCalculator
+        com.lsspp.util.YongshenCalculator.BaziInput baziInput =
+            new com.lsspp.util.YongshenCalculator.BaziInput(tiangan, dizhi);
+        com.lsspp.util.YongshenCalculator.YongshenResult result =
+            com.lsspp.util.YongshenCalculator.calculateYongshen(baziInput);
+
+        log.info("📊 用神分析(百分制算法): 日主状态={}, 日主得分={}, 用神={}",
+            result.rizhuStatus, result.rizhuScore, result.yongshen);
+
+        // 3. 转换为YongshenAnalysis格式
+        return YongshenAnalysis.builder()
+            .yongshen(result.yongshen)
+            .xishen(result.xishen)
+            .jishen(result.jishen)
+            .chousen(result.chousen != null ? result.chousen : "")
+            .rizhuStatus(result.rizhuStatus)
+            .rizhuScore(result.rizhuScore)
+            .wuxingScores(result.wuxingScores)
+            .calculationDetails(result.calculationDetails)
             .build();
     }
 
@@ -358,7 +396,7 @@ public class DivinationService {
     }
 
     /**
-     * 六爻计算 - 基于Node.js generateAccurateLiuyaoResponse
+     * 六爻计算 - 使用LiuyaoCalculator工具类实现经典算法
      */
     private DivinationResponse calculateLiuyao(DivinationRequest request) {
         log.info("🔮 开始六爻起卦计算");
@@ -368,87 +406,111 @@ public class DivinationService {
             method = "time"; // 默认时间起卦
         }
 
-        DivinationResponse.DivinationResponseBuilder builder = DivinationResponse.builder();
+        try {
+            com.lsspp.util.LiuyaoCalculator.LiuyaoResult result;
+            LocalDateTime divinationTime = LocalDateTime.now();
 
-        switch (method.toLowerCase()) {
-            case "time":
-                builder.originalHexagram(HexagramInfo.builder()
-                    .name("山火贲")
-                    .lines(Arrays.asList("——", "○", "——", "——", "○", "——"))
-                    .interpretation("此卦主文明之象，外表华美而内在充实，宜修身养性，文化事业可成。")
-                    .build())
-                    .changedHexagram(HexagramInfo.builder()
-                        .name("风火家人")
-                        .lines(Arrays.asList("○", "○", "——", "——", "○", "——"))
-                        .interpretation("变卦主家庭和睦，团结一致，内外协调，事业有成。")
-                        .build())
-                    .changingLine(5)
-                    .worldLine(1)
-                    .responseLine(4);
-                break;
+            switch (method.toLowerCase()) {
+                case "time":
+                    // 时间起卦法(梅花易数农历时间法)
+                    LocalDateTime dateTime;
+                    // 如果有提供出生日期时间,则使用提供的时间
+                    if (request.getBirthYear() != null && request.getBirthMonth() != null &&
+                        request.getBirthDay() != null && request.getBirthHour() != null) {
+                        dateTime = processBirthDateTime(request);
+                        divinationTime = dateTime;
+                    } else {
+                        // 否则使用当前时间
+                        dateTime = LocalDateTime.now();
+                        divinationTime = dateTime;
+                    }
+                    result = com.lsspp.util.LiuyaoCalculator.timeQigua(dateTime);
+                    break;
 
-            case "number":
-                builder.originalHexagram(HexagramInfo.builder()
-                    .name("天地否")
-                    .lines(Arrays.asList("——", "——", "——", "○", "○", "○"))
-                    .interpretation("此卦主阻塞不通，天地不交，君子宜退避待时，不可强行。")
-                    .build())
-                    .changedHexagram(HexagramInfo.builder()
-                        .name("天山遁")
-                        .lines(Arrays.asList("——", "——", "——", "——", "○", "○"))
-                        .interpretation("变卦主退隐避世，明哲保身，暂时退避以待良机。")
-                        .build())
-                    .changingLine(3)
-                    .worldLine(3)
-                    .responseLine(6);
-                break;
+                case "number":
+                    // 数字起卦法
+                    Integer[] numbers = request.getNumbers();
+                    if (numbers == null || numbers.length < 2) {
+                        throw new IllegalArgumentException("数字起卦需要提供两个数字");
+                    }
+                    result = com.lsspp.util.LiuyaoCalculator.numberQigua(numbers[0], numbers[1]);
+                    break;
 
-            case "manual":
-                builder.originalHexagram(HexagramInfo.builder()
-                    .name("火天大有")
-                    .lines(Arrays.asList("○", "——", "——", "——", "——", "——"))
-                    .interpretation("此卦主大有收获，君子德盛位尊，事业兴旺，财富充盈。")
-                    .build())
-                    .changedHexagram(HexagramInfo.builder()
-                        .name("火风鼎")
-                        .lines(Arrays.asList("○", "○", "——", "——", "——", "——"))
-                        .interpretation("变卦主革新鼎立，除旧布新，事业转机，地位稳固。")
-                        .build())
-                    .changingLine(1)
-                    .worldLine(3)
-                    .responseLine(6);
-                break;
+                case "manual":
+                    // 手动起卦/指定卦法 - 暂时使用时间起卦作为默认
+                    // TODO: 实现完整的手动起卦逻辑
+                    result = com.lsspp.util.LiuyaoCalculator.timeQigua(LocalDateTime.now());
+                    break;
 
-            default:
-                // 随机起卦
-                List<String> lines = new ArrayList<>();
-                for (int i = 0; i < 6; i++) {
-                    lines.add(Math.random() < 0.5 ? "——" : "○");
-                }
-                builder.originalHexagram(HexagramInfo.builder()
-                    .name("泽水困")
-                    .lines(lines)
-                    .interpretation("此卦象征困顿之境，但困而能变，变则通，通则久。")
-                    .build())
-                    .worldLine((int)(Math.random() * 6) + 1)
-                    .responseLine((int)(Math.random() * 6) + 1);
+                default:
+                    // 默认使用时间起卦
+                    result = com.lsspp.util.LiuyaoCalculator.timeQigua(LocalDateTime.now());
+                    break;
+            }
+
+            // 使用专业断卦服务分析卦象
+            String question = request.getQuestion();
+            String professionalAnalysis = liuyaoDiviner.analyzeDivination(question, result, divinationTime);
+
+            // 将专业分析替换简单预测
+            result.setPrediction(professionalAnalysis);
+
+            // 转换为API响应格式
+            DivinationResponse response = convertLiuyaoResult(result);
+            log.info("✅ 六爻计算成功: {}之{}",
+                result.getOriginalHexagramName(),
+                result.getChangedHexagramName());
+
+            return response;
+
+        } catch (Exception e) {
+            log.error("❌ 六爻计算失败: {}", e.getMessage(), e);
+            throw new RuntimeException("六爻计算失败: " + e.getMessage(), e);
         }
+    }
 
-        // 六爻分析
-        LiuyaoAnalysis analysis = LiuyaoAnalysis.builder()
-            .sixRelatives(Arrays.asList("兄弟", "子孙", "妻财", "官鬼", "父母", "兄弟"))
-            .sixAnimals(Arrays.asList("青龙", "朱雀", "勾陈", "腾蛇", "白虎", "玄武"))
-            .elements(Arrays.asList("土", "火", "火", "木", "木", "土"))
+    /**
+     * 将LiuyaoCalculator结果转换为API响应格式
+     */
+    private DivinationResponse convertLiuyaoResult(com.lsspp.util.LiuyaoCalculator.LiuyaoResult result) {
+        // 构建本卦信息
+        HexagramInfo originalHexagram = HexagramInfo.builder()
+            .name(result.getOriginalHexagramName())
+            .lines(result.getOriginalLines())
+            .interpretation(result.getOriginalInterpretation())
             .build();
 
-        builder.analysis(analysis);
+        // 构建变卦信息
+        HexagramInfo changedHexagram = HexagramInfo.builder()
+            .name(result.getChangedHexagramName())
+            .lines(result.getChangedLines())
+            .interpretation(result.getChangedInterpretation())
+            .build();
 
-        // 预测结果
-        String prediction = generateLiuyaoPrediction(method);
-        builder.prediction(prediction);
+        // 构建六爻分析
+        LiuyaoAnalysis analysis = LiuyaoAnalysis.builder()
+            // 主卦信息
+            .sixRelatives(result.getSixRelatives())
+            .sixAnimals(result.getSixAnimals())
+            .elements(result.getElements())
+            .najiaDizhi(result.getNajiaDizhi())
+            // 变卦信息
+            .changedSixRelatives(result.getChangedSixRelatives())
+            .changedElements(result.getChangedElements())
+            .changedNajiaDizhi(result.getChangedNajiaDizhi())
+            .build();
 
-        log.info("✅ 六爻计算成功: {} 方法", method);
-        return builder.build();
+        // 构建完整响应
+        // 只使用专业断卦结果,不附加计算过程
+        return DivinationResponse.builder()
+            .originalHexagram(originalHexagram)
+            .changedHexagram(changedHexagram)
+            .changingLine(result.getChangingLine())
+            .worldLine(result.getWorldLine())
+            .responseLine(result.getResponseLine())
+            .analysis(analysis)
+            .prediction(result.getPrediction())
+            .build();
     }
 
     /**
@@ -507,21 +569,6 @@ public class DivinationService {
             .build();
     }
 
-    /**
-     * 生成六爻预测结果
-     */
-    private String generateLiuyaoPrediction(String method) {
-        switch (method.toLowerCase()) {
-            case "time":
-                return "根据山火贲卦象分析，您所询问之事注重外在表现，但更要重视内在修养。建议您在追求外在成就的同时，不忘培养内在品德，这样才能获得真正的成功。";
-            case "number":
-                return "根据天地否卦象分析，目前运势阻滞，诸事不顺。建议您暂时收敛锋芒，韬光养晦，等待时机成熟再行动。切勿急躁冒进，保持耐心是关键。";
-            case "manual":
-                return "根据火天大有卦象分析，您的运势极佳，事业有成，财源广进。建议您抓住当前良机，积极进取，但也要保持谦逊，避免骄傲自满。";
-            default:
-                return "根据卦象分析，您目前可能面临一些困难，但这是成长的必经之路。建议您保持冷静，耐心应对，困境终将过去。";
-        }
-    }
 
     /**
      * 获取五行属性
@@ -549,6 +596,51 @@ public class DivinationService {
                 .favorableNumbers(Arrays.asList(2, 7))
                 .careerSuggestions(Arrays.asList("文职", "管理"))
                 .build())
+            .build();
+    }
+
+    // ===== BaziAnalyzer结果转换方法 =====
+
+    /**
+     * 转换格局分析结果
+     */
+    private GejuAnalysis convertGejuAnalysis(com.lsspp.util.BaziAnalyzer.GeJuResult geju) {
+        return GejuAnalysis.builder()
+            .mainGeju(geju.mainGeju)
+            .subGeju(geju.subGeju)
+            .isZhengge(geju.isZhengge)
+            .isCongge(geju.isCongge)
+            .isHuage(geju.isHuage)
+            .isZhuanwang(geju.isZhuanwang)
+            .yongshen(geju.yongshen)
+            .xishen(geju.xishen)
+            .jishen(geju.jishen)
+            .analysis(geju.analysis)
+            .strength(geju.strength)
+            .build();
+    }
+
+    /**
+     * 转换神煞分析结果
+     */
+    private ShenshaAnalysis convertShenshaAnalysis(com.lsspp.util.BaziAnalyzer.ShenshaResult shensha) {
+        return ShenshaAnalysis.builder()
+            .jixing(shensha.jixing)
+            .xiongshen(shensha.xiongshen)
+            .meaning(shensha.meaning)
+            .analysis(shensha.analysis)
+            .build();
+    }
+
+    /**
+     * 转换调候分析结果
+     */
+    private TiaohouAnalysis convertTiaohouAnalysis(com.lsspp.util.BaziAnalyzer.TiaohouResult tiaohou) {
+        return TiaohouAnalysis.builder()
+            .climate(tiaohou.climate)
+            .tiaohou(tiaohou.tiaohou)
+            .reason(tiaohou.reason)
+            .analysis(tiaohou.analysis)
             .build();
     }
 }

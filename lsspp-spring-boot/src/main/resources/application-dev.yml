@@ -5,9 +5,9 @@ server:
 spring:
   # 数据源配置
   datasource:
-    url: jdbc:postgresql://localhost:5432/lsspp_dev
-    username: lsspp_dev
-    password: dev123
+    url: jdbc:postgresql://localhost:5432/lsspp_bazi
+    username: lee
+    password: ''
 
   # JPA配置
   jpa:
